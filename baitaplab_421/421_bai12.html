@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý sinh viên</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        width: 900px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      form input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      form button {
+        padding: 10px 20px;
+        border: none;
+        background: blue;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      form button:hover {
+        background: darkblue;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+
+      table th {
+        background: #007bff;
+        color: white;
+      }
+
+      .delete-btn {
+        background: red;
+        color: white;
+        border: none;
+        padding: 7px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .delete-btn:hover {
+        background: darkred;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>QUẢN LÝ SINH VIÊN</h1>
+
+      <form id="studentForm">
+        <input type="text" id="name" placeholder="Tên sinh viên" required />
+
+        <input type="number" id="age" placeholder="Tuổi" required />
+
+        <input type="text" id="major" placeholder="Ngành học" required />
+
+        <button type="submit">Thêm</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Tuổi</th>
+            <th>Ngành học</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentList"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // THAY LINK API CỦA BẠN
+      const API_URL = "https://YOUR_PROJECT.mockapi.io/students";
+
+      const studentList = document.getElementById("studentList");
+      const studentForm = document.getElementById("studentForm");
+
+      // HIỂN THỊ DANH SÁCH
+      async function loadStudents() {
+        try {
+          const response = await fetch(API_URL);
+
+          const students = await response.json();
+
+          renderStudents(students);
+        } catch (error) {
+          console.log("Lỗi:", error);
+        }
+      }
+
+      // RENDER DỮ LIỆU
+      function renderStudents(students) {
+        studentList.innerHTML = "";
+
+        students.forEach((student) => {
+          studentList.innerHTML += `
+                    <tr>
+                        <td>${student.id}</td>
+
+                        <td>${student.name}</td>
+
+                        <td>${student.age}</td>
+
+                        <td>${student.major}</td>
+
+                        <td>
+                            <button 
+                                class="delete-btn"
+                                onclick="deleteStudent('${student.id}')"
+                            >
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `;
+        });
+      }
+
+      // THÊM SINH VIÊN
+      studentForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const newStudent = {
+          name: document.getElementById("name").value,
+
+          age: document.getElementById("age").value,
+
+          major: document.getElementById("major").value,
+        };
+
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify(newStudent),
+          });
+
+          studentForm.reset();
+
+          loadStudents();
+        } catch (error) {
+          console.log("Lỗi:", error);
+        }
+      });
+
+      // XÓA SINH VIÊN
+      async function deleteStudent(id) {
+        const confirmDelete = confirm("Bạn có chắc muốn xóa?");
+
+        if (confirmDelete) {
+          try {
+            await fetch(`${API_URL}/${id}`, {
+              method: "DELETE",
+            });
+
+            loadStudents();
+          } catch (error) {
+            console.log("Lỗi:", error);
+          }
+        }
+      }
+
+      // CHẠY CHƯƠNG TRÌNH
+      loadStudents();
+    </script>
+  </body>
+</html>

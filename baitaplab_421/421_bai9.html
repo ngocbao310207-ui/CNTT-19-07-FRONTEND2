@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Công Việc</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        padding-top: 50px;
+      }
+
+      .container {
+        width: 600px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+      }
+
+      #btnThem {
+        background: #28a745;
+      }
+
+      #btnThem:hover {
+        background: #218838;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      li {
+        background: #f9f9f9;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .hoanThanh {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      .actions button {
+        margin-left: 5px;
+      }
+
+      .btnDone {
+        background: #007bff;
+      }
+
+      .btnDelete {
+        background: #dc3545;
+      }
+
+      .btnDone:hover {
+        background: #0056b3;
+      }
+
+      .btnDelete:hover {
+        background: #c82333;
+      }
+
+      .filter {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      .filter button {
+        background: #6c757d;
+        margin: 5px;
+      }
+
+      .filter button:hover {
+        background: #5a6268;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>ỨNG DỤNG TO-DO LIST</h2>
+
+      <!-- Nhập công việc -->
+      <div class="input-group">
+        <input type="text" id="congViec" placeholder="Nhập công việc..." />
+
+        <button id="btnThem">Thêm</button>
+      </div>
+
+      <!-- Bộ lọc -->
+      <div class="filter">
+        <button onclick="locCongViec('tatca')">Tất cả</button>
+
+        <button onclick="locCongViec('hoanthanh')">Hoàn thành</button>
+
+        <button onclick="locCongViec('chuahoanthanh')">Chưa hoàn thành</button>
+      </div>
+
+      <!-- Danh sách -->
+      <ul id="danhSachCongViec"></ul>
+    </div>
+
+    <script>
+      // Mảng công việc
+      let danhSach = JSON.parse(localStorage.getItem("todo")) || [];
+
+      // Lấy phần tử
+      let input = document.getElementById("congViec");
+
+      let btnThem = document.getElementById("btnThem");
+
+      let danhSachHTML = document.getElementById("danhSachCongViec");
+
+      // Hàm lưu localStorage
+      function luuDuLieu() {
+        localStorage.setItem("todo", JSON.stringify(danhSach));
+      }
+
+      // Hàm hiển thị danh sách
+      function render(ds = danhSach) {
+        danhSachHTML.innerHTML = "";
+
+        ds.forEach(function (cv, index) {
+          let li = document.createElement("li");
+
+          // Nội dung công việc
+          let span = document.createElement("span");
+
+          span.innerText = cv.ten;
+
+          if (cv.hoanThanh) {
+            span.classList.add("hoanThanh");
+          }
+
+          // Khu vực nút
+          let actions = document.createElement("div");
+
+          actions.classList.add("actions");
+
+          // Nút hoàn thành
+          let btnDone = document.createElement("button");
+
+          btnDone.innerText = "✓";
+
+          btnDone.classList.add("btnDone");
+
+          btnDone.addEventListener("click", function () {
+            danhSach[index].hoanThanh = !danhSach[index].hoanThanh;
+
+            luuDuLieu();
+
+            render();
+          });
+
+          // Nút xóa
+          let btnDelete = document.createElement("button");
+
+          btnDelete.innerText = "X";
+
+          btnDelete.classList.add("btnDelete");
+
+          btnDelete.addEventListener("click", function () {
+            danhSach.splice(index, 1);
+
+            luuDuLieu();
+
+            render();
+          });
+
+          // Gắn nút
+          actions.appendChild(btnDone);
+
+          actions.appendChild(btnDelete);
+
+          // Gắn vào li
+          li.appendChild(span);
+
+          li.appendChild(actions);
+
+          // Gắn vào danh sách
+          danhSachHTML.appendChild(li);
+        });
+      }
+
+      // Thêm công việc
+      btnThem.addEventListener("click", function () {
+        let tenCongViec = input.value.trim();
+
+        if (tenCongViec == "") {
+          alert("Vui lòng nhập công việc!");
+
+          return;
+        }
+
+        // Thêm vào mảng
+        danhSach.push({
+          ten: tenCongViec,
+          hoanThanh: false,
+        });
+
+        // Lưu dữ liệu
+        luuDuLieu();
+
+        // Hiển thị lại
+        render();
+
+        // Xóa input
+        input.value = "";
+      });
+
+      // Hàm lọc
+      function locCongViec(loai) {
+        if (loai == "tatca") {
+          render();
+        } else if (loai == "hoanthanh") {
+          let ketQua = danhSach.filter(function (cv) {
+            return cv.hoanThanh;
+          });
+
+          render(ketQua);
+        } else {
+          let ketQua = danhSach.filter(function (cv) {
+            return !cv.hoanThanh;
+          });
+
+          render(ketQua);
+        }
+      }
+
+      // Hiển thị ban đầu
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tra Cứu Thông Tin</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        width: 700px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+      }
+
+      #btnTim {
+        background: #007bff;
+      }
+
+      #btnXoa {
+        background: #dc3545;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      #ketQua {
+        margin-top: 20px;
+      }
+
+      .card {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #007bff;
+      }
+
+      .error {
+        color: red;
+        font-size: 18px;
+        text-align: center;
+      }
+
+      .loading {
+        color: orange;
+        text-align: center;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>TRA CỨU THÔNG TIN NGƯỜI DÙNG</h2>
+
+      <div class="input-group">
+        <input type="number" id="maID" placeholder="Nhập mã định danh..." />
+
+        <button id="btnTim">Tra cứu</button>
+
+        <button id="btnXoa">Xóa</button>
+      </div>
+
+      <div id="ketQua"></div>
+    </div>
+
+    <script>
+      // API mẫu
+      const apiURL = "https://jsonplaceholder.typicode.com/users/";
+
+      // Lấy phần tử
+      let inputID = document.getElementById("maID");
+
+      let ketQua = document.getElementById("ketQua");
+
+      let btnTim = document.getElementById("btnTim");
+
+      let btnXoa = document.getElementById("btnXoa");
+
+      // Hàm tra cứu
+      async function traCuu() {
+        let id = inputID.value.trim();
+
+        // Kiểm tra rỗng
+        if (id == "") {
+          ketQua.innerHTML = "<p class='error'>Vui lòng nhập mã ID!</p>";
+
+          return;
+        }
+
+        ketQua.innerHTML = "<p class='loading'>Đang tải dữ liệu...</p>";
+
+        try {
+          // URL động
+          let response = await fetch(apiURL + id);
+
+          // Kiểm tra dữ liệu
+          if (!response.ok) {
+            throw new Error("Không tìm thấy");
+          }
+
+          // Chuyển JSON
+          let user = await response.json();
+
+          // Hiển thị kết quả
+          ketQua.innerHTML = `
+                    <div class="card">
+
+                        <h3>
+                            ${user.name}
+                        </h3>
+
+                        <p>
+                            <b>ID:</b>
+                            ${user.id}
+                        </p>
+
+                        <p>
+                            <b>Email:</b>
+                            ${user.email}
+                        </p>
+
+                        <p>
+                            <b>Số điện thoại:</b>
+                            ${user.phone}
+                        </p>
+
+                        <p>
+                            <b>Website:</b>
+                            ${user.website}
+                        </p>
+
+                        <p>
+                            <b>Thành phố:</b>
+                            ${user.address.city}
+                        </p>
+
+                    </div>
+                `;
+        } catch (error) {
+          ketQua.innerHTML = "<p class='error'>Không tìm thấy dữ liệu!</p>";
+
+          console.log(error);
+        }
+      }
+
+      // Hàm xóa
+      function xoaNoiDung() {
+        inputID.value = "";
+
+        ketQua.innerHTML = "";
+      }
+
+      // Gắn sự kiện
+      btnTim.addEventListener("click", traCuu);
+
+      btnXoa.addEventListener("click", xoaNoiDung);
+    </script>
+  </body>
+</html>

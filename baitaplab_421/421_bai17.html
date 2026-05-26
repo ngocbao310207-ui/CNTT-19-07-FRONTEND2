@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Giỏ Hàng</title>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .cart {
+        width: 420px;
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .cart h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+      }
+
+      .product {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .product-info h2 {
+        font-size: 22px;
+        color: #222;
+      }
+
+      .product-info p {
+        margin-top: 5px;
+        color: #666;
+        font-size: 18px;
+      }
+
+      .quantity-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn {
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 8px;
+        background: #007bff;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .btn:hover {
+        background: #0056b3;
+      }
+
+      #quantity {
+        font-size: 22px;
+        font-weight: bold;
+        width: 30px;
+        text-align: center;
+      }
+
+      .total {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px solid #ddd;
+        text-align: center;
+      }
+
+      .total h2 {
+        color: #e63946;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="cart">
+      <h1>🛒 Giỏ Hàng</h1>
+
+      <div class="product">
+        <div class="product-info">
+          <h2>Tai Nghe Bluetooth</h2>
+
+          <p>
+            Đơn giá:
+            <span id="price">500000</span> VNĐ
+          </p>
+        </div>
+
+        <div class="quantity-box">
+          <button id="decrease" class="btn">-</button>
+
+          <span id="quantity">1</span>
+
+          <button id="increase" class="btn">+</button>
+        </div>
+      </div>
+
+      <div class="total">
+        <h2>
+          Thành tiền:
+          <span id="total">500000</span> VNĐ
+        </h2>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        // Đơn giá
+        let price = 500000;
+
+        // Số lượng ban đầu
+        let quantity = 1;
+
+        // Hàm cập nhật giao diện
+        function updateCart() {
+          let total = price * quantity;
+
+          $("#quantity").text(quantity);
+
+          $("#total").text(total.toLocaleString("vi-VN"));
+        }
+
+        // Tăng số lượng
+        $("#increase").click(function () {
+          quantity++;
+
+          updateCart();
+        });
+
+        // Giảm số lượng
+        $("#decrease").click(function () {
+          if (quantity > 1) {
+            quantity--;
+
+            updateCart();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

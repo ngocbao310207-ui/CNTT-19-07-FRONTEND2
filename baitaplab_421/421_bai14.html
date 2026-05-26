@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Bài Lab 14 - Hiệu ứng jQuery</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        text-align: center;
+        padding-top: 50px;
+      }
+
+      .container {
+        width: 700px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin: 8px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+      }
+
+      .fadeIn-btn {
+        background: green;
+      }
+
+      .fadeOut-btn {
+        background: red;
+      }
+
+      .slideDown-btn {
+        background: blue;
+      }
+
+      .slideUp-btn {
+        background: orange;
+      }
+
+      .toggle-btn {
+        background: purple;
+      }
+
+      .chain-btn {
+        background: black;
+      }
+
+      .box {
+        margin-top: 30px;
+        padding: 30px;
+        background: #007bff;
+        color: white;
+        border-radius: 10px;
+        font-size: 20px;
+      }
+
+      .highlight {
+        background: gold !important;
+        color: black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>BÀI LAB 14 - HIỆU ỨNG jQuery</h1>
+
+      <button class="fadeIn-btn">Fade In</button>
+
+      <button class="fadeOut-btn">Fade Out</button>
+
+      <button class="slideDown-btn">Slide Down</button>
+
+      <button class="slideUp-btn">Slide Up</button>
+
+      <button class="toggle-btn">Slide Toggle</button>
+
+      <button class="chain-btn">Hiệu ứng liên tiếp</button>
+
+      <div class="box">Đây là khối nội dung dùng để demo hiệu ứng jQuery.</div>
+    </div>
+
+    <script>
+      // FADE IN
+      $(".fadeIn-btn").click(function () {
+        $(".box").fadeIn(1000);
+      });
+
+      // FADE OUT
+      $(".fadeOut-btn").click(function () {
+        $(".box").fadeOut(1000);
+      });
+
+      // SLIDE DOWN
+      $(".slideDown-btn").click(function () {
+        $(".box").slideDown(1000);
+      });
+
+      // SLIDE UP
+      $(".slideUp-btn").click(function () {
+        $(".box").slideUp(1000);
+      });
+
+      // SLIDE TOGGLE
+      $(".toggle-btn").click(function () {
+        $(".box").slideToggle(1000);
+      });
+
+      // CHAINING + HIGHLIGHT
+      $(".chain-btn").click(function () {
+        $(".box")
+          .slideUp(800)
+          .slideDown(800)
+          .fadeOut(800)
+          .fadeIn(800)
+          .addClass("highlight");
+      });
+    </script>
+  </body>
+</html>

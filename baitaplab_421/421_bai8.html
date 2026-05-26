@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bộ Đếm Tương Tác</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 400px;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        margin-bottom: 20px;
+        color: #007bff;
+      }
+
+      #soDem {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 20px 0;
+        transition: 0.3s;
+      }
+
+      .duong {
+        color: green;
+      }
+
+      .am {
+        color: red;
+      }
+
+      .khong {
+        color: black;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        color: white;
+      }
+
+      #tang {
+        background: #28a745;
+      }
+
+      #giam {
+        background: #dc3545;
+      }
+
+      #reset {
+        background: #6c757d;
+      }
+
+      #tang5 {
+        background: #007bff;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>BỘ ĐẾM TƯƠNG TÁC</h2>
+
+      <div id="soDem" class="khong">0</div>
+
+      <button id="tang">Tăng +1</button>
+
+      <button id="giam">Giảm -1</button>
+
+      <button id="reset">Đặt lại</button>
+
+      <button id="tang5">Tăng +5</button>
+    </div>
+
+    <script>
+      // Biến trạng thái
+      let count = 0;
+
+      // Lấy phần tử
+      let hienThi = document.getElementById("soDem");
+
+      let btnTang = document.getElementById("tang");
+
+      let btnGiam = document.getElementById("giam");
+
+      let btnReset = document.getElementById("reset");
+
+      let btnTang5 = document.getElementById("tang5");
+
+      // Hàm cập nhật giao diện
+      function render() {
+        hienThi.innerText = count;
+
+        // Đổi màu theo giá trị
+        if (count > 0) {
+          hienThi.className = "duong";
+        } else if (count < 0) {
+          hienThi.className = "am";
+        } else {
+          hienThi.className = "khong";
+        }
+      }
+
+      // Sự kiện tăng
+      btnTang.addEventListener("click", function () {
+        count++;
+
+        render();
+      });
+
+      // Sự kiện giảm
+      btnGiam.addEventListener("click", function () {
+        count--;
+
+        render();
+      });
+
+      // Sự kiện đặt lại
+      btnReset.addEventListener("click", function () {
+        count = 0;
+
+        render();
+      });
+
+      // Sự kiện tăng nhanh +5
+      btnTang5.addEventListener("click", function () {
+        count += 5;
+
+        render();
+      });
+    </script>
+  </body>
+</html>

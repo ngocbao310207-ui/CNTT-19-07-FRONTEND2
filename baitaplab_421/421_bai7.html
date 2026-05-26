@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thao Tác DOM</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 500px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #007bff;
+      }
+
+      p {
+        font-size: 18px;
+        margin: 15px 0;
+      }
+
+      img {
+        width: 250px;
+        height: 180px;
+        border-radius: 10px;
+        object-fit: cover;
+        margin-bottom: 20px;
+        transition: 0.3s;
+      }
+
+      .dark-mode {
+        background: #222;
+        color: white;
+      }
+
+      .dark-mode h1 {
+        color: yellow;
+      }
+
+      .dark-mode button {
+        background: orange;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="khung">
+      <h1 id="tieuDe">Chào mừng đến với JavaScript DOM</h1>
+
+      <p id="moTa">Đây là giao diện ban đầu.</p>
+
+      <img id="hinhAnh" src="https://picsum.photos/400/250" alt="Hình ảnh" />
+
+      <br />
+
+      <button onclick="thayDoiNoiDung()">Thay đổi</button>
+
+      <button onclick="khoiPhuc()">Khôi phục</button>
+    </div>
+
+    <script>
+      // Hàm thay đổi nội dung
+      function thayDoiNoiDung() {
+        // Lấy phần tử
+        let tieuDe = document.getElementById("tieuDe");
+
+        let moTa = document.querySelector("#moTa");
+
+        let hinhAnh = document.getElementById("hinhAnh");
+
+        let khung = document.getElementById("khung");
+
+        // Thay đổi văn bản
+        tieuDe.innerText = "DOM đã được thay đổi!";
+
+        moTa.textContent =
+          "Bạn vừa thay đổi nội dung, ảnh và giao diện bằng JavaScript.";
+
+        // Thay đổi ảnh
+        hinhAnh.src = "https://picsum.photos/id/1015/400/250";
+
+        // Thay đổi class
+        khung.classList.add("dark-mode");
+      }
+
+      // Hàm khôi phục
+      function khoiPhuc() {
+        let tieuDe = document.getElementById("tieuDe");
+
+        let moTa = document.querySelector("#moTa");
+
+        let hinhAnh = document.getElementById("hinhAnh");
+
+        let khung = document.getElementById("khung");
+
+        // Khôi phục nội dung
+        tieuDe.innerText = "Chào mừng đến với JavaScript DOM";
+
+        moTa.textContent = "Đây là giao diện ban đầu.";
+
+        // Khôi phục ảnh
+        hinhAnh.src = "https://picsum.photos/400/250";
+
+        // Xóa class
+        khung.classList.remove("dark-mode");
+      }
+    </script>
+  </body>
+</html>

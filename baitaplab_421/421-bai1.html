@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính chỉ số BMI</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        width: 350px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #ketQua {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .gay {
+        color: orange;
+      }
+
+      .binhthuong {
+        color: green;
+      }
+
+      .thuacan {
+        color: darkorange;
+      }
+
+      .beophi {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>TÍNH CHỈ SỐ BMI</h2>
+
+      <label>Chiều cao (m):</label>
+      <input type="number" id="chieuCao" step="0.01" placeholder="Ví dụ: 1.7" />
+
+      <label>Cân nặng (kg):</label>
+      <input type="number" id="canNang" placeholder="Ví dụ: 65" />
+
+      <button onclick="tinhBMI()">Tính BMI</button>
+
+      <div id="ketQua"></div>
+    </div>
+
+    <script>
+      function tinhBMI() {
+        let chieuCao = Number(document.getElementById("chieuCao").value);
+        let canNang = Number(document.getElementById("canNang").value);
+        let ketQua = document.getElementById("ketQua");
+
+        // Kiểm tra dữ liệu
+        if (chieuCao <= 0 || canNang <= 0) {
+          ketQua.innerHTML = "Vui lòng nhập dữ liệu hợp lệ!";
+          ketQua.className = "";
+          ketQua.style.color = "red";
+          return;
+        }
+
+        // Tính BMI
+        let bmi = canNang / (chieuCao * chieuCao);
+        bmi = bmi.toFixed(2);
+
+        let xepLoai = "";
+        let mau = "";
+
+        // Phân loại BMI
+        if (bmi < 18.5) {
+          xepLoai = "Gầy";
+          mau = "gay";
+        } else if (bmi < 25) {
+          xepLoai = "Bình thường";
+          mau = "binhthuong";
+        } else if (bmi < 30) {
+          xepLoai = "Thừa cân";
+          mau = "thuacan";
+        } else {
+          xepLoai = "Béo phì";
+          mau = "beophi";
+        }
+
+        // Hiển thị kết quả
+        ketQua.innerHTML = `
+                BMI của bạn: ${bmi} <br>
+                Phân loại: ${xepLoai}
+            `;
+
+        ketQua.className = mau;
+      }
+    </script>
+  </body>
+</html>

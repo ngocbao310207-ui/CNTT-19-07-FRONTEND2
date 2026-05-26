@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xử Lý Điểm Sinh Viên</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 500px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 70%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #ketQua {
+        margin-top: 20px;
+        line-height: 1.8;
+        font-size: 17px;
+      }
+
+      .gioi {
+        color: green;
+      }
+
+      .kha {
+        color: blue;
+      }
+
+      .trungbinh {
+        color: orange;
+      }
+
+      .yeu {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>XỬ LÝ ĐIỂM SINH VIÊN</h2>
+
+      <p>Nhập thêm điểm mới:</p>
+
+      <input type="number" id="diemMoi" placeholder="Ví dụ: 8" />
+
+      <button onclick="themDiem()">Thêm điểm</button>
+
+      <button onclick="xuLyDiem()">Tính kết quả</button>
+
+      <div id="ketQua"></div>
+    </div>
+
+    <script>
+      // Mảng điểm ban đầu
+      let danhSachDiem = [8, 7, 9, 6, 10];
+
+      // Hàm thêm điểm mới
+      function themDiem() {
+        let diem = Number(document.getElementById("diemMoi").value);
+
+        if (diem < 0 || diem > 10) {
+          alert("Điểm phải từ 0 đến 10!");
+          return;
+        }
+
+        danhSachDiem.push(diem);
+
+        alert("Đã thêm điểm thành công!");
+
+        document.getElementById("diemMoi").value = "";
+      }
+
+      // Hàm xử lý điểm
+      function xuLyDiem() {
+        let ketQua = document.getElementById("ketQua");
+
+        // Tạo bản sao mảng
+        let diemSauKhiLoc = [...danhSachDiem];
+
+        // Loại bỏ điểm thấp nhất
+        let diemThapNhat = Math.min(...diemSauKhiLoc);
+
+        let viTri = diemSauKhiLoc.indexOf(diemThapNhat);
+
+        diemSauKhiLoc.splice(viTri, 1);
+
+        // Tính tổng
+        let tong = 0;
+
+        diemSauKhiLoc.forEach(function (diem) {
+          tong += diem;
+        });
+
+        // Tính trung bình
+        let trungBinh = tong / diemSauKhiLoc.length;
+
+        trungBinh = trungBinh.toFixed(2);
+
+        let xepLoai = "";
+        let mau = "";
+
+        // Phân loại học lực
+        if (trungBinh >= 8) {
+          xepLoai = "Giỏi";
+          mau = "gioi";
+        } else if (trungBinh >= 6.5) {
+          xepLoai = "Khá";
+          mau = "kha";
+        } else if (trungBinh >= 5) {
+          xepLoai = "Trung bình";
+          mau = "trungbinh";
+        } else {
+          xepLoai = "Yếu";
+          mau = "yeu";
+        }
+
+        // Hiển thị kết quả
+        ketQua.innerHTML = `
+                <b>Danh sách điểm:</b>
+                ${danhSachDiem.join(", ")} <br>
+
+                <b>Điểm thấp nhất đã loại:</b>
+                ${diemThapNhat} <br>
+
+                <b>Tổng điểm:</b>
+                ${tong} <br>
+
+                <b>Điểm trung bình:</b>
+                ${trungBinh} <br>
+
+                <b>Xếp loại:</b>
+                <span class="${mau}">
+                    ${xepLoai}
+                </span>
+            `;
+      }
+    </script>
+  </body>
+</html>

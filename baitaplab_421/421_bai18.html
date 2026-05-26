@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quản Lý Thành Viên</title>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .container{
+            width: 600px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input{
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button{
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        #addBtn{
+            background: #28a745;
+            color: white;
+        }
+
+        #addBtn:hover{
+            background: #1f7e34;
+        }
+
+        ul{
+            list-style: none;
+        }
+
+        li{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .member-name{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .btn-group{
+            display: flex;
+            gap: 8px;
+        }
+
+        .editBtn{
+            background: #ffc107;
+            color: black;
+        }
+
+        .editBtn:hover{
+            background: #d39e00;
+        }
+
+        .deleteBtn{
+            background: #dc3545;
+            color: white;
+        }
+
+        .deleteBtn:hover{
+            background: #b02a37;
+        }
+
+        .search-box{
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>👨‍💻 Quản Lý Thành Viên</h1>
+
+        <!-- Tìm kiếm -->
+        <div class="search-box">
+
+            <input type="text" id="searchInput" placeholder="Tìm kiếm thành viên...">
+
+        </div>
+
+        <!-- Form thêm -->
+        <div class="form-group">
+
+            <input type="text" id="memberInput" placeholder="Nhập tên thành viên">
+
+            <button id="addBtn">Thêm</button>
+
+        </div>
+
+        <!-- Danh sách -->
+        <ul id="memberList"></ul>
+
+    </div>
+
+    <script>
+
+        $(document).ready(function(){
+
+            let count = 0;
+
+            // Hàm cập nhật STT
+            function updateNumber(){
+
+                $("#memberList li").each(function(index){
+
+                    $(this).find(".stt").text(index + 1);
+
+                });
+
+            }
+
+            // Thêm thành viên
+            $("#addBtn").click(function(){
+
+                let name = $("#memberInput").val().trim();
+
+                if(name == ""){
+                    alert("Vui lòng nhập tên!");
+                    return;
+                }
+
+                count++;
+
+                let member = `
+                    <li>
+
+                        <span class="member-name">
+                            <span class="stt">${count}</span>.
+                            <span class="name">${name}</span>
+                        </span>
+
+                        <div class="btn-group">
+
+                            <button class="editBtn">Sửa</button>
+
+                            <button class="deleteBtn">Xóa</button>
+
+                        </div>
+
+                    </li>
+                `;
+
+                $("#memberList").append(member);
+
+                $("#memberInput").val("");
+
+                updateNumber();
+
+            });
+
+            // Xóa thành viên
+            $("#memberList").on("click", ".deleteBtn", function(){
+
+                $(this).closest("li").remove();
+
+                updateNumber();
+
+            });
+
+            // Sửa thành viên
+            $("#memberList").on("click", ".editBtn", function(){
+
+                let currentName = $(this)
+                    .closest("li")
+                    .find(".name")
+                    .text();
+
+                let newName = prompt("Nhập tên mới:", currentName);
+
+                if(newName != null && newName.trim() != ""){
+
+                    $(this)
+                        .closest("li")
+                        .find(".name")
+                        .text(newName);
+
+                }
+
+            });
+
+            // Tìm kiếm thành viên
+            $("#searchInput").on("keyup", function(){
+
+                let keyword = $(this).val().toLowerCase();
+
+                $("#memberList li").filter(function(){
+
+                    $(this).toggle(
+
+                        $(this)
+                        .text()
+                        .toLowerCase()
+                        .indexOf(keyword) > -1
+
+                    );
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

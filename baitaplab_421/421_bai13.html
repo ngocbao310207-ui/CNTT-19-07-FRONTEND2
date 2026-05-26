@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Bài Lab 13 - jQuery Hide Show Toggle</title>
+
+    <!-- Nhúng thư viện jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        text-align: center;
+        padding-top: 50px;
+      }
+
+      .container {
+        width: 700px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      .content {
+        margin-top: 30px;
+        padding: 20px;
+        background: #007bff;
+        color: white;
+        border-radius: 10px;
+        font-size: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .hide-btn {
+        background: red;
+        color: white;
+      }
+
+      .show-btn {
+        background: green;
+        color: white;
+      }
+
+      .toggle-btn {
+        background: orange;
+        color: white;
+      }
+
+      .status-btn {
+        background: purple;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>BÀI LAB 13 - jQuery</h1>
+
+      <button class="hide-btn">Ẩn</button>
+
+      <button class="show-btn">Hiện</button>
+
+      <button class="toggle-btn">Toggle</button>
+
+      <button class="status-btn">Kiểm tra trạng thái</button>
+
+      <div class="content">
+        Đây là khối nội dung đang được hiển thị bằng jQuery.
+      </div>
+    </div>
+
+    <script>
+      // ẨN NỘI DUNG
+      $(".hide-btn").click(function () {
+        $(".content").hide();
+      });
+
+      // HIỆN NỘI DUNG
+      $(".show-btn").click(function () {
+        $(".content").show();
+      });
+
+      // TOGGLE NỘI DUNG
+      $(".toggle-btn").click(function () {
+        $(".content").toggle();
+      });
+
+      // KIỂM TRA TRẠNG THÁI
+      $(".status-btn").click(function () {
+        if ($(".content").is(":visible")) {
+          alert("Nội dung đang HIỆN");
+        } else {
+          alert("Nội dung đang ẨN");
+        }
+      });
+    </script>
+  </body>
+</html>

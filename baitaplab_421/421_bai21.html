@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Bài Lab 21 - CRUD jQuery Ajax</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        padding: 30px;
+      }
+
+      .container {
+        width: 1000px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      form input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      form button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+      }
+
+      #saveBtn {
+        background: #007bff;
+      }
+
+      #cancelBtn {
+        background: gray;
+        display: none;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+      }
+
+      table th {
+        background: #007bff;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background: #f9f9f9;
+      }
+
+      .edit-btn {
+        background: orange;
+        color: white;
+        border: none;
+        padding: 7px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 5px;
+      }
+
+      .delete-btn {
+        background: red;
+        color: white;
+        border: none;
+        padding: 7px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .message {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>QUẢN LÝ SINH VIÊN - CRUD AJAX</h1>
+
+      <div class="message" id="message"></div>
+
+      <form id="studentForm">
+        <input type="text" id="name" placeholder="Họ tên" />
+
+        <input type="number" id="age" placeholder="Tuổi" />
+
+        <input type="text" id="major" placeholder="Ngành học" />
+
+        <button type="submit" id="saveBtn">Thêm</button>
+
+        <button type="button" id="cancelBtn">Hủy</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Tuổi</th>
+            <th>Ngành học</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentList"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // THAY API CỦA BẠN
+      const API_URL = "https://YOUR_PROJECT.mockapi.io/students";
+
+      let editId = null;
+
+      // LOAD DANH SÁCH
+      function loadStudents() {
+        $.ajax({
+          url: API_URL,
+
+          method: "GET",
+
+          success: function (data) {
+            renderStudents(data);
+          },
+
+          error: function () {
+            showMessage("Không thể tải dữ liệu!", "error");
+          },
+        });
+      }
+
+      // HIỂN THỊ DỮ LIỆU
+      function renderStudents(students) {
+        let html = "";
+
+        students.forEach(function (student) {
+          html += `
+                    <tr>
+                        <td>${student.id}</td>
+
+                        <td>${student.name}</td>
+
+                        <td>${student.age}</td>
+
+                        <td>${student.major}</td>
+
+                        <td>
+
+                            <button 
+                                class="edit-btn"
+                                onclick="editStudent(
+                                    '${student.id}',
+                                    '${student.name}',
+                                    '${student.age}',
+                                    '${student.major}'
+                                )"
+                            >
+                                Sửa
+                            </button>
+
+                            <button 
+                                class="delete-btn"
+                                onclick="deleteStudent('${student.id}')"
+                            >
+                                Xóa
+                            </button>
+
+                        </td>
+                    </tr>
+                `;
+        });
+
+        $("#studentList").html(html);
+      }
+
+      // THÔNG BÁO
+      function showMessage(text, type) {
+        $("#message").text(text).removeClass("success error").addClass(type);
+      }
+
+      // SUBMIT FORM
+      $("#studentForm").submit(function (e) {
+        e.preventDefault();
+
+        let name = $("#name").val().trim();
+
+        let age = $("#age").val().trim();
+
+        let major = $("#major").val().trim();
+
+        // KIỂM TRA RỖNG
+        if (name === "" || age === "" || major === "") {
+          showMessage("Vui lòng nhập đầy đủ thông tin!", "error");
+
+          return;
+        }
+
+        let studentData = {
+          name: name,
+
+          age: age,
+
+          major: major,
+        };
+
+        // NẾU ĐANG SỬA
+        if (editId) {
+          $.ajax({
+            url: `${API_URL}/${editId}`,
+
+            method: "PUT",
+
+            data: studentData,
+
+            success: function () {
+              showMessage("Cập nhật thành công!", "success");
+
+              resetForm();
+
+              loadStudents();
+            },
+
+            error: function () {
+              showMessage("Cập nhật thất bại!", "error");
+            },
+          });
+        }
+
+        // NẾU THÊM MỚI
+        else {
+          $.ajax({
+            url: API_URL,
+
+            method: "POST",
+
+            data: studentData,
+
+            success: function () {
+              showMessage("Thêm sinh viên thành công!", "success");
+
+              resetForm();
+
+              loadStudents();
+            },
+
+            error: function () {
+              showMessage("Thêm dữ liệu thất bại!", "error");
+            },
+          });
+        }
+      });
+
+      // XÓA
+      function deleteStudent(id) {
+        let confirmDelete = confirm("Bạn có chắc muốn xóa?");
+
+        if (confirmDelete) {
+          $.ajax({
+            url: `${API_URL}/${id}`,
+
+            method: "DELETE",
+
+            success: function () {
+              showMessage("Xóa thành công!", "success");
+
+              loadStudents();
+            },
+
+            error: function () {
+              showMessage("Xóa thất bại!", "error");
+            },
+          });
+        }
+      }
+
+      // SỬA
+      function editStudent(id, name, age, major) {
+        editId = id;
+
+        $("#name").val(name);
+
+        $("#age").val(age);
+
+        $("#major").val(major);
+
+        $("#saveBtn").text("Cập nhật");
+
+        $("#cancelBtn").show();
+      }
+
+      // HỦY SỬA
+      $("#cancelBtn").click(function () {
+        resetForm();
+      });
+
+      // RESET FORM
+      function resetForm() {
+        $("#studentForm")[0].reset();
+
+        editId = null;
+
+        $("#saveBtn").text("Thêm");
+
+        $("#cancelBtn").hide();
+      }
+
+      // LOAD KHI MỞ TRANG
+      loadStudents();
+    </script>
+  </body>
+</html>

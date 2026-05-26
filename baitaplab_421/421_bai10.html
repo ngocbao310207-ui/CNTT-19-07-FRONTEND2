@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hiển Thị Dữ Liệu JSON/API</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        width: 900px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      #loading {
+        text-align: center;
+        color: orange;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      #error {
+        text-align: center;
+        color: red;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .card {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 5px solid #007bff;
+      }
+
+      .card h3 {
+        margin: 0;
+        color: #007bff;
+      }
+
+      .card p {
+        margin: 8px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>DANH SÁCH NGƯỜI DÙNG</h2>
+
+      <div id="loading">Đang tải dữ liệu...</div>
+
+      <div id="error"></div>
+
+      <div id="danhSach"></div>
+    </div>
+
+    <script>
+      // API mẫu
+      const apiURL = "https://jsonplaceholder.typicode.com/users";
+
+      // Lấy phần tử
+      let danhSach = document.getElementById("danhSach");
+
+      let loading = document.getElementById("loading");
+
+      let error = document.getElementById("error");
+
+      // Hàm hiển thị dữ liệu
+      function render(users) {
+        let html = "";
+
+        users.forEach(function (user) {
+          html += `
+                    <div class="card">
+
+                        <h3>
+                            ${user.name}
+                        </h3>
+
+                        <p>
+                            <b>Email:</b>
+                            ${user.email}
+                        </p>
+
+                        <p>
+                            <b>Số điện thoại:</b>
+                            ${user.phone}
+                        </p>
+
+                        <p>
+                            <b>Website:</b>
+                            ${user.website}
+                        </p>
+
+                    </div>
+                `;
+        });
+
+        danhSach.innerHTML = html;
+      }
+
+      // Hàm fetch dữ liệu
+      async function layDuLieu() {
+        try {
+          // Gọi API
+          let response = await fetch(apiURL);
+
+          // Chuyển JSON
+          let data = await response.json();
+
+          // Ẩn loading
+          loading.innerHTML = "";
+
+          // Hiển thị dữ liệu
+          render(data);
+        } catch (loi) {
+          loading.innerHTML = "";
+
+          error.innerHTML = "Không thể tải dữ liệu!";
+
+          console.log(loi);
+        }
+      }
+
+      // Gọi khi tải trang
+      layDuLieu();
+    </script>
+  </body>
+</html>

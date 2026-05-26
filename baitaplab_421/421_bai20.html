@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Bài Lab 20 - Ajax POST</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        padding: 30px;
+      }
+
+      .container {
+        width: 900px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      form input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      form button {
+        padding: 10px 20px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      form button:hover {
+        background: #0056b3;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+      }
+
+      table th {
+        background: #007bff;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background: #f9f9f9;
+      }
+
+      .message {
+        text-align: center;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>THÊM SINH VIÊN BẰNG AJAX</h1>
+
+      <div class="message" id="message"></div>
+
+      <form id="studentForm">
+        <input type="text" id="name" placeholder="Họ tên" />
+
+        <input type="number" id="age" placeholder="Tuổi" />
+
+        <input type="text" id="major" placeholder="Ngành học" />
+
+        <button type="submit">Thêm</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Tuổi</th>
+            <th>Ngành học</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentList"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // THAY LINK API CỦA BẠN
+      const API_URL = "https://YOUR_PROJECT.mockapi.io/students";
+
+      // LOAD DANH SÁCH
+      function loadStudents() {
+        $.ajax({
+          url: API_URL,
+
+          method: "GET",
+
+          success: function (data) {
+            renderStudents(data);
+          },
+
+          error: function () {
+            $("#message")
+              .text("Không thể tải dữ liệu!")
+              .removeClass("success")
+              .addClass("error");
+          },
+        });
+      }
+
+      // HIỂN THỊ DỮ LIỆU
+      function renderStudents(students) {
+        let html = "";
+
+        students.forEach(function (student) {
+          html += `
+                    <tr>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.age}</td>
+                        <td>${student.major}</td>
+                    </tr>
+                `;
+        });
+
+        $("#studentList").html(html);
+      }
+
+      // THÊM DỮ LIỆU
+      $("#studentForm").submit(function (e) {
+        // NGĂN LOAD TRANG
+        e.preventDefault();
+
+        // LẤY DỮ LIỆU
+        let name = $("#name").val().trim();
+
+        let age = $("#age").val().trim();
+
+        let major = $("#major").val().trim();
+
+        // KIỂM TRA RỖNG
+        if (name === "" || age === "" || major === "") {
+          $("#message")
+            .text("Vui lòng nhập đầy đủ thông tin!")
+            .removeClass("success")
+            .addClass("error");
+
+          return;
+        }
+
+        // DỮ LIỆU GỬI ĐI
+        let newStudent = {
+          name: name,
+
+          age: age,
+
+          major: major,
+        };
+
+        // AJAX POST
+        $.ajax({
+          url: API_URL,
+
+          method: "POST",
+
+          data: newStudent,
+
+          success: function () {
+            $("#message")
+              .text("Thêm sinh viên thành công!")
+              .removeClass("error")
+              .addClass("success");
+
+            // XÓA FORM
+            $("#studentForm")[0].reset();
+
+            // LOAD LẠI DỮ LIỆU
+            loadStudents();
+          },
+
+          error: function () {
+            $("#message")
+              .text("Thêm dữ liệu thất bại!")
+              .removeClass("success")
+              .addClass("error");
+          },
+        });
+      });
+
+      // CHẠY KHI MỞ TRANG
+      loadStudents();
+    </script>
+  </body>
+</html>

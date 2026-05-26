@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính Toán Đơn Hàng Callback</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        width: 700px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      .ketQua {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        line-height: 1.8;
+      }
+
+      .title {
+        color: #007bff;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>QUY TRÌNH TÍNH TOÁN ĐƠN HÀNG</h2>
+
+      <button onclick="xuLyDonHang()">Tính đơn hàng</button>
+
+      <div id="ketQua"></div>
+    </div>
+
+    <script>
+      // Dữ liệu đơn hàng
+      let donHang1 = {
+        ten: "Đơn hàng 1",
+        sanPham: [
+          { ten: "Laptop", gia: 15000000, soLuong: 1 },
+          { ten: "Chuột", gia: 500000, soLuong: 2 },
+        ],
+      };
+
+      let donHang2 = {
+        ten: "Đơn hàng 2",
+        sanPham: [
+          { ten: "Điện thoại", gia: 8000000, soLuong: 1 },
+          { ten: "Tai nghe", gia: 1200000, soLuong: 1 },
+        ],
+      };
+
+      // Hàm định dạng tiền
+      function dinhDangTien(tien) {
+        return tien.toLocaleString("vi-VN") + " VNĐ";
+      }
+
+      // Bước 1: Tính tiền gốc
+      function tinhTienGoc(donHang, callback) {
+        let tong = 0;
+
+        donHang.sanPham.forEach(function (sp) {
+          tong += sp.gia * sp.soLuong;
+        });
+
+        callback(tong);
+      }
+
+      // Bước 2: Tính giảm giá
+      function tinhGiamGia(tienGoc, callback) {
+        let giamGia = 0;
+
+        if (tienGoc >= 10000000) {
+          giamGia = tienGoc * 0.1;
+        } else if (tienGoc >= 5000000) {
+          giamGia = tienGoc * 0.05;
+        }
+
+        callback(giamGia);
+      }
+
+      // Bước 3: Tính phí vận chuyển
+      function tinhPhiVanChuyen(tienGoc, callback) {
+        let phiShip = 30000;
+
+        if (tienGoc >= 7000000) {
+          phiShip = 0;
+        }
+
+        callback(phiShip);
+      }
+
+      // Bước 4: Tính thuế VAT
+      function tinhThue(tienSauGiam, callback) {
+        let thue = tienSauGiam * 0.08;
+
+        callback(thue);
+      }
+
+      // Hàm xử lý toàn bộ đơn hàng
+      function xuLy(donHang, divKetQua) {
+        tinhTienGoc(donHang, function (tienGoc) {
+          tinhGiamGia(tienGoc, function (giamGia) {
+            tinhPhiVanChuyen(tienGoc, function (phiShip) {
+              let tienSauGiam = tienGoc - giamGia;
+
+              tinhThue(tienSauGiam, function (thue) {
+                let tongThanhToan = tienSauGiam + phiShip + thue;
+
+                divKetQua.innerHTML += `
+                                <div class="ketQua">
+
+                                    <div class="title">
+                                        ${donHang.ten}
+                                    </div>
+
+                                    <b>Tiền gốc:</b>
+                                    ${dinhDangTien(tienGoc)} <br>
+
+                                    <b>Giảm giá:</b>
+                                    ${dinhDangTien(giamGia)} <br>
+
+                                    <b>Phí vận chuyển:</b>
+                                    ${dinhDangTien(phiShip)} <br>
+
+                                    <b>Thuế VAT:</b>
+                                    ${dinhDangTien(thue)} <br>
+
+                                    <b>Tổng thanh toán:</b>
+                                    ${dinhDangTien(tongThanhToan)}
+
+                                </div>
+                            `;
+              });
+            });
+          });
+        });
+      }
+
+      // Chạy xử lý
+      function xuLyDonHang() {
+        let ketQua = document.getElementById("ketQua");
+
+        ketQua.innerHTML = "";
+
+        xuLy(donHang1, ketQua);
+
+        xuLy(donHang2, ketQua);
+      }
+    </script>
+  </body>
+</html>

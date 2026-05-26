@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Sản Phẩm</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        width: 900px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input,
+      select {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+
+      #tongKho {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: green;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>QUẢN LÝ DANH SÁCH SẢN PHẨM</h2>
+
+      <!-- Tìm kiếm -->
+      <input type="text" id="tuKhoa" placeholder="Nhập tên sản phẩm" />
+
+      <button onclick="timSanPham()">Tìm kiếm</button>
+
+      <!-- Lọc giá -->
+      <input type="number" id="giaMin" placeholder="Giá tối thiểu" />
+
+      <input type="number" id="giaMax" placeholder="Giá tối đa" />
+
+      <button onclick="locSanPham()">Lọc giá</button>
+
+      <!-- Sắp xếp -->
+      <select id="sapXep">
+        <option value="tang">Giá tăng dần</option>
+        <option value="giam">Giá giảm dần</option>
+      </select>
+
+      <button onclick="sapXepSanPham()">Sắp xếp</button>
+
+      <!-- Bảng sản phẩm -->
+      <table>
+        <thead>
+          <tr>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Tổng giá trị</th>
+          </tr>
+        </thead>
+
+        <tbody id="danhSach"></tbody>
+      </table>
+
+      <div id="tongKho"></div>
+    </div>
+
+    <script>
+      // Mảng sản phẩm
+      let sanPham = [
+        {
+          ten: "Laptop",
+          gia: 15000000,
+          soLuong: 5,
+        },
+        {
+          ten: "Điện thoại",
+          gia: 8000000,
+          soLuong: 10,
+        },
+        {
+          ten: "Tai nghe",
+          gia: 1200000,
+          soLuong: 15,
+        },
+        {
+          ten: "Bàn phím",
+          gia: 700000,
+          soLuong: 8,
+        },
+        {
+          ten: "Chuột",
+          gia: 500000,
+          soLuong: 20,
+        },
+      ];
+
+      // Hàm định dạng tiền
+      function dinhDangTien(tien) {
+        return tien.toLocaleString("vi-VN") + " VNĐ";
+      }
+
+      // Hàm hiển thị sản phẩm
+      function hienThiDanhSach(danhSach) {
+        let html = "";
+
+        danhSach.map(function (sp) {
+          html += `
+                    <tr>
+                        <td>${sp.ten}</td>
+
+                        <td>${dinhDangTien(sp.gia)}</td>
+
+                        <td>${sp.soLuong}</td>
+
+                        <td>
+                            ${dinhDangTien(sp.gia * sp.soLuong)}
+                        </td>
+                    </tr>
+                `;
+        });
+
+        document.getElementById("danhSach").innerHTML = html;
+
+        // Tổng giá trị kho
+        let tongKho = danhSach.reduce(function (tong, sp) {
+          return tong + sp.gia * sp.soLuong;
+        }, 0);
+
+        document.getElementById("tongKho").innerHTML =
+          "Tổng giá trị tồn kho: " + dinhDangTien(tongKho);
+      }
+
+      // Hiển thị ban đầu
+      hienThiDanhSach(sanPham);
+
+      // Tìm kiếm sản phẩm
+      function timSanPham() {
+        let tuKhoa = document.getElementById("tuKhoa").value.toLowerCase();
+
+        let ketQua = sanPham.find(function (sp) {
+          return sp.ten.toLowerCase().includes(tuKhoa);
+        });
+
+        if (ketQua) {
+          hienThiDanhSach([ketQua]);
+        } else {
+          alert("Không tìm thấy sản phẩm!");
+        }
+      }
+
+      // Lọc sản phẩm theo giá
+      function locSanPham() {
+        let giaMin = Number(document.getElementById("giaMin").value);
+
+        let giaMax = Number(document.getElementById("giaMax").value);
+
+        let ketQua = sanPham.filter(function (sp) {
+          return sp.gia >= giaMin && sp.gia <= giaMax;
+        });
+
+        hienThiDanhSach(ketQua);
+      }
+
+      // Sắp xếp sản phẩm
+      function sapXepSanPham() {
+        let kieuSapXep = document.getElementById("sapXep").value;
+
+        let danhSachMoi = [...sanPham];
+
+        if (kieuSapXep == "tang") {
+          danhSachMoi.sort(function (a, b) {
+            return a.gia - b.gia;
+          });
+        } else {
+          danhSachMoi.sort(function (a, b) {
+            return b.gia - a.gia;
+          });
+        }
+
+        hienThiDanhSach(danhSachMoi);
+      }
+    </script>
+  </body>
+</html>

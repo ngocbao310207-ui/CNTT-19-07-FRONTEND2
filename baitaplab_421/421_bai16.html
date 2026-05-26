@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bộ Đếm</title>
+
+    <!-- Thư viện jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        text-align: center;
+        margin-top: 50px;
+      }
+
+      #counter {
+        font-size: 50px;
+        font-weight: bold;
+        margin: 20px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .positive {
+        color: green;
+      }
+
+      .negative {
+        color: red;
+      }
+
+      .zero {
+        color: black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Bộ Đếm Lượt Tương Tác</h1>
+
+    <!-- Hiển thị số đếm -->
+    <div id="counter" class="zero">0</div>
+
+    <!-- Các nút điều khiển -->
+    <button id="increase" class="btn">Tăng +1</button>
+
+    <button id="decrease" class="btn">Giảm -1</button>
+
+    <button id="reset" class="btn">Đặt lại</button>
+
+    <button id="increase10" class="btn">Tăng +10</button>
+
+    <script>
+      $(document).ready(function () {
+        // Biến trạng thái
+        let count = 0;
+
+        // Hàm cập nhật giao diện
+        function updateCounter() {
+          $("#counter").text(count);
+
+          // Đổi màu theo giá trị
+          if (count > 0) {
+            $("#counter").removeClass("negative zero").addClass("positive");
+          } else if (count < 0) {
+            $("#counter").removeClass("positive zero").addClass("negative");
+          } else {
+            $("#counter").removeClass("positive negative").addClass("zero");
+          }
+        }
+
+        // Nút tăng
+        $("#increase").click(function () {
+          count++;
+
+          updateCounter();
+        });
+
+        // Nút giảm
+        $("#decrease").click(function () {
+          count--;
+
+          updateCounter();
+        });
+
+        // Nút đặt lại
+        $("#reset").click(function () {
+          count = 0;
+
+          updateCounter();
+        });
+
+        // Nút tăng nhanh +10
+        $("#increase10").click(function () {
+          count += 10;
+
+          updateCounter();
+        });
+      });
+    </script>
+  </body>
+</html>
