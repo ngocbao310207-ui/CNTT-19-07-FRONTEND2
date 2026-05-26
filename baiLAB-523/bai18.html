@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Thành Viên</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+
+        .container{
+            width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input{
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button{
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+        }
+
+        #addBtn{
+            background-color: #4CAF50;
+        }
+
+        .edit{
+            background-color: orange;
+        }
+
+        .delete{
+            background-color: #f44336;
+        }
+
+        ul{
+            list-style: none;
+            padding: 0;
+        }
+
+        li{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .member-name{
+            font-size: 18px;
+        }
+
+        .actions button{
+            margin-left: 5px;
+        }
+
+        .stt{
+            font-weight: bold;
+            color: blue;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Quản Lý Thành Viên</h1>
+
+        <!-- Form nhập -->
+        <div class="form-group">
+            <input type="text" id="memberInput" placeholder="Nhập tên thành viên">
+
+            <button id="addBtn">Thêm</button>
+        </div>
+
+        <!-- Danh sách -->
+        <ul id="memberList"></ul>
+
+    </div>
+
+    <script>
+        $(document).ready(function(){
+
+            // Hàm cập nhật số thứ tự
+            function updateSTT(){
+
+                $("#memberList li").each(function(index){
+
+                    $(this).find(".stt").text(index + 1 + ".");
+                });
+            }
+
+            // Thêm thành viên
+            $("#addBtn").click(function(){
+
+                let name = $("#memberInput").val().trim();
+
+                // Kiểm tra rỗng
+                if(name == ""){
+
+                    alert("Vui lòng nhập tên!");
+
+                    return;
+                }
+
+                // Tạo phần tử mới
+                let member = `
+                    <li>
+                        <div>
+                            <span class="stt"></span>
+                            <span class="member-name">${name}</span>
+                        </div>
+
+                        <div class="actions">
+                            <button class="edit">Sửa</button>
+                            <button class="delete">Xóa</button>
+                        </div>
+                    </li>
+                `;
+
+                // Thêm vào danh sách
+                $("#memberList").append(member);
+
+                // Cập nhật STT
+                updateSTT();
+
+                // Xóa dữ liệu ô input
+                $("#memberInput").val("");
+            });
+
+            // Xóa thành viên
+            $("#memberList").on("click", ".delete", function(){
+
+                $(this).closest("li").remove();
+
+                updateSTT();
+            });
+
+            // Sửa thành viên
+            $("#memberList").on("click", ".edit", function(){
+
+                let currentName = $(this)
+                    .closest("li")
+                    .find(".member-name")
+                    .text();
+
+                let newName = prompt(
+                    "Nhập tên mới:",
+                    currentName
+                );
+
+                // Kiểm tra dữ liệu hợp lệ
+                if(newName != null && newName.trim() != ""){
+
+                    $(this)
+                        .closest("li")
+                        .find(".member-name")
+                        .text(newName);
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng Đơn Giản</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+
+        .cart{
+            width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .product{
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .product h2{
+            margin-bottom: 10px;
+        }
+
+        .price{
+            color: green;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .controls{
+            margin: 15px 0;
+        }
+
+        button{
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .minus{
+            background-color: #f44336;
+            color: white;
+        }
+
+        .plus{
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .quantity{
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .total{
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart">
+        <h1>Giỏ Hàng</h1>
+
+        <div class="product">
+            <h2>Tai Nghe Bluetooth</h2>
+
+            <div class="price">
+                Đơn giá: <span id="price">500000</span> VNĐ
+            </div>
+
+            <div class="controls">
+                <button class="minus">-</button>
+
+                <span class="quantity">1</span>
+
+                <button class="plus">+</button>
+            </div>
+
+            <div class="total">
+                Thành tiền:
+                <span id="money">500000</span> VNĐ
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+
+            // Đơn giá
+            let price = 500000;
+
+            // Số lượng ban đầu
+            let quantity = 1;
+
+            // Hàm cập nhật giao diện
+            function updateCart(){
+
+                $(".quantity").text(quantity);
+
+                let total = quantity * price;
+
+                $("#money").text(total);
+            }
+
+            // Tăng số lượng
+            $(".plus").click(function(){
+
+                quantity++;
+
+                updateCart();
+            });
+
+            // Giảm số lượng
+            $(".minus").click(function(){
+
+                // Không cho nhỏ hơn 1
+                if(quantity > 1){
+
+                    quantity--;
+
+                    updateCart();
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
