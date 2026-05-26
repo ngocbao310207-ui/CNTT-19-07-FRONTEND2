@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Đếm Lượt Tương Tác</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 Bộ Đếm Lượt Tương Tác</h1>
+        
+        <!-- Vùng hiển thị số đếm -->
+        <div class="counter-display" id="counterDisplay">
+            <span id="counterValue">0</span>
+        </div>
+
+        <!-- Nhóm nút tăng/giảm đơn vị -->
+        <div class="button-group">
+            <button id="decreaseBtn" class="btn btn-danger">
+                <span class="icon">−</span> Giảm
+            </button>
+            <button id="resetBtn" class="btn btn-warning">
+                <span class="icon">↻</span> Đặt Lại
+            </button>
+            <button id="increaseBtn" class="btn btn-success">
+                <span class="icon">+</span> Tăng
+            </button>
+        </div>
+
+        <!-- Nhóm nút tăng/giảm nhanh (10 đơn vị) -->
+        <div class="button-group">
+            <button id="decrease10Btn" class="btn btn-danger-light">
+                <span class="icon">⬇⬇</span> Giảm 10
+            </button>
+            <button id="increase10Btn" class="btn btn-success-light">
+                <span class="icon">⬆⬆</span> Tăng 10
+            </button>
+        </div>
+
+        <!-- Hộp thông tin thống kê -->
+        <div class="info-box">
+            <div class="info-item">
+                <p>📊 Lượt tương tác:</p>
+                <span id="interactionCount" class="info-value">0</span> <small>lần</small>
+            </div>
+            <div class="info-item">
+                <p>🎯 Trạng thái:</p>
+                <span id="statusText" class="status-badge">ZERO</span>
+            </div>
+            <div class="info-item">
+                <p>📈 Max đạt được:</p>
+                <span id="maxValue" class="info-value">0</span>
+            </div>
+        </div>
+
+        <!-- Hộp hỗ trợ -->
+        <div class="help-box">
+            <h3>⌨️ Phím Tắt</h3>
+            <ul>
+                <li><kbd>+</kbd> hoặc <kbd>=</kbd> : Tăng 1</li>
+                <li><kbd>-</kbd> : Giảm 1</li>
+                <li><kbd>0</kbd> hoặc <kbd>R</kbd> : Đặt lại</li>
+                <li><kbd>↑</kbd> : Tăng 10</li>
+                <li><kbd>↓</kbd> : Giảm 10</li>
+                <li><kbd>Kéo chuột trên số</kbd> : Tăng/Giảm</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
