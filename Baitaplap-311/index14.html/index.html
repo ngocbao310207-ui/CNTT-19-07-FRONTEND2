@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 14 - Hiệu ứng jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Hiệu ứng mờ dần và trượt giao diện</h2>
+    
+    <button id="fOut">Mờ dần (FadeOut)</button>
+    <button id="fIn">Hiện rõ (FadeIn)</button>
+    <button id="sToggle">Trượt lên/xuống (SlideToggle)</button>
+    <br><br>
+
+    <div id="effectBox" style="width:350px; height:120px; background-color:coral; color:white; padding:15px;">
+        Hộp thông báo hiệu ứng trực quan của jQuery.
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            // Áp dụng tối thiểu 2 loại hiệu ứng kèm căn chỉnh tốc độ [cite: 225, 228, 233, 234]
+            $("#fOut").click(function(){
+                $("#effectBox").fadeOut(600);
+            });
+            
+            $("#fIn").click(function(){
+                $("#effectBox").fadeIn("slow");
+            });
+
+            $("#sToggle").click(function(){
+                // Minh họa tính năng Chaining (Chuỗi lệnh liên tiếp) làm ví dụ mở rộng [cite: 225]
+                $("#effectBox").slideToggle(400).css("font-weight", "bold");
+            });
+        });
+    </script>
+</body>
+</html>

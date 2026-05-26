@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 10 - Fetch API List</title>
+</head>
+<body>
+    <h2>Danh sách người dùng từ MockAPI</h2>
+    <div id="loading" style="display:none; color:blue;">Đang tải dữ liệu từ server...</div>
+    <ul id="dataList" style="line-height:1.8;"></ul>
+
+    <script>
+        // Endpoint mockapi mẫu [cite: 168, 172, 177]
+        const apiEndpoint = "https://656461f3ceac410ab831a987.mockapi.io/users";
+
+        async function fetchUserData() {
+            let loader = document.getElementById('loading');
+            let listContainer = document.getElementById('dataList');
+            loader.style.display = "block";
+            listContainer.innerHTML = "";
+
+            try {
+                // Gọi fetch lấy dữ liệu từ nguồn ngoài [cite: 166, 173, 178, 181]
+                let response = await fetch(apiEndpoint);
+                if(!response.ok) throw new Error("Kết nối API thất bại.");
+                
+                let users = await response.json(); // Chuyển đổi JSON [cite: 166, 173]
+                
+                // Duyệt dữ liệu hiển thị ít nhất 3 trường thông tin dạng thẻ HTML [cite: 174, 175, 179]
+                users.forEach(user => {
+                    let li = document.createElement('li');
+                    li.innerHTML = `<strong>ID: ${user.id}</strong> - Tên: ${user.name} - Email: ${user.email}`;
+                    listContainer.appendChild(li);
+                });
+            } catch (error) {
+                // Yêu cầu mở rộng: Xử lý lỗi hệ thống [cite: 182]
+                listContainer.innerHTML = `<li style="color:red;">Lỗi: ${error.message}</li>`;
+            } finally {
+                loader.style.display = "none";
+            }
+        }
+
+        // Tự động gọi khi tải trang [cite: 180]
+        window.onload = fetchUserData;
+    </script>
+</body>
+</html>

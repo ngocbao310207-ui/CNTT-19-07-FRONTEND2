@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 07 - Thao tác DOM</title>
+    <style>
+        .highlight { font-style: italic; color: blue; }
+    </style>
+</head>
+<body>
+    <h2 id="mainTitle">Tiêu đề ban đầu</h2>
+    <p id="descriptionText">Đoạn văn miêu tả trạng thái cũ của hệ thống.</p>
+    <img id="displayImg" src="https://picsum.photos/id/1/200/150" alt="Ảnh gốc"><br><br>
+    
+    <button id="changeBtn">Thay đổi nội dung giao diện</button>
+    <button id="resetBtn">Khôi phục trạng thái</button>
+
+    <script>
+        // Lấy tham chiếu đến các phần tử [cite: 111, 121]
+        const mainTitle = document.getElementById('mainTitle');
+        const descText = document.getElementById('descriptionText');
+        const targetImg = document.getElementById('displayImg');
+        const changeBtn = document.getElementById('changeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Gắn sự kiện click để thay đổi nội dung động [cite: 113, 116, 117, 122, 123]
+        changeBtn.addEventListener('click', function() {
+            mainTitle.innerText = "Tiêu đề đã được cập nhật thành công!";
+            descText.textContent = "Nội dung đoạn văn được viết lại hoàn toàn qua thuộc tính textContent.";
+            descText.classList.add('highlight');
+            targetImg.src = "https://picsum.photos/id/10/200/150"; // Thay đổi thuộc tính src [cite: 111, 123]
+        });
+
+        // Yêu cầu mở rộng: Khôi phục lại trạng thái ban đầu [cite: 125]
+        resetBtn.addEventListener('click', function() {
+            mainTitle.innerText = "Tiêu đề ban đầu";
+            descText.textContent = "Đoạn văn miêu tả trạng thái cũ của hệ thống.";
+            descText.classList.remove('highlight');
+            targetImg.src = "https://picsum.photos/id/1/200/150";
+        });
+    </script>
+</body>
+</html>

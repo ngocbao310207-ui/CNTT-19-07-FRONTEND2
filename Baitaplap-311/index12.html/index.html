@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 12 - CRUD Sinh viên</title>
+</head>
+<body>
+    <h2>Quản lý danh sách sinh viên (CRUD giả lập)</h2>
+    
+    <fieldset style="width: 350px; margin-bottom: 20px;">
+        <legend>Thêm Sinh Viên Mới</legend>
+        Tên: <input type="text" id="stdName"><br><br>
+        Lớp: <input type="text" id="stdClass"><br><br>
+        <button onclick="createNewStudent()">Lưu thông tin</button>
+    </fieldset>
+
+    <table border="1" cellpadding="6" style="border-collapse:collapse; width: 500px;">
+        <thead>
+            <tr><th>ID</th><th>Họ và Tên</th><th>Lớp</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+    </table>
+
+    <script>
+        const studentApi = "https://656461f3ceac410ab831a987.mockapi.io/students";
+
+        // GET: Lấy danh sách [cite: 199, 200, 207]
+        async function loadStudents() {
+            let tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = "<tr><td colspan='4'>Đang tải dữ liệu...</td></tr>";
+            try {
+                let res = await fetch(studentApi);
+                let list = await res.json();
+                tbody.innerHTML = "";
+                
+                list.forEach(std => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${std.id}</td>
+                            <td>${std.name}</td>
+                            <td>${std.class}</td>
+                            <td><button onclick="deleteStudent('${std.id}')">Xóa</button></td>
+                        </tr>
+                    `;
+                });
+            } catch (e) {
+                tbody.innerHTML = "<tr><td colspan='4' style='color:red;'>Lỗi tải danh sách.</td></tr>";
+            }
+        }
+
+        // POST: Thêm mới sinh viên [cite: 199, 204, 208]
+        async function createNewStudent() {
+            let nameInput = document.getElementById('stdName');
+            let classInput = document.getElementById('stdClass');
+            
+            if(!nameInput.value || !classInput.value) return alert("Vui lòng điền đủ thông tin!");
+
+            let newStudentData = { name: nameInput.value, class: classInput.value };
+            
+            await fetch(studentApi, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newStudentData)
+            });
+
+            nameInput.value = "";
+            classInput.value = "";
+            loadStudents(); // Đồng bộ tải lại giao diện 
+        }
+
+        // DELETE: Xóa sinh viên [cite: 199, 205, 209]
+        async function deleteStudent(id) {
+            if(!confirm("Bạn chắc chắn muốn xóa sinh viên này chứ?")) return;
+            
+            await fetch(`${studentApi}/${id}`, { method: 'DELETE' });
+            loadStudents();
+        }
+
+        window.onload = loadStudents;
+    </script>
+</body>
+</html>

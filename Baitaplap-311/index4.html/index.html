@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 04 - Điểm sinh viên</title>
+</head>
+<body>
+    <h2>Xử lý dữ liệu điểm sinh viên</h2>
+    <div id="displayArea"></div>
+
+    <script>
+        // Mảng điểm gồm ít nhất 5 giá trị số [cite: 60, 65]
+        let scoreArray = [8.5, 4.0, 9.2, 6.7, 7.5, 3.2];
+
+        function processScores(scores) {
+            // Yêu cầu mở rộng: loại bỏ điểm thấp nhất trước khi tính toán [cite: 70]
+            let sortedScores = [...scores].sort((a, b) => a - b);
+            let lowest = sortedScores.shift(); 
+
+            // Duyệt mảng tính tổng và trung bình [cite: 56, 61, 66]
+            let sum = sortedScores.reduce((acc, current) => acc + current, 0);
+            let avg = (sum / sortedScores.length).toFixed(2);
+
+            // Viết điều kiện phân loại học lực [cite: 62, 67]
+            let rank = "";
+            if (avg >= 8.0) rank = "Giỏi";
+            else if (avg >= 6.5) rank = "Khá";
+            else if (avg >= 5.0) rank = "Trung bình";
+            else rank = "Yếu";
+
+            // Trình bày kết quả trực quan [cite: 63, 68]
+            document.getElementById('displayArea').innerHTML = `
+                <p>Danh sách điểm gốc: [${scores.join(', ')}]</p>
+                <p>Điểm thấp nhất bị loại bỏ: ${lowest}</p>
+                <p>Danh sách điểm tính toán: [${sortedScores.join(', ')}]</p>
+                <p>Điểm trung bình hệ số: ${avg}</p>
+                <p>Phân loại học tập: <strong>${rank}</strong></p>
+            `;
+        }
+
+        processScores(scoreArray);
+    </script>
+</body>
+</html>

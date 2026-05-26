@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 06 - Quy trình Callback</title>
+</head>
+<body>
+    <h2>Quy trình tính toán hóa đơn tự động (Callback)</h2>
+    <div id="logConsole" style="background:#222; color:#0f0; padding:15px; font-family:monospace; border-radius:5px; line-height:1.6;"></div>
+
+    <script>
+        // Dữ liệu đơn hàng dạng object [cite: 93, 97]
+        const order = {
+            id: "DH-2026",
+            itemsPrice: 500000, 
+            discountCode: "SALE20"
+        };
+
+        function logStep(msg) {
+            document.getElementById('logConsole').innerHTML += msg + "<br>";
+        }
+
+        // Tách các bước thành từng hàm xử lý riêng biệt [cite: 98, 102]
+        function calculateBasePrice(ord, callback) {
+            let base = ord.itemsPrice;
+            logStep(`[Bước 1] Tính toán tiền gốc sản phẩm: ${base.toLocaleString()} VNĐ`);
+            callback(base); // Truyền kết quả qua callback [cite: 93, 99, 103]
+        }
+
+        function applyDiscount(currentMoney, callback) {
+            let discount = currentMoney >= 300000 ? 50000 : 0;
+            let afterDiscount = currentMoney - discount;
+            logStep(`[Bước 2] Áp dụng chương trình khuyến mãi giảm: -${discount.toLocaleString()} VNĐ (Còn: ${afterDiscount.toLocaleString()} VNĐ)`);
+            callback(afterDiscount);
+        }
+
+        function addShippingFee(currentMoney, callback) {
+            let shipFee = currentMoney >= 400000 ? 0 : 30000;
+            let total = currentMoney + shipFee;
+            logStep(`[Bước 3] Phí giao hàng tính toán: +${shipFee.toLocaleString()} VNĐ`);
+            callback(total);
+        }
+
+        // Khởi động chuỗi xử lý liên tiếp [cite: 93, 94, 100]
+        logStep("--- KHỞI ĐỘNG XỬ LÝ ĐƠN HÀNG ---");
+        calculateBasePrice(order, function(price1) {
+            applyDiscount(price1, function(price2) {
+                addShippingFee(price2, function(finalTotal) {
+                    logStep(`<strong>=> [KẾT QUẢ CUỐI CÙNG] Tổng thanh toán: ${finalTotal.toLocaleString()} VNĐ</strong>`);
+                });
+            })
+        });
+    </script>
+</body>
+</html>

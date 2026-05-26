@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 21 - CRUD Ajax Hoàn Chỉnh</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Hệ thống quản lý CRUD sinh viên tích hợp API Ajax</h2>
+    
+    <fieldset style="width: 400px; margin-bottom: 20px;">
+        <legend id="formLegend">Thêm Sinh Viên Mới</legend>
+        <input type="hidden" id="crudStudentId"> Họ tên: <input type="text" id="crudName"><br><br>
+        Lớp học: <input type="text" id="crudClass"><br><br>
+        <button id="btnSave">Lưu thông tin</button>
+        <button id="btnCancelEdit" style="display:none;">Hủy chế độ sửa</button>
+    </fieldset>
+
+    <table border="1" cellpadding="6" style="border-collapse:collapse; width:600px;">
+        <thead>
+            <tr style="background:#eee;"><th>ID</th><th>Họ tên</th><th>Lớp</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="crudTableBody"></tbody>
+    </table>
+
+    <script>
+        const studentEndpoint = "https://656461f3ceac410ab831a987.mockapi.io/students";
+
+        // Ajax GET: Đọc danh sách và render [cite: 315, 319, 324]
+        function refreshStudentList() {
+            $.ajax({
+                url: studentEndpoint,
+                method: "GET",
+                success: function(list) {
+                    let rows = "";
+                    list.forEach(std => {
+                        rows += `<tr>
+                            <td>${std.id}</td>
+                            <td>${std.name}</td>
+                            <td>${std.class}</td>
+                            <td>
+                                <button onclick="editMode('${std.id}', '${std.name}', '${std.class}')">Sửa</button>
+                                <button onclick="deleteStudentWithAjax('${std.id}')">Xóa</button>
+                            </td>
+                        </tr>`;
+                    });
+                    $("#crudTableBody").html(rows);
+                }
+            });
+        }
+
+        // Bắt sự kiện Click nút Lưu (Xử lý cả POST và PUT) [cite: 315, 320, 321, 325]
+        $("#btnSave").click(function(){
+            let id = $("#crudStudentId").val();
+            let name = $("#crudName").val().trim();
+            let cls = $("#crudClass").val().trim();
+
+            if(!name || !cls) return alert("Vui lòng nhập đầy đủ thông tin!");
+
+            let payload = { name: name, class: cls };
+
+            if(id === "") {
+                // Biến ID rỗng => Chạy POST (Thêm mới) [cite: 315, 320, 325]
+                $.ajax({
+                    url: studentEndpoint,
+                    method: "POST",
+                    data: payload,
+                    success: function() {
+                        resetFormState();
+                        refreshStudentList(); // Đồng bộ tải lại danh sách [cite: 315, 326]
+                    }
+                });
+            } else {
+                // Có ID => Chạy PUT (Cập nhật thông tin sửa) [cite: 315, 321, 325]
+                $.ajax({
+                    url: `${studentEndpoint}/${id}`,
+                    method: "PUT",
+                    data: payload,
+                    success: function() {
+                        resetFormState();
+                        refreshStudentList();
+                    }
+                });
+            }
+        });
+
+        // Ajax DELETE: Xóa dữ liệu [cite: 315, 322, 325]
+        function deleteStudentWithAjax(id) {
+            if(!confirm("Bạn chắc chắn muốn xóa bản ghi này?")) return;
+            $.ajax({
+                url: `${studentEndpoint}/${id}`,
+                method: "DELETE",
+                success: function() {
+                    refreshStudentList(); // Cập nhật lại giao diện [cite: 326]
+                }
+            });
+        }
+
+        // Chuyển biểu mẫu sang trạng thái sửa đổi thông tin [cite: 321]
+        function editMode(id, name, cls) {
+            $("#crudStudentId").val(id);
+            $("#crudName").val(name);
+            $("#crudClass").val(cls);
+            
+            $("#formLegend").text(`Cập Nhật Sinh Viên (ID: ${id})`);
+            $("#btnCancelEdit").show();
+        }
+
+        function resetFormState() {
+            $("#crudStudentId").val("");
+            $("#crudName").val("");
+            $("#crudClass").val("");
+            $("#formLegend").text("Thêm Sinh Viên Mới");
+            $("#btnCancelEdit").hide();
+        }
+
+        $("#btnCancelEdit").click(resetFormState);
+
+        // Khởi động chạy danh sách ban đầu khi mở trang
+        $(document).ready(refreshStudentList);
+    </script>
+</body>
+</html>

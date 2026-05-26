@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 17 - Giỏ hàng Đơn giản</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Mô phỏng tính toán giỏ hàng trực tuyến</h2>
+    
+    <div class="product-item" style="border:1px solid #ccc; padding:15px; width:300px;">
+        <h4 id="prodName">Chuột Logitech G102</h4>
+        <p>Đơn giá: <span id="unitPrice">400000</span> VNĐ</p>
+        
+        <div>
+            Số lượng: 
+            <button id="minusQty">-</button>
+            <input type="text" id="qtyInput" value="1" style="width:40px; text-align:center;" readonly>
+            <button id="plusQty">+</button>
+        </div>
+        <hr>
+        <p><strong>Thành tiền: <span id="totalItemPrice">400,000</span> VNĐ</strong></p>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            // Lưu đơn giá ban đầu [cite: 269]
+            const price = parseInt($("#unitPrice").text());
+
+            function reCalculateCart() {
+                let qty = parseInt($("#qtyInput").val());
+                // Thành tiền = số lượng x đơn giá [cite: 263, 266]
+                let cost = qty * price;
+                $("#totalItemPrice").text(cost.toLocaleString()); // Cập nhật tức thời [cite: 266, 270]
+            }
+
+            // Xử lý sự kiện tăng/giảm số lượng [cite: 266, 270]
+            $("#plusQty").click(function(){
+                let currentQty = parseInt($("#qtyInput").val());
+                $("#qtyInput").val(currentQty + 1);
+                reCalculateCart();
+            });
+
+            $("#minusQty").click(function(){
+                let currentQty = parseInt($("#qtyInput").val());
+                // Không cho phép số lượng nhỏ hơn 1 [cite: 267]
+                if (currentQty > 1) {
+                    $("#qtyInput").val(currentQty - 1);
+                    reCalculateCart();
+                } else {
+                    alert("Số lượng sản phẩm tối thiểu trong giỏ hàng là 1!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

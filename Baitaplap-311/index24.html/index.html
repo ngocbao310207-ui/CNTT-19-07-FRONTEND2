@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài lab 24 - Landing Page Sự kiện</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-warning" href="#">FIT EVENT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#hero">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Lịch trình sự kiện</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#register">Đăng ký tham gia</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header id="hero" class="bg-dark text-white text-center py-5" style="background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://picsum.photos/id/180/1200/400'); background-size: cover; background-position: center;">
+        <div class="container my-5 py-3">
+            <h1 class="display-4 fw-bold text-warning">Hội Thảo Công Nghệ Tương Lai 2026</h1>
+            <p class="lead mt-3 text-light">Nơi hội tụ các xu hướng lập trình hiện đại hàng đầu cùng chuyên gia đầu ngành.</p>
+            <a href="#register" class="btn btn-warning btn-lg mt-4 fw-bold px-4">Đăng Ký Giữ Chỗ Ngay</a>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        
+        <section class="mb-5">
+            <h2 class="text-center fw-bold mb-4">Giá Trị Nhận Được</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <div class="card p-3 shadow-sm border-0 bg-light text-center h-100">
+                        <h4 class="text-primary mt-2">Kiến thức chuyên sâu</h4>
+                        <p class="text-muted mt-2">Cập nhật nhanh nhất các công nghệ Web API, Framework JS thế hệ mới.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card p-3 shadow-sm border-0 bg-light text-center h-100">
+                        <h4 class="text-primary mt-2">Cơ hội kết nối</h4>
+                        <p class="text-muted mt-2">Gặp gỡ, giao lưu và học hỏi trực tiếp cùng với hơn 20 doanh nghiệp lớn.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card p-3 shadow-sm border-0 bg-light text-center h-100">
+                        <h4 class="text-primary mt-2">Quà tặng hấp dẫn</h4>
+                        <p class="text-muted mt-2">Nhận bộ tài liệu thực hành độc quyền cùng vô vàn chứng nhận từ BTC.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="schedule" class="py-4">
+            <h2 class="text-center fw-bold mb-4">Lịch Trình Chi Tiết</h2>
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="list-group shadow-sm">
+                        <div class="list-group-item p-3">
+                            <span class="badge bg-warning text-dark me-2">08:00 - 08:30</span> <strong>Đón tiếp khách mời</strong> - Check-in nhận tài liệu và ổn định vị trí hội trường.
+                        </div>
+                        <div class="list-group-item p-3">
+                            <span class="badge bg-primary me-2">08:30 - 10:00</span> <strong>Chủ đề 1: Xu hướng lập trình Web với Ajax & API giả lập</strong> - Chuyên gia chia sẻ.
+                        </div>
+                        <div class="list-group-item p-3">
+                            <span class="badge bg-primary me-2">10:15 - 11:45</span> <strong>Chủ đề 2: Tối ưu hóa UI/UX Responsive với Bootstrap 5</strong> - Thảo luận bàn tròn.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="register" class="bg-light py-5 border-top">
+        <div class="container" style="max-width: 600px;">
+            <h2 class="text-center fw-bold mb-4">Đăng Ký Tham Gia Sự Kiện</h2>
+            <div class="card p-4 shadow border-0">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Họ và tên của bạn</label>
+                        <input type="text" class="form-control" required placeholder="Ví dụ: Trần Quang Mạnh">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Địa chỉ Email</label>
+                        <input type="email" class="form-control" required placeholder="name@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số điện thoại liên hệ</label>
+                        <input type="tel" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 fw-bold py-2 mt-2 text-dark">XÁC NHẬN ĐĂNG KÝ</button>
+                </form>
+            </div>
+            <div class="text-center text-muted mt-5" style="font-size:0.85em;">
+                © 2026 Khoa CNTT - Tài liệu thực hành dùng chung cho giảng viên[cite: 1, 19].
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 11 - Tra cứu ID</title>
+</head>
+<body>
+    <h2>Tra cứu thông tin chi tiết qua ID</h2>
+    <input type="number" id="searchId" placeholder="Nhập ID cần tìm (ví dụ: 1)...">
+    <button onclick="searchItem()">Tra cứu</button>
+    
+    <div id="detailView" style="margin-top:15px; padding:10px; border:1px dashed #aaa; width:400px;">
+        Kết quả tra cứu hiển thị tại đây.
+    </div>
+
+    <script>
+        async function searchItem() {
+            let id = document.getElementById('searchId').value.trim();
+            let view = document.getElementById('detailView');
+            if(!id) return alert("Hãy nhập ID cần tra cứu!");
+
+            // Tạo URL động chứa tham số dạng Template String [cite: 186, 188, 194]
+            let dynamicUrl = `https://656461f3ceac410ab831a987.mockapi.io/users/${id}`;
+            view.innerHTML = "Đang tìm kiếm...";
+
+            try {
+                let res = await fetch(dynamicUrl);
+                if (res.status === 404) {
+                    // Thông báo phù hợp khi không tìm thấy dữ liệu [cite: 186, 192, 195]
+                    view.innerHTML = "<span style='color:red;'>Không tìm thấy đối tượng trùng khớp với ID này!</span>";
+                    return;
+                }
+                
+                let data = await res.json();
+                // Hiển thị chi tiết đối tượng [cite: 186, 191, 195]
+                view.innerHTML = `
+                    <h4>Thông tin chi tiết:</h4>
+                    <p>Mã số: ${data.id}</p>
+                    <p>Họ tên: ${data.name}</p>
+                    <p>Địa chỉ email: ${data.email}</p>
+                `;
+            } catch(err) {
+                view.innerHTML = "<span style='color:red;'>Đã xảy ra lỗi trong quá trình kết nối máy chủ!</span>";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 03 - Đoán số</title>
+</head>
+<body>
+    <h2>Trò chơi dự đoán số (Từ 1 đến 100)</h2>
+    <input type="number" id="guessInput" placeholder="Nhập số bạn đoán...">
+    <button onclick="checkGuess()">Kiểm tra</button>
+    <button onclick="resetGame()">Chơi lại</button>
+    
+    <p id="feedback"></p>
+    <p id="attemptsBox"></p>
+    <p id="historyBox" style="color:gray; font-size:0.9em;"></p>
+
+    <script>
+        let secretNumber;
+        let attempts;
+        let guessHistory = [];
+
+        function resetGame() {
+            // Sinh ngẫu nhiên một số bí mật trong khoảng 1-100 [cite: 38, 41, 46, 49]
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            guessHistory = [];
+            document.getElementById('feedback').innerText = "Trò chơi mới đã bắt đầu! Hãy đoán xem.";
+            document.getElementById('attemptsBox').innerText = "";
+            document.getElementById('historyBox').innerText = "";
+            document.getElementById('guessInput').value = "";
+        }
+
+        function checkGuess() {
+            let guess = Number(document.getElementById('guessInput').value);
+            if (!guess || guess < 1 || guess > 100) {
+                alert("Vui lòng nhập một số từ 1 đến 100!");
+                return;
+            }
+
+            attempts++; // Đếm số lượt dự đoán [cite: 38, 43]
+            guessHistory.push(guess); // Yêu cầu mở rộng: Lưu lịch sử [cite: 51]
+
+            let feedbackBox = document.getElementById('feedback');
+            
+            // So sánh giá trị để phản hồi [cite: 42, 48]
+            if (guess < secretNumber) {
+                feedbackBox.innerText = "Số bạn đoán nhỏ hơn số bí mật!";
+            } else if (guess > secretNumber) {
+                feedbackBox.innerText = "Số bạn đoán lớn hơn số bí mật!";
+            } else {
+                feedbackBox.innerText = `Chính xác! Bạn đã đoán đúng số bí mật là ${secretNumber}.`;
+                document.getElementById('attemptsBox').innerText = `Tổng số lần đoán thành công: ${attempts}`;
+            }
+
+            document.getElementById('historyBox').innerText = "Lịch sử đoán: " + guessHistory.join(', ');
+        }
+
+        // Khởi động ván đầu tiên khi tải trang
+        window.onload = resetGame;
+    </script>
+</body>
+</html>

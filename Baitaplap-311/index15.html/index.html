@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 15 - Kiểm tra Form</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .err-msg { color: red; font-size: 0.85em; display: block; margin-top: 3px; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Biểu mẫu đăng ký thành viên mới</h2>
+    
+    <form id="regForm" style="width: 350px;">
+        <div>
+            <label>Họ và tên:</label><br>
+            <input type="text" id="fullName" style="width:100%;">
+            <span id="nameErr" class="err-msg"></span>
+        </div><br>
+        <div>
+            <label>Email:</label><br>
+            <input type="text" id="email" style="width:100%;">
+            <span id="emailErr" class="err-msg"></span>
+        </div><br>
+        <div>
+            <label>Mật khẩu:</label><br>
+            <input type="password" id="password" style="width:100%;">
+            <span id="passErr" class="err-msg"></span>
+        </div><br>
+        <div>
+            <label>Xác nhận mật khẩu:</label><br>
+            <input type="password" id="confirmPass" style="width:100%;">
+            <span id="cfPassErr" class="err-msg"></span>
+        </div><br>
+        
+        <button type="submit">Đăng ký hệ thống</button>
+    </form>
+    <p id="formStatus" class="success"></p>
+
+    <script>
+        $(document).ready(function(){
+            $("#regForm").submit(function(event){
+                // Chặn gửi biểu mẫu mặc định để kiểm tra dữ liệu client [cite: 238, 245]
+                event.preventDefault();
+                
+                // Xóa thông báo lỗi cũ
+                $(".err-msg").text("");
+                $("#formStatus").text("");
+
+                // Lấy dữ liệu và loại bỏ khoảng trống biên bằng val, trim [cite: 238, 246]
+                let name = $("#fullName").val().trim();
+                let email = $("#email").val().trim();
+                let pass = $("#password").val();
+                let cfPass = $("#confirmPass").val();
+
+                let isValid = true;
+
+                // Kiểm tra các quy tắc nghiệp vụ dữ liệu rỗng, độ dài mật khẩu [cite: 241, 246]
+                if (name === "") {
+                    $("#nameErr").text("Họ tên không được phép bỏ trống.");
+                    isValid = false;
+                }
+
+                // Định dạng email chuẩn Regex [cite: 238, 241]
+                let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    $("#emailErr").text("Định dạng thư điện tử Email không hợp lệ.");
+                    isValid = false;
+                }
+
+                if (pass.length < 6) {
+                    $("#passErr").text("Mật khẩu bắt buộc phải từ 6 ký tự trở lên.");
+                    isValid = false;
+                }
+
+                // Kiểm tra xác nhận mật khẩu trùng khớp [cite: 242]
+                if (cfPass !== pass) {
+                    $("#cfPassErr").text("Mật khẩu xác nhận không khớp.");
+                    isValid = false;
+                }
+
+                if(isValid) {
+                    // Phản hồi kết quả trực quan ngay trên giao diện [cite: 243, 247]
+                    $("#formStatus").text("Chúc mừng! Toàn bộ biểu mẫu hợp lệ, đăng ký thành công.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

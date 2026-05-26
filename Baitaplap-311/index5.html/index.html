@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 05 - Quản lý sản phẩm</title>
+</head>
+<body>
+    <h2>Quản lý danh sách sản phẩm</h2>
+    
+    <input type="text" id="searchName" placeholder="Tìm theo tên...">
+    <button onclick="triggerSearch()">Tìm kiếm</button> | 
+    <input type="number" id="maxPrice" placeholder="Giá tối đa...">
+    <button onclick="triggerFilter()">Lọc giá</button> |
+    <button onclick="renderProducts(products)">Hiển thị tất cả</button>
+    
+    <div id="productContainer" style="margin-top: 15px;"></div>
+    <div id="summaryArea" style="margin-top: 15px; font-weight: bold;"></div>
+
+    <script>
+        // Mảng đối tượng chứa ít nhất 5 sản phẩm [cite: 78, 83]
+        const products = [
+            { id: 1, name: "Điện thoại iPhone 15", price: 22000000, quantity: 10 },
+            { id: 2, name: "Máy tính xách tay Asus", price: 18500000, quantity: 5 },
+            { id: 3, name: "Chuột không dây Logitech", price: 450000, quantity: 25 },
+            { id: 4, name: "Bàn phím cơ AKKO", price: 1200000, quantity: 8 },
+            { id: 5, name: "Tai nghe Sony WH-1000XM5", price: 6500000, quantity: 4 }
+        ];
+
+        // Hàm render danh sách để tái sử dụng [cite: 79, 84]
+        function renderProducts(dataList) {
+            let container = document.getElementById('productContainer');
+            if(dataList.length === 0) {
+                container.innerHTML = "<p>Không tìm thấy sản phẩm nào tương thích!</p>";
+                return;
+            }
+            
+            let html = "<table border='1' cellpadding='5' style='border-collapse:collapse;'><tr><th>Tên sản phẩm</th><th>Giá</th><th>Số lượng</th></tr>";
+            dataList.forEach(item => {
+                html += `<tr><td>${item.name}</td><td>${item.price.toLocaleString()}đ</td><td>${item.quantity}</td></tr>`;
+            });
+            html += "</table>";
+            container.innerHTML = html;
+            
+            calculateStockValue(dataList);
+        }
+
+        // Chức năng tìm sản phẩm bằng find [cite: 80, 85]
+        function triggerSearch() {
+            let keyword = document.getElementById('searchName').value.toLowerCase().trim();
+            let matched = products.find(p => p.name.toLowerCase().includes(keyword));
+            renderProducts(matched ? [matched] : []);
+        }
+
+        // Chức năng lọc sản phẩm theo giá bằng filter [cite: 81, 85]
+        function triggerFilter() {
+            let limitPrice = Number(document.getElementById('maxPrice').value);
+            if(!limitPrice) return alert("Vui lòng nhập giá trị hạn định để lọc!");
+            let filtered = products.filter(p => p.price <= limitPrice);
+            renderProducts(filtered);
+        }
+
+        // Yêu cầu mở rộng: Hiển thị tổng giá trị tồn kho [cite: 89]
+        function calculateStockValue(dataList) {
+            let totalValue = dataList.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+            document.getElementById('summaryArea').innerText = `Tổng giá trị hàng hóa hiển thị: ${totalValue.toLocaleString()} VNĐ`;
+        }
+
+        // Gọi hiển thị ban đầu khi tải trang
+        renderProducts(products);
+    </script>
+</body>
+</html>

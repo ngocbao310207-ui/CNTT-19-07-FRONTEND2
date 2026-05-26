@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 01 - Tính BMI</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .error { color: red; }
+        .result { font-weight: bold; padding: 10px; margin-top: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h2>Tính chỉ số khối cơ thể (BMI)</h2>
+    <label>Chiều cao (m): </label><input type="number" id="height" step="0.01"><br><br>
+    <label>Cân nặng (kg): </label><input type="number" id="weight" step="0.1"><br><br>
+    <button onclick="calculateBMI()">Tính toán</button>
+
+    <div id="error-msg" class="error"></div>
+    <div id="result-box" class="result"></div>
+
+    <script>
+        function calculateBMI() {
+            // Lấy dữ liệu và ép kiểu [cite: 13]
+            let h = Number(document.getElementById('height').value);
+            let w = Number(document.getElementById('weight').value);
+            let errorBox = document.getElementById('error-msg');
+            let resultBox = document.getElementById('result-box');
+            
+            errorBox.innerText = "";
+            resultBox.innerText = "";
+            resultBox.style.backgroundColor = "transparent";
+
+            // Yêu cầu mở rộng: Kiểm tra dữ liệu rỗng, âm, bằng 0 [cite: 17]
+            if (!h || !w || h <= 0 || w <= 0) {
+                errorBox.innerText = "Vui lòng nhập chiều cao và cân nặng hợp lệ (lớn hơn 0)!";
+                return;
+            }
+
+            // Tính BMI và làm tròn 2 chữ số [cite: 8, 14]
+            let bmi = (w / (h * h)).toFixed(2);
+            let classification = "";
+            let color = "";
+
+            // Phân loại ít nhất 4 mức và đổi màu kết quả [cite: 9, 14, 18]
+            if (bmi < 18.5) {
+                classification = "Gầy";
+                color = "#ffeb3b";
+            } else if (bmi < 25) {
+                classification = "Bình thường";
+                color = "#4caf50";
+            } else if (bmi < 30) {
+                classification = "Thừa cân";
+                color = "#ff9800";
+            } else {
+                classification = "Béo phì";
+                color = "#f44336";
+            }
+
+            // Hiển thị kết quả trực tiếp [cite: 10, 15]
+            resultBox.innerText = `Chỉ số BMI: ${bmi} - Thể trạng: ${classification}`;
+            resultBox.style.backgroundColor = color;
+        }
+    </script>
+</body>
+</html>

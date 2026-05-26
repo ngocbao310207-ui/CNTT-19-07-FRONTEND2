@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 16 - Bộ đếm jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Bộ đếm tương tác jQuery</h2>
+    <div id="counterLabel" style="font-size:2.5em; margin:15px 0;">0</div>
+    <button id="btnInc">Tăng (+1)</button>
+    <button id="btnDec">Giảm (-1)</button>
+    <button id="btnRes">Đặt lại (0)</button>
+
+    <script>
+        $(document).ready(function(){
+            let currentCount = 0; // Biến trạng thái [cite: 251, 257]
+
+            function updateDisplay() {
+                // Sử dụng text() để cập nhật giá trị số đếm [cite: 251, 254, 257]
+                $("#counterLabel").text(currentCount);
+            }
+
+            // Gắn sự kiện click điều khiển tương tác [cite: 251, 252, 258]
+            $("#btnInc").click(function(){
+                currentCount++;
+                updateDisplay();
+            });
+
+            $("#btnDec").click(function(){
+                // Áp dụng quy tắc cho phép số âm nếu cần thiết [cite: 255]
+                currentCount--;
+                updateDisplay();
+            });
+
+            $("#btnRes").click(function(){
+                currentCount = 0;
+                updateDisplay();
+            });
+        });
+    </script>
+</body>
+</html>

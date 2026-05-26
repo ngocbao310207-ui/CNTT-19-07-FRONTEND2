@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 02 - Tính khuyến mãi</title>
+</head>
+<body>
+    <h2>Tính toán khuyến mãi đơn hàng</h2>
+    <label>Giá trị đơn hàng (VNĐ): </label>
+    <input type="number" id="orderValue"><br><br>
+    
+    <label>Hạng thành viên: </label>
+    <select id="memberRank">
+        <option value="Bronze">Đồng (Bronze)</option>
+        <option value="Silver">Bạc (Silver)</option>
+        <option value="Gold">Vàng (Gold)</option>
+    </select><br><br>
+    
+    <button onclick="processOrder()">Tính tiền</button>
+    <div id="invoice" style="margin-top:15px; font-family: monospace;"></div>
+
+    <script>
+        // Hàm tính toán riêng để tăng tính rõ ràng [cite: 31]
+        function calculateDiscount(value, rank) {
+            let rate = 0;
+            // Áp dụng tối thiểu 3 mức khuyến mãi kết hợp hạng thành viên [cite: 22, 25, 30]
+            if (value >= 1000000) {
+                rate = rank === "Gold" ? 0.20 : (rank === "Silver" ? 0.15 : 0.10);
+            } else if (value >= 500000) {
+                rate = rank === "Gold" ? 0.12 : (rank === "Silver" ? 0.08 : 0.05);
+            } else if (value >= 200000) {
+                rate = rank === "Gold" ? 0.05 : 0.02;
+            }
+            return rate;
+        }
+
+        function processOrder() {
+            let value = Number(document.getElementById('orderValue').value);
+            let rank = document.getElementById('memberRank').value;
+            
+            if (value < 0 || isNaN(value)) {
+                alert("Vui lòng nhập giá trị đơn hàng hợp lệ!");
+                return;
+            }
+
+            let rate = calculateDiscount(value, rank);
+            let discountAmount = value * rate;
+            let finalTotal = value - discountAmount;
+            
+            // Yêu cầu mở rộng: Miễn phí vận chuyển khi đơn > 800k [cite: 34]
+            let shipping = (value >= 800000) ? "Miễn phí vận chuyển" : "30,000 VNĐ";
+
+            // Hiển thị đầy đủ thông tin [cite: 27, 32]
+            document.getElementById('invoice').innerHTML = `
+                <p>Tiền gốc: ${value.toLocaleString()} VNĐ</p>
+                <p>Tỷ lệ giảm: ${rate * 100}%</p>
+                <p>Số tiền giảm: ${discountAmount.toLocaleString()} VNĐ</p>
+                <p>Phí giao hàng: ${shipping}</p>
+                <hr>
+                <p><strong>Tổng thanh toán: ${finalTotal.toLocaleString()} VNĐ</strong></p>
+            `;
+        }
+    </script>
+</body>
+</html>

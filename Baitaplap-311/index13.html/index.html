@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 13 - Ẩn hiện jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Điều khiển ẩn/hiện nội dung dữ liệu</h2>
+    
+    <button id="btnHide">Ẩn khối nội dung</button>
+    <button id="btnShow">Hiện khối nội dung</button>
+    <button id="btnToggle">Chuyển đổi nhanh (Toggle)</button>
+    <br><br>
+
+    <div id="contentBlock" style="padding:20px; background-color:lightblue; width:300px; border:1px solid #000;">
+        Đây là nội dung hộp thông tin sẽ bị tác động bởi các hàm jQuery selector.
+    </div>
+
+    <script>
+        // Sử dụng jQuery selector gắn sự kiện click và gọi hàm cơ bản [cite: 213, 221, 222]
+        $(document).ready(function(){
+            $("#btnHide").click(function(){
+                $("#contentBlock").hide(); // Ẩn [cite: 213, 216]
+            });
+
+            $("#btnShow").click(function(){
+                $("#contentBlock").show(); // Hiện [cite: 213, 216]
+            });
+
+            $("#btnToggle").click(function(){
+                $("#contentBlock").toggle(); // Toggle trạng thái [cite: 213, 217]
+            });
+        });
+    </script>
+</body>
+</html>

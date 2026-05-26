@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 09 - To-do List</title>
+    <style>
+        .completed { text-decoration: line-through; color: gray; }
+        li { margin-bottom: 5px; }
+        button { margin-left: 8px; }
+    </style>
+</head>
+<body>
+    <h2>Ứng dụng quản lý công việc cá nhân (To-do List)</h2>
+    <input type="text" id="taskInput" placeholder="Nhập tên đầu việc cần làm...">
+    <button onclick="addNewTask()">Thêm việc</button>
+
+    <ul id="taskList" style="margin-top: 15px;"></ul>
+
+    <script>
+        // Mô hình cấu trúc dữ liệu lưu danh sách công việc [cite: 156, 160]
+        let listData = [];
+
+        // Hàm kết xuất danh sách HTML từ mảng [cite: 145, 157, 159]
+        function renderTasks() {
+            const listContainer = document.getElementById('taskList');
+            listContainer.innerHTML = "";
+
+            listData.forEach((task, index) => {
+                const li = document.createElement('li'); // Sử dụng createElement [cite: 145]
+                
+                const span = document.createElement('span');
+                span.innerText = task.title;
+                if(task.isDone) span.classList.add('completed');
+                li.appendChild(span);
+
+                // Nút cấu hình hoàn thành [cite: 149, 153, 158]
+                const doneBtn = document.createElement('button');
+                doneBtn.innerText = task.isDone ? "Hoàn tác" : "Hoàn thành";
+                doneBtn.onclick = () => toggleTaskStatus(index);
+                li.appendChild(doneBtn);
+
+                // Nút hành động xóa công việc [cite: 149, 154, 158]
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerText = "Xóa";
+                deleteBtn.onclick = () => removeTask(index);
+                li.appendChild(deleteBtn);
+
+                listContainer.appendChild(li);
+            });
+        }
+
+        // Xử lý sự kiện thêm mới [cite: 148, 152, 158]
+        function addNewTask() {
+            let input = document.getElementById('taskInput');
+            let content = input.value.trim();
+            if(!content) return alert("Vui lòng điền nội dung công việc!");
+            
+            listData.push({ title: content, isDone: false });
+            input.value = "";
+            renderTasks();
+        }
+
+        function toggleTaskStatus(idx) {
+            listData[idx].isDone = !listData[idx].isDone;
+            renderTasks();
+        }
+
+        function removeTask(idx) {
+            listData.splice(idx, 1);
+            renderTasks();
+        }
+    </script>
+</body>
+</html>

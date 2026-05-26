@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 20 - Ajax Post Form</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Thêm đối tượng mới bằng Ajax POST</h2>
+    
+    <form id="ajaxInsertForm" style="width:300px; padding:15px; border:1px solid #ddd;">
+        Tên đối tượng: <input type="text" id="addName" style="width:100%;"><br><br>
+        Email liên hệ: <input type="text" id="addEmail" style="width:100%;"><br><br>
+        Mật khẩu lưu: <input type="password" id="addPass" style="width:100%;"><br><br>
+        <button type="submit">Gửi dữ liệu (POST)</button>
+    </form>
+    
+    <p id="postStatusMsg" style="font-weight:bold;"></p>
+
+    <script>
+        $(document).ready(function(){
+            const apiTarget = "https://656461f3ceac410ab831a987.mockapi.io/users";
+
+            $("#ajaxInsertForm").submit(function(e){
+                // Bắt sự kiện submit và ngăn form tải lại trang [cite: 310]
+                e.preventDefault();
+                $("#postStatusMsg").text("Đang truyền dữ liệu lên Server...").css("color", "blue");
+
+                // Thu thập lấy từng trường thông tin dữ liệu [cite: 301]
+                let dataPayload = {
+                    name: $("#addName").val(),
+                    email: $("#addEmail").val(),
+                    password: $("#addPass").val()
+                };
+
+                // Dùng $.ajax POST gửi gói dữ liệu [cite: 301, 303, 306, 310]
+                $.ajax({
+                    url: apiTarget,
+                    method: "POST",
+                    data: dataPayload,
+                    success: function(result) {
+                        // Thông báo thành công và làm mới giao diện [cite: 300, 307, 308, 312]
+                        $("#postStatusMsg").text(`Thêm thành công! Đối tượng mới có mã ID: ${result.id}`).css("color", "green");
+                        // Yêu cầu mở rộng: xóa dữ liệu form cũ sau khi hoàn tất [cite: 313]
+                        $("#ajaxInsertForm")[0].reset();
+                    },
+                    error: function() {
+                        $("#postStatusMsg").text("Gửi dữ liệu thất bại, vui lòng thử lại.").css("color", "red");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

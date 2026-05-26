@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 18 - Quản lý thành viên</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h2>Danh sách thành viên nội bộ</h2>
+    <input type="text" id="memberNameInput" placeholder="Nhập tên thành viên...">
+    <button id="btnAddMember">Thêm mới</button>
+    
+    <ul id="memberList" style="width:350px; margin-top:20px; line-height:2;">
+        <li>
+            <span class="name-span">Trần Quang Mạnh</span> 
+            <button class="btn-edit">Sửa</button> 
+            <button class="btn-del">Xóa</button>
+        </li>
+    </ul>
+
+    <script>
+        $(document).ready(function(){
+            // Xử lý hành động THÊM MỚI dùng append() chèn thẻ động [cite: 274, 281]
+            $("#btnAddMember").click(function(){
+                let name = $("#memberNameInput").val().trim();
+                if(!name) return alert("Vui lòng điền tên trước khi lưu!");
+                
+                let newRow = `<li>
+                    <span class="name-span">${name}</span> 
+                    <button class="btn-edit">Sửa</button> 
+                    <button class="btn-del">Xóa</button>
+                </li>`;
+                
+                $("#memberList").append(newRow);
+                $("#memberNameInput").val("");
+            });
+
+            // Sử dụng Event Delegation cơ bản phục vụ cho các nút tạo động [cite: 274]
+            // Xử lý hành động XÓA dùng closest() và remove() [cite: 274, 277, 282]
+            $("#memberList").on("click", ".btn-del", function(){
+                if(confirm("Xác nhận gỡ tên thành viên này?")) {
+                    $(this).closest("li").remove();
+                }
+            });
+
+            // Xử lý hành động SỬA tên trực tiếp tại chỗ [cite: 277, 278, 283]
+            $("#memberList").on("click", ".btn-edit", function(){
+                let currentLi = $(this).closest("li");
+                let span = currentLi.find(".name-span");
+                let oldName = span.text();
+                
+                let newName = prompt("Nhập tên thành viên mới để thay đổi:", oldName);
+                if (newName !== null && newName.trim() !== "") {
+                    span.text(newName.trim()); // Cập nhật ngay giao diện [cite: 278]
+                }
+            });
+        });
+    </script>
+</body>
+</html>
