@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 13 - Ẩn/Hiện Nội Dung jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .content {
+            background-color: #e8f4f8;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+            display: none;
+        }
+        .content.show {
+            display: block;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .btn-hide {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-hide:hover {
+            background-color: #d32f2f;
+        }
+        .btn-show {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-show:hover {
+            background-color: #45a049;
+        }
+        .btn-toggle {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-toggle:hover {
+            background-color: #0b7dda;
+        }
+        .btn-check {
+            background-color: #FF9800;
+            color: white;
+        }
+        .btn-check:hover {
+            background-color: #e68900;
+        }
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .status.visible {
+            color: #4CAF50;
+        }
+        .status.hidden {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thao Tác Ẩn/Hiện Nội Dung</h1>
+        
+        <div class="content" id="myContent">
+            <h2>📦 Nội Dung Chính</h2>
+            <p>Đây là nội dung sẽ được ẩn/hiện. Bạn có thể sử dụng các nút bên dưới để điều khiển việc hiển thị hoặc ẩn khối nội dung này.</p>
+            <p>jQuery cung cấp các hàm <strong>hide()</strong>, <strong>show()</strong>, và <strong>toggle()</strong> để quản lý trạng thái hiển thị của các phần tử HTML.</p>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-hide" id="hideBtn">Ẩn Nội Dung</button>
+            <button class="btn-show" id="showBtn">Hiện Nội Dung</button>
+            <button class="btn-toggle" id="toggleBtn">Chuyển Đổi</button>
+            <button class="btn-check" id="checkBtn">Kiểm Tra Trạng Thái</button>
+        </div>
+
+        <div class="status" id="status">Nội dung đang <span class="hidden">ẩn</span></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Ẩn nội dung khi bấm nút Ẩn
+            $("#hideBtn").click(function() {
+                $("#myContent").hide();
+                updateStatus();
+            });
+
+            // Hiện nội dung khi bấm nút Hiện
+            $("#showBtn").click(function() {
+                $("#myContent").show();
+                updateStatus();
+            });
+
+            // Chuyển đổi trạng thái (toggle)
+            $("#toggleBtn").click(function() {
+                $("#myContent").toggle();
+                updateStatus();
+            });
+
+            // Kiểm tra trạng thái
+            $("#checkBtn").click(function() {
+                if ($("#myContent").is(":visible")) {
+                    alert("✓ Nội dung đang HIỆN");
+                } else {
+                    alert("✗ Nội dung đang ẨN");
+                }
+            });
+
+            // Hàm cập nhật trạng thái
+            function updateStatus() {
+                const status = $("#status");
+                if ($("#myContent").is(":visible")) {
+                    status.html("Nội dung đang <span class='visible'>HIỆN</span>").removeClass('hidden').addClass('visible');
+                } else {
+                    status.html("Nội dung đang <span class='hidden'>ẨN</span>").removeClass('visible').addClass('hidden');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

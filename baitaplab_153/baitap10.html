@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 10 - Hiển thị danh sách từ API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #667eea;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #c33;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .user-card h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .user-info {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .user-info strong {
+            color: #333;
+            min-width: 60px;
+        }
+
+        .user-info a {
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Danh Sách Người Dùng</h1>
+        <p class="subtitle">Lấy dữ liệu từ JSONPlaceholder API</p>
+
+        <div class="loading show" id="loading">
+            ⏳ Đang tải dữ liệu...
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="user-list" id="userList"></div>
+
+        <div class="no-data" id="noData" style="display: none;">
+            Không có dữ liệu để hiển thị
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://jsonplaceholder.typicode.com/users';
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const userListEl = document.getElementById('userList');
+        const noDataEl = document.getElementById('noData');
+
+        // Hàm fetch dữ liệu từ API
+        async function fetchUsers() {
+            try {
+                loadingEl.classList.add('show');
+                errorEl.classList.remove('show');
+                userListEl.innerHTML = '';
+                noDataEl.style.display = 'none';
+
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const users = await response.json();
+
+                if (users.length === 0) {
+                    noDataEl.style.display = 'block';
+                    return;
+                }
+
+                renderUsers(users);
+            } catch (error) {
+                showError(`Lỗi khi tải dữ liệu: ${error.message}`);
+                console.error('Error:', error);
+            } finally {
+                loadingEl.classList.remove('show');
+            }
+        }
+
+        // Hàm render danh sách người dùng
+        function renderUsers(users) {
+            userListEl.innerHTML = users
+                .map(
+                    (user) => `
+                <div class="user-card">
+                    <h3>${user.name}</h3>
+                    <div class="user-info">
+                        <strong>Email:</strong>
+                        <span><a href="mailto:${user.email}">${user.email}</a></span>
+                    </div>
+                    <div class="user-info">
+                        <strong>Điện thoại:</strong>
+                        <span>${user.phone}</span>
+                    </div>
+                    <div class="user-info">
+                        <strong>Công ty:</strong>
+                        <span>${user.company.name}</span>
+                    </div>
+                    <div class="user-info">
+                        <strong>Website:</strong>
+                        <span><a href="http://${user.website}" target="_blank">${user.website}</a></span>
+                    </div>
+                </div>
+            `
+                )
+                .join('');
+        }
+
+        // Hàm hiển thị lỗi
+        function showError(message) {
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        // Gọi hàm fetch khi tải trang
+        document.addEventListener('DOMContentLoaded', fetchUsers);
+    </script>
+</body>
+</html>

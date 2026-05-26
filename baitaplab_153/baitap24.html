@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Summit 2024 - Hội nghị công nghệ hàng năm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --light-bg: #f8f9ff;
+            --accent-color: #667eea;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #333 !important;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 120px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .btn-primary-custom {
+            background: white;
+            color: var(--accent-color);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            background: white;
+            color: var(--accent-color);
+        }
+
+        .btn-secondary-custom {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background: white;
+            color: var(--accent-color);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+
+        /* Features Section */
+        #features {
+            background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .feature-card h5 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Schedule Section */
+        #schedule {
+            background: white;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: var(--primary-gradient);
+        }
+
+        .timeline-item {
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: 0;
+            margin-right: 50%;
+            padding-right: 2rem;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 50%;
+            padding-left: 2rem;
+            text-align: left;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid var(--accent-color);
+            border-radius: 50%;
+            top: 20px;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: #f8f9ff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .timeline-time {
+            font-weight: 700;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .timeline-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Speakers Section */
+        #speakers {
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
+        }
+
+        .speaker-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .speaker-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+        }
+
+        .speaker-image {
+            width: 100%;
+            height: 300px;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+        }
+
+        .speaker-info {
+            padding: 1.5rem;
+        }
+
+        .speaker-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .speaker-title {
+            color: var(--accent-color);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .speaker-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Registration Section */
+        #registration {
+            background: var(--primary-gradient);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #registration::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        #registration::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: 5%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        .reg-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+        }
+
+        .form-control-custom {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .form-control-custom:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: white;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .form-control-custom::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-submit {
+            background: white;
+            color: var(--accent-color);
+            border: none;
+            padding: 12px 40px;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-link {
+            color: #bbb;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-link:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .timeline::before {
+                left: 10px;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 50px;
+                margin-right: 0;
+                padding-left: 2rem;
+                text-align: left;
+            }
+
+            .timeline-dot {
+                left: 10px;
+                transform: translateX(calc(-50% + 1px));
+            }
+
+            .reg-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-lg">
+            <a class="navbar-brand" href="#"><i class="fas fa-rocket"></i> Tech Summit 2024</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Điểm Nổi Bật</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Lịch Trình</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#speakers">Diễn Giả</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#registration">Đăng Ký</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container-lg">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content fade-in">
+                    <h1>Tech Summit 2024</h1>
+                    <p>Hội nghị công nghệ hàng năm quy tụ những chuyên gia hàng đầu từ khắp nơi trên thế giới</p>
+                    <div>
+                        <button class="btn btn-primary-custom me-3 mb-2">Đăng Ký Ngay</button>
+                        <button class="btn btn-secondary-custom mb-2">Tìm Hiểu Thêm</button>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center fade-in">
+                    <div style="font-size: 8rem; color: rgba(255,255,255,0.3); margin-top: 2rem;">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container-lg">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Điểm Nổi Bật</h2>
+                <p class="section-subtitle">Khám phá những điểm nổi bật chính của sự kiện năm nay</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h5>Các Diễn Giá Nổi Tiếng</h5>
+                        <p>Các chuyên gia hàng đầu trong ngành công nghệ sẽ chia sẻ kinh nghiệm và insights quý báu</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5>Kết Nối Mạng Lưới</h5>
+                        <p>Cơ hội gặp gỡ và kết nối với hàng nghìn chuyên gia từ các lĩnh vực khác nhau</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h5>Workshop & Hội Thảo</h5>
+                        <p>Tham gia các workshop thực hành để nâng cao kỹ năng và học hỏi những công nghệ mới nhất</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule">
+        <div class="container-lg">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Lịch Trình Sự Kiện</h2>
+                <p class="section-subtitle">Chương trình chi tiết cho ngày hội công nghệ</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">08:00 - 09:00</div>
+                                <div class="timeline-title">Đón Tiếp & Cà Phê Sáng</div>
+                                <div class="timeline-desc">Đón tiếp khách mời, cà phê và hors d'oeuvres</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">09:30 - 10:30</div>
+                                <div class="timeline-title">Bài Phát Biểu Khai Mạc</div>
+                                <div class="timeline-desc">CEO hàng đầu chia sẻ về xu hướng công nghệ 2024</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">11:00 - 12:00</div>
+                                <div class="timeline-title">Panel Discussion: AI & Tương Lai</div>
+                                <div class="timeline-desc">Thảo luận về vai trò của AI trong các ngành công nghiệp</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">12:30 - 13:30</div>
+                                <div class="timeline-title">Bữa Trưa Networking</div>
+                                <div class="timeline-desc">Dùng bữa trưa sang trọng và tham gia các hoạt động kết nối</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">14:00 - 15:30</div>
+                                <div class="timeline-title">Workshop Thực Hành</div>
+                                <div class="timeline-desc">Chọn một trong các workshop: Web3, Cloud Computing hoặc Data Science</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-time">16:00 - 17:00</div>
+                                <div class="timeline-title">Showcase & Networking</div>
+                                <div class="timeline-desc">Xem các bản demo công nghệ mới và tiếp tục kết nối với các chuyên gia</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speakers Section -->
+    <section id="speakers">
+        <div class="container-lg">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Diễn Giả Nổi Tiếng</h2>
+                <p class="section-subtitle">Gặp gỡ các nhân vật hàng đầu trong ngành công nghệ</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="speaker-card fade-in">
+                        <div class="speaker-image">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Nguyễn Văn A</div>
+                            <div class="speaker-title">CTO - Tech Innovators</div>
+                            <div class="speaker-desc">Chuyên gia về AI và Machine Learning với 15 năm kinh nghiệm</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="speaker-card fade-in">
+                        <div class="speaker-image">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Trần Thị B</div>
+                            <div class="speaker-title">Founder - Cloud Solutions</div>
+                            <div class="speaker-desc">Chuyên gia về Cloud Computing và DevOps, có hơn 20 năm kinh nghiệm</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="speaker-card fade-in">
+                        <div class="speaker-image">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="speaker-info">
+                            <div class="speaker-name">Phạm Minh C</div>
+                            <div class="speaker-title">Director - Data Science</div>
+                            <div class="speaker-desc">Chuyên gia phân tích dữ liệu lớn, tư vấn cho Fortune 500 companies</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="registration">
+        <div class="container-lg">
+            <div class="row align-items-center">
+                <div class="col-lg-5 position-relative z-3">
+                    <h2 class="reg-title">Đăng Ký Tham Dự</h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95;">
+                        Hãy hoàn thành form dưới đây để đăng ký tham dự sự kiện. Chúng tôi sẽ gửi xác nhận qua email của bạn.
+                    </p>
+                </div>
+                <div class="col-lg-7 position-relative z-3">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Họ và Tên</label>
+                                <input type="text" class="form-control form-control-custom" placeholder="Nhập tên của bạn" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control form-control-custom" placeholder="your@email.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Số Điện Thoại</label>
+                                <input type="tel" class="form-control form-control-custom" placeholder="+84 xxx xxx xxx" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Công Ty</label>
+                                <input type="text" class="form-control form-control-custom" placeholder="Tên công ty">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Chọn Lĩnh Vực Quan Tâm</label>
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="ai" value="AI">
+                                            <label class="form-check-label" for="ai">AI & ML</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="cloud" value="Cloud">
+                                            <label class="form-check-label" for="cloud">Cloud</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="web3" value="Web3">
+                                            <label class="form-check-label" for="web3">Web3</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Ghi Chú (Tùy Chọn)</label>
+                                <textarea class="form-control form-control-custom" rows="3" placeholder="Để lại ghi chú..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-submit">Đăng Ký Ngay</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container-lg">
+            <div class="row mb-4">
+                <div class="col-md-3 mb-4">
+                    <h6 class="footer-title"><i class="fas fa-rocket"></i> Tech Summit 2024</h6>
+                    <p style="color: #bbb; font-size: 0.9rem;">Hội nghị công nghệ hàng năm dành cho các chuyên gia IT</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="footer-title">Liên Kết Nhanh</h6>
+                    <a href="#" class="footer-link">Về Chúng Tôi</a>
+                    <a href="#" class="footer-link">Lịch Trình</a>
+                    <a href="#" class="footer-link">Diễn Giả</a>
+                    <a href="#" class="footer-link">Liên Hệ</a>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="footer-title">Thông Tin</h6>
+                    <a href="#" class="footer-link">Điều Khoản Sử Dụng</a>
+                    <a href="#" class="footer-link">Chính Sách Bảo Mật</a>
+                    <a href="#" class="footer-link">FAQ</a>
+                    <a href="#" class="footer-link">Hỗ Trợ</a>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="footer-title">Theo Dõi Chúng Tôi</h6>
+                    <div class="social-icons">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tech Summit. Tất cả quyền được bảo lưu. Thiết kế với <i class="fas fa-heart" style="color: #f5576c;"></i> bằng Bootstrap</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .speaker-card, .timeline-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Cảm ơn bạn đã đăng ký! Chúng tôi sẽ liên hệ với bạn sớm.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

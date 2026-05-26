@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Đăng Ký - Kiểm Tra Dữ Liệu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        input.valid {
+            border-color: #28a745;
+            background-color: #f0fdf4;
+        }
+        
+        input.invalid {
+            border-color: #dc3545;
+            background-color: #fdf0f1;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Form Đăng Ký</h1>
+        
+        <div class="alert" id="successAlert">
+            ✓ Đăng ký thành công!
+        </div>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullname">Họ và Tên:</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Nhập họ và tên">
+                <div class="error-message" id="fullnameError"></div>
+                <div class="success-message" id="fullnameSuccess">✓ Hợp lệ</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Nhập email">
+                <div class="error-message" id="emailError"></div>
+                <div class="success-message" id="emailSuccess">✓ Hợp lệ</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)">
+                <div class="error-message" id="passwordError"></div>
+                <div class="success-message" id="passwordSuccess">✓ Hợp lệ</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Xác nhận mật khẩu:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
+                <div class="error-message" id="confirmPasswordError"></div>
+                <div class="success-message" id="confirmPasswordSuccess">✓ Hợp lệ</div>
+            </div>
+            
+            <button type="submit">Đăng Ký</button>
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            function clearError(field) {
+                $(`#${field}Error`).removeClass('show').text('');
+                $(`#${field}Success`).removeClass('show');
+            }
+            
+            function showError(field, message) {
+                $(`#${field}Error`).addClass('show').text(message);
+                $(`#${field}Success`).removeClass('show');
+                $(`#${field}`).addClass('invalid').removeClass('valid');
+            }
+            
+            function showSuccess(field) {
+                $(`#${field}Error`).removeClass('show').text('');
+                $(`#${field}Success`).addClass('show');
+                $(`#${field}`).addClass('valid').removeClass('invalid');
+            }
+            
+            function validateFullname(value) {
+                value = value.trim();
+                if (value === '') {
+                    showError('fullname', 'Vui lòng nhập họ và tên');
+                    return false;
+                }
+                if (value.length < 3) {
+                    showError('fullname', 'Họ và tên phải có ít nhất 3 ký tự');
+                    return false;
+                }
+                showSuccess('fullname');
+                return true;
+            }
+            
+            function validateEmail(value) {
+                value = value.trim();
+                if (value === '') {
+                    showError('email', 'Vui lòng nhập email');
+                    return false;
+                }
+                if (!emailRegex.test(value)) {
+                    showError('email', 'Email không hợp lệ');
+                    return false;
+                }
+                showSuccess('email');
+                return true;
+            }
+            
+            function validatePassword(value) {
+                if (value === '') {
+                    showError('password', 'Vui lòng nhập mật khẩu');
+                    return false;
+                }
+                if (value.length < 6) {
+                    showError('password', 'Mật khẩu phải có ít nhất 6 ký tự');
+                    return false;
+                }
+                showSuccess('password');
+                return true;
+            }
+            
+            function validateConfirmPassword(password, confirmPassword) {
+                if (confirmPassword === '') {
+                    showError('confirmPassword', 'Vui lòng xác nhận mật khẩu');
+                    return false;
+                }
+                if (password !== confirmPassword) {
+                    showError('confirmPassword', 'Mật khẩu xác nhận không trùng khớp');
+                    return false;
+                }
+                showSuccess('confirmPassword');
+                return true;
+            }
+            
+            $('#fullname').on('blur', function() {
+                validateFullname($(this).val());
+            }).on('focus', function() {
+                clearError('fullname');
+            });
+            
+            $('#email').on('blur', function() {
+                validateEmail($(this).val());
+            }).on('focus', function() {
+                clearError('email');
+            });
+            
+            $('#password').on('blur', function() {
+                validatePassword($(this).val());
+            }).on('focus', function() {
+                clearError('password');
+            });
+            
+            $('#confirmPassword').on('blur', function() {
+                validateConfirmPassword($('#password').val(), $(this).val());
+            }).on('focus', function() {
+                clearError('confirmPassword');
+            });
+            
+            $('#registerForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                let isValid = true;
+                
+                const fullname = $('#fullname').val();
+                const email = $('#email').val();
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+                
+                if (!validateFullname(fullname)) isValid = false;
+                if (!validateEmail(email)) isValid = false;
+                if (!validatePassword(password)) isValid = false;
+                if (!validateConfirmPassword(password, confirmPassword)) isValid = false;
+                
+                if (isValid) {
+                    $('#successAlert').addClass('show');
+                    setTimeout(function() {
+                        $('#registerForm')[0].reset();
+                        $('#successAlert').removeClass('show');
+                        $('input').removeClass('valid invalid');
+                        $('.success-message').removeClass('show');
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

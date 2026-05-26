@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Xử lý điểm sinh viên</title>
+</head>
+<body>
+  <h2>Danh sách điểm sinh viên</h2>
+  <div id="output"></div>
+
+  <h3>Thêm điểm mới</h3>
+  <input type="number" id="newScore" placeholder="Nhập điểm (0-10)">
+  <button onclick="addScore()">Thêm</button>
+
+  <h3>Xóa điểm thấp nhất</h3>
+  <button onclick="removeLowest()">Xóa điểm thấp nhất</button>
+
+  <script>
+    // 1. Khai báo mảng dữ liệu mẫu
+    let scores = [];
+
+    // Hàm render kết quả
+    function render() {
+      let sum = scores.reduce((a, b) => a + b, 0);
+      let avg = sum / scores.length;
+
+      // 3. Phân loại học lực
+      let rank = "";
+      if (avg < 5) rank = "Yếu";
+      else if (avg < 6.5) rank = "Trung bình";
+      else if (avg < 8) rank = "Khá";
+      else rank = "Giỏi";
+
+      document.getElementById("output").innerHTML =
+        `Danh sách điểm: ${scores.join(", ")}<br>
+         Tổng điểm: ${sum}<br>
+         Trung bình: ${avg.toFixed(2)}<br>
+         Xếp loại: ${rank}`;
+    }
+
+    // 4. Cho phép nhập thêm điểm mới
+    function addScore() {
+      let val = Number(document.getElementById("newScore").value);
+      if (!val || val < 0 || val > 10) {
+        alert("Vui lòng nhập điểm hợp lệ (0-10)");
+        return;
+      }
+      scores.push(val);
+      render();
+    }
+
+    // 5. Xóa điểm thấp nhất
+    function removeLowest() {
+      if (scores.length === 0) {
+        alert("Danh sách rỗng!");
+        return;
+      }
+      let min = Math.min(...scores);
+      let index = scores.indexOf(min);
+      scores.splice(index, 1);
+      render();
+    }
+
+    // Hiển thị ban đầu
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý sản phẩm</title>
+</head>
+<body>
+  <h2>Danh sách sản phẩm</h2>
+  <div id="list"></div>
+
+  <h3>Tìm kiếm sản phẩm theo tên</h3>
+  <input type="text" id="searchName" placeholder="Nhập tên sản phẩm">
+  <button onclick="searchProduct()">Tìm</button>
+  <div id="searchResult"></div>
+
+  <h3>Lọc sản phẩm theo giá</h3>
+  <input type="number" id="minPrice" placeholder="Giá tối thiểu">
+  <input type="number" id="maxPrice" placeholder="Giá tối đa">
+  <button onclick="filterProduct()">Lọc</button>
+  <div id="filterResult"></div>
+
+  <h3>Sắp xếp sản phẩm</h3>
+  <button onclick="sortAsc()">Giá tăng dần</button>
+  <button onclick="sortDesc()">Giá giảm dần</button>
+
+  <h3>Tổng giá trị tồn kho</h3>
+  <div id="totalValue"></div>
+
+  <script>
+    // 1. Khai báo dữ liệu sản phẩm
+    let products = [
+      {name:"Bút", price:5000, qty:10},
+      {name:"Vở", price:12000, qty:20},
+      {name:"Thước", price:8000, qty:15},
+      {name:"Tẩy", price:3000, qty:30},
+      {name:"Balo", price:150000, qty:5}
+    ];
+
+    // 2. Hàm render danh sách
+    function render(list){
+      document.getElementById("list").innerHTML =
+        list.map(p=>`${p.name} - Giá: ${p.price.toLocaleString()} VNĐ - SL: ${p.qty}`).join("<br>");
+      calcTotalValue(list);
+    }
+
+    // 3. Tìm sản phẩm theo tên
+    function searchProduct(){
+      let keyword = document.getElementById("searchName").value.toLowerCase();
+      let found = products.find(p=>p.name.toLowerCase().includes(keyword));
+      document.getElementById("searchResult").innerHTML = found ?
+        `Tìm thấy: ${found.name} - Giá: ${found.price.toLocaleString()} VNĐ - SL: ${found.qty}` :
+        "Không tìm thấy sản phẩm!";
+    }
+
+    // 4. Lọc sản phẩm theo giá
+    function filterProduct(){
+      let min = Number(document.getElementById("minPrice").value);
+      let max = Number(document.getElementById("maxPrice").value);
+      let filtered = products.filter(p=>p.price>=min && p.price<=max);
+      document.getElementById("filterResult").innerHTML =
+        filtered.length>0 ? filtered.map(p=>`${p.name} - ${p.price.toLocaleString()} VNĐ`).join("<br>")
+                          : "Không có sản phẩm trong khoảng giá!";
+    }
+
+    // Mở rộng: Sắp xếp
+    function sortAsc(){
+      products.sort((a,b)=>a.price-b.price);
+      render(products);
+    }
+    function sortDesc(){
+      products.sort((a,b)=>b.price-a.price);
+      render(products);
+    }
+
+    // Mở rộng: Tổng giá trị tồn kho
+    function calcTotalValue(list){
+      let total = list.reduce((sum,p)=>sum+p.price*p.qty,0);
+      document.getElementById("totalValue").innerHTML =
+        `Tổng giá trị tồn kho: ${total.toLocaleString()} VNĐ`;
+    }
+
+    // Hiển thị ban đầu
+    render(products);
+  </script>
+</body>
+</html>

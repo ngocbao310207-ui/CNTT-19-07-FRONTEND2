@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 20 - Thêm dữ liệu bằng Form và Ajax</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #submitBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #submitBtn:hover {
+            background-color: #45a049;
+        }
+        
+        #resetBtn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        #resetBtn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .list-section {
+            margin-top: 30px;
+        }
+        
+        .list-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        .item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .item-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .item-email {
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .item-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Thêm dữ liệu bằng Form và Ajax</h1>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="form-section">
+            <form id="dataForm">
+                <div class="form-group">
+                    <label for="name">Tên (*):</label>
+                    <input type="text" id="name" name="name" placeholder="Nhập tên của bạn" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email (*):</label>
+                    <input type="email" id="email" name="email" placeholder="Nhập email của bạn" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Mô tả (*):</label>
+                    <textarea id="description" name="description" placeholder="Nhập mô tả" required></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn">Gửi dữ liệu</button>
+                    <button type="reset" id="resetBtn">Xóa trắng</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="list-section">
+            <h2>📋 Danh sách dữ liệu</h2>
+            <div id="dataList" class="empty-message">Chưa có dữ liệu. Hãy thêm dữ liệu mới!</div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Thay đổi URL này thành endpoint của bạn trên mockapi.io
+        const API_URL = 'https://jsonplaceholder.typicode.com/users';
+
+        // Load danh sách dữ liệu khi trang tải
+        function loadData() {
+            $.ajax({
+                url: API_URL,
+                type: 'GET',
+                success: function(data) {
+                    displayData(data);
+                },
+                error: function() {
+                    showMessage('Lỗi: Không thể tải dữ liệu!', 'error');
+                }
+            });
+        }
+
+        // Hiển thị danh sách dữ liệu
+        function displayData(data) {
+            const dataList = $('#dataList');
+            
+            if (data.length === 0) {
+                dataList.html('<div class="empty-message">Chưa có dữ liệu. Hãy thêm dữ liệu mới!</div>');
+                return;
+            }
+            
+            let html = '';
+            data.forEach(item => {
+                html += `
+                    <div class="item">
+                        <div class="item-title">👤 ${item.name}</div>
+                        <div class="item-email">📧 ${item.email}</div>
+                        <div class="item-description">📝 ${item.description}</div>
+                    </div>
+                `;
+            });
+            
+            dataList.html(html);
+        }
+
+        // Hiển thị thông báo
+        function showMessage(message, type) {
+            const messageDiv = $('#message');
+            messageDiv.removeClass('success error').addClass(type).text(message).show();
+            
+            // Tự động ẩn thông báo sau 3 giây
+            setTimeout(() => {
+                messageDiv.hide();
+            }, 3000);
+        }
+
+        // Xử lý sự kiện submit form
+        $('#dataForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // Lấy dữ liệu từ form
+            const formData = {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                description: $('#description').val()
+            };
+
+            // Kiểm tra dữ liệu rỗng
+            if (!formData.name || !formData.email || !formData.description) {
+                showMessage('Vui lòng điền đầy đủ tất cả các trường!', 'error');
+                return;
+            }
+
+            // Gửi dữ liệu lên server
+            $.ajax({
+                url: API_URL,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    showMessage('✅ Thêm dữ liệu thành công!', 'success');
+                    
+                    // Xóa trắng form
+                    $('#dataForm')[0].reset();
+                    
+                    // Tải lại danh sách dữ liệu
+                    setTimeout(() => {
+                        loadData();
+                    }, 500);
+                },
+                error: function(xhr, status, error) {
+                    showMessage('❌ Lỗi: ' + (xhr.responseJSON?.message || 'Không thể gửi dữ liệu!'), 'error');
+                }
+            });
+        });
+
+        // Load dữ liệu khi trang tải xong
+        $(document).ready(function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý danh sách thành viên</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #memberList { margin-top: 20px; }
+    .member {
+      margin: 5px 0;
+      padding: 5px;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .member span {
+      flex: 1;
+    }
+    button {
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Quản lý danh sách thành viên</h2>
+  <input type="text" id="memberName" placeholder="Nhập tên thành viên">
+  <button id="addMember">Thêm mới</button>
+
+  <div id="memberList"></div>
+
+  <script>
+    $(document).ready(function() {
+      // Thêm thành viên mới
+      $("#addMember").click(function() {
+        let name = $("#memberName").val().trim();
+        if (name !== "") {
+          let newMember = `
+            <div class="member">
+              <span class="name">${name}</span>
+              <button class="edit">Sửa</button>
+              <button class="delete">Xóa</button>
+            </div>`;
+          $("#memberList").append(newMember);
+          $("#memberName").val(""); // reset ô nhập
+        }
+      });
+
+      // Event delegation cho nút Xóa
+      $("#memberList").on("click", ".delete", function() {
+        $(this).closest(".member").remove();
+      });
+
+      // Event delegation cho nút Sửa
+      $("#memberList").on("click", ".edit", function() {
+        let memberDiv = $(this).closest(".member");
+        let currentName = memberDiv.find(".name").text();
+        let newName = prompt("Nhập tên mới:", currentName);
+        if (newName !== null && newName.trim() !== "") {
+          memberDiv.find(".name").text(newName.trim());
+        }
+      });
+    });
+  </script>
+</body>
+</html>

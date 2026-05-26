@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trò chơi đoán số</title>
+</head>
+<body>
+  <h2>Đoán số từ 1 đến 100</h2>
+  <input type="number" id="guess" placeholder="Nhập số">
+  <button onclick="checkGuess()">Đoán</button>
+  <button onclick="resetGame()">Chơi lại</button>
+  <div id="message"></div>
+
+  <script>
+    let secret = Math.floor(Math.random()*100)+1;
+    let attempts = 0;
+
+    function checkGuess() {
+      let g = Number(document.getElementById("guess").value);
+      attempts++;
+      if (g < secret) {
+        document.getElementById("message").textContent = "Số bí mật lớn hơn!";
+      } else if (g > secret) {
+        document.getElementById("message").textContent = "Số bí mật nhỏ hơn!";
+      } else {
+        document.getElementById("message").textContent = 
+          `Chính xác! Bạn đã đoán đúng sau ${attempts} lần.`;
+      }
+    }
+
+    function resetGame() {
+      secret = Math.floor(Math.random()*100)+1;
+      attempts = 0;
+      document.getElementById("message").textContent = "Trò chơi bắt đầu lại!";
+    }
+  </script>
+</body>
+</html>

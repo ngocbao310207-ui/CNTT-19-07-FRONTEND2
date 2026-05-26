@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sinh Viên</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .table-section {
+            margin-top: 20px;
+        }
+        
+        .table-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+            transition: background 0.2s;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Quản lý Sinh Viên</h1>
+            <p>Hệ thống quản lý thông tin sinh viên</p>
+        </div>
+        
+        <div class="content">
+            <!-- Message Alert -->
+            <div id="messageContainer"></div>
+            
+            <!-- Form Thêm Sinh Viên -->
+            <div class="form-section">
+                <h2>➕ Thêm Sinh Viên Mới</h2>
+                <form id="studentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Tên Sinh Viên *</label>
+                            <input type="text" id="name" placeholder="Nhập tên sinh viên" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" placeholder="Nhập email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Số Điện Thoại</label>
+                            <input type="text" id="phone" placeholder="Nhập số điện thoại">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Địa Chỉ</label>
+                            <input type="text" id="address" placeholder="Nhập địa chỉ">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="note">Ghi Chú</label>
+                        <textarea id="note" placeholder="Nhập ghi chú" rows="3"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary">Thêm Sinh Viên</button>
+                        <button type="reset" class="btn-secondary">Xóa Form</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Danh Sách Sinh Viên -->
+            <div class="table-section">
+                <h2>📋 Danh Sách Sinh Viên</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm theo tên...">
+                </div>
+                <div id="tableContainer">
+                    <div class="loading">Đang tải dữ liệu...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_URL = 'https://jsonplaceholder.typicode.com/users';
+        
+        // DOM Elements
+        const studentForm = document.getElementById('studentForm');
+        const tableContainer = document.getElementById('tableContainer');
+        const messageContainer = document.getElementById('messageContainer');
+        const searchInput = document.getElementById('searchInput');
+        
+        let students = [];
+        let filteredStudents = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStudents();
+            studentForm.addEventListener('submit', handleAddStudent);
+            searchInput.addEventListener('input', handleSearch);
+        });
+        
+        // Fetch students from API
+        async function loadStudents() {
+            try {
+                tableContainer.innerHTML = '<div class="loading">Đang tải dữ liệu...</div>';
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                students = await response.json();
+                filteredStudents = [...students];
+                renderTable(filteredStudents);
+            } catch (error) {
+                console.error('Error loading students:', error);
+                showMessage('Lỗi khi tải dữ liệu sinh viên!', 'error');
+                tableContainer.innerHTML = '<div class="empty-state">Không thể tải dữ liệu</div>';
+            }
+        }
+        
+        // Add new student
+        async function handleAddStudent(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                note: document.getElementById('note').value.trim()
+            };
+            
+            if (!formData.name || !formData.email) {
+                showMessage('Vui lòng nhập tên và email!', 'error');
+                return;
+            }
+            
+            try {
+                // Simulate adding to local array (JSONPlaceholder is read-only)
+                const newStudent = {
+                    id: Math.max(...students.map(s => s.id), 0) + 1,
+                    username: formData.name.toLowerCase().replace(/\s+/g, ''),
+                    ...formData
+                };
+                
+                students.unshift(newStudent);
+                filteredStudents = [...students];
+                renderTable(filteredStudents);
+                studentForm.reset();
+                showMessage('✓ Thêm sinh viên thành công!', 'success');
+            } catch (error) {
+                console.error('Error adding student:', error);
+                showMessage('Lỗi khi thêm sinh viên!', 'error');
+            }
+        }
+        
+        // Delete student
+        function handleDeleteStudent(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sinh viên này?')) {
+                try {
+                    students = students.filter(s => s.id !== id);
+                    filteredStudents = filteredStudents.filter(s => s.id !== id);
+                    renderTable(filteredStudents);
+                    showMessage('✓ Xóa sinh viên thành công!', 'success');
+                } catch (error) {
+                    console.error('Error deleting student:', error);
+                    showMessage('Lỗi khi xóa sinh viên!', 'error');
+                }
+            }
+        }
+        
+        // Edit student (bonus feature)
+        function handleEditStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (student) {
+                document.getElementById('name').value = student.name;
+                document.getElementById('email').value = student.email;
+                document.getElementById('phone').value = student.phone || '';
+                document.getElementById('address').value = student.address || '';
+                document.getElementById('note').value = student.note || '';
+                
+                students = students.filter(s => s.id !== id);
+                filteredStudents = filteredStudents.filter(s => s.id !== id);
+                renderTable(filteredStudents);
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showMessage('📝 Chỉnh sửa thông tin sinh viên', 'success');
+            }
+        }
+        
+        // Search students
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                filteredStudents = [...students];
+            } else {
+                filteredStudents = students.filter(s => 
+                    s.name.toLowerCase().includes(searchTerm) ||
+                    s.email.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderTable(filteredStudents);
+        }
+        
+        // Render table
+        function renderTable(data) {
+            if (data.length === 0) {
+                tableContainer.innerHTML = '<div class="empty-state">Không có sinh viên nào</div>';
+                return;
+            }
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Sinh Viên</th>
+                            <th>Email</th>
+                            <th>Số Điện Thoại</th>
+                            <th>Địa Chỉ</th>
+                            <th>Ghi Chú</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.forEach(student => {
+                html += `
+                    <tr>
+                        <td><strong>#${student.id}</strong></td>
+                        <td>${student.name || 'N/A'}</td>
+                        <td>${student.email || 'N/A'}</td>
+                        <td>${student.phone || student.phone || 'N/A'}</td>
+                        <td>${student.address || student.city || 'N/A'}</td>
+                        <td>${student.note || '-'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-warning" onclick="handleEditStudent(${student.id})">Sửa</button>
+                                <button class="btn-danger" onclick="handleDeleteStudent(${student.id})">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            tableContainer.innerHTML = html;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messageContainer.innerHTML = '';
+            messageContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

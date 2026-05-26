@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Bộ đếm lượt tương tác</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    #counter {
+      font-size: 2em;
+      margin: 20px;
+      font-weight: bold;
+    }
+    .positive { color: green; }
+    .negative { color: red; }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h2>Bộ đếm lượt tương tác</h2>
+  <div id="counter">0</div>
+  <button id="increase">Tăng +1</button>
+  <button id="decrease">Giảm -1</button>
+  <button id="reset">Đặt lại</button>
+  <button id="increase10">Tăng nhanh +10</button>
+
+  <script>
+    $(document).ready(function() {
+      let count = 0;
+
+      function updateDisplay() {
+        $("#counter").text(count);
+        if (count > 0) {
+          $("#counter").removeClass("negative").addClass("positive");
+        } else if (count < 0) {
+          $("#counter").removeClass("positive").addClass("negative");
+        } else {
+          $("#counter").removeClass("positive negative");
+        }
+      }
+
+      $("#increase").click(function() {
+        count++;
+        updateDisplay();
+      });
+
+      $("#decrease").click(function() {
+        count--;
+        updateDisplay();
+      });
+
+      $("#reset").click(function() {
+        count = 0;
+        updateDisplay();
+      });
+
+      $("#increase10").click(function() {
+        count += 10;
+        updateDisplay();
+      });
+
+      updateDisplay();
+    });
+  </script>
+</body>
+</html>

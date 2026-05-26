@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 19 - Tải dữ liệu bằng Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #764ba2;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top: 2px solid transparent;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background-color: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #c33;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        thead {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tbody tr:hover {
+            background-color: #f5f5f5;
+            transition: background-color 0.2s ease;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        
+        .success-message {
+            background-color: #efe;
+            color: #3c3;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #3c3;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Danh sách dữ liệu từ Ajax</h1>
+        <p class="subtitle">Tải dữ liệu bất đồng bộ từ Mock API</p>
+        
+        <div class="button-group">
+            <button id="loadBtn">📥 Tải dữ liệu</button>
+            <button id="clearBtn">🗑️ Xóa dữ liệu</button>
+        </div>
+        
+        <div class="loading" id="loading">
+            <span class="spinner"></span>
+            <span> Đang tải dữ liệu...</span>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            ✓ Dữ liệu được tải thành công!
+        </div>
+        
+        <div class="error" id="errorMessage"></div>
+        
+        <div id="dataContainer">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Địa chỉ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="no-data">
+                        <td colspan="4">Nhấn "Tải dữ liệu" để bắt đầu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // API endpoint (mockapi.io)
+            const API_URL = 'https://jsonplaceholder.typicode.com/users';
+            
+            // Hàm tải dữ liệu
+            function loadData() {
+                // Hiển thị loading
+                $('#loading').addClass('show');
+                $('#errorMessage').removeClass('show');
+                $('#successMessage').removeClass('show');
+                
+                $.ajax({
+                    url: API_URL,
+                    type: 'GET',
+                    dataType: 'json',
+                    timeout: 10000,
+                    success: function(data) {
+                        $('#loading').removeClass('show');
+                        renderTable(data);
+                        $('#successMessage').addClass('show');
+                        
+                        // Ẩn thông báo sau 3 giây
+                        setTimeout(function() {
+                            $('#successMessage').removeClass('show');
+                        }, 3000);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#loading').removeClass('show');
+                        let errorMsg = 'Không thể tải dữ liệu!';
+                        
+                        if (status === 'timeout') {
+                            errorMsg = '⏱️ Hết thời gian chờ. Vui lòng thử lại.';
+                        } else if (xhr.status === 0) {
+                            errorMsg = '❌ Lỗi kết nối. Kiểm tra Internet và API URL.';
+                        } else if (xhr.status === 404) {
+                            errorMsg = '❌ Không tìm thấy dữ liệu (404).';
+                        } else if (xhr.status === 500) {
+                            errorMsg = '❌ Lỗi Server (500).';
+                        } else {
+                            errorMsg = `❌ Lỗi: ${error}`;
+                        }
+                        
+                        $('#errorMessage').text(errorMsg).addClass('show');
+                        
+                        // Hiển thị bảng trống
+                        $('#tableBody').html('<tr class="no-data"><td colspan="4">' + errorMsg + '</td></tr>');
+                    }
+                });
+            }
+            
+            // Hàm render bảng dữ liệu
+            function renderTable(data) {
+                if (!data || data.length === 0) {
+                    $('#tableBody').html('<tr class="no-data"><td colspan="4">Không có dữ liệu</td></tr>');
+                    return;
+                }
+                
+                let html = '';
+                data.forEach((item, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.name || 'N/A'}</td>
+                            <td>${item.email || 'N/A'}</td>
+                            <td>${item.address || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+                
+                $('#tableBody').html(html);
+            }
+            
+            // Hàm xóa dữ liệu
+            function clearData() {
+                $('#tableBody').html('<tr class="no-data"><td colspan="4">Dữ liệu đã được xóa</td></tr>');
+                $('#errorMessage').removeClass('show');
+                $('#successMessage').removeClass('show');
+            }
+            
+            // Event listeners
+            $('#loadBtn').click(loadData);
+            $('#clearBtn').click(clearData);
+            
+            // Tự động tải dữ liệu khi trang mở (tùy chọn)
+            // loadData();
+        });
+    </script>
+</body>
+</html>

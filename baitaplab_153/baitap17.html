@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Giỏ hàng trực tuyến</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; }
+    h2 { text-align: center; color: #333; }
+    .container { width: 800px; margin: 20px auto; }
+    .product {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .info { flex: 2; }
+    .controls { flex: 1; text-align: right; }
+    .controls button {
+      margin: 0 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .increase { background: #4CAF50; color: white; }
+    .decrease { background: #f44336; color: white; }
+    .subtotal { font-weight: bold; color: #333; }
+    .total {
+      text-align: right;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛒 Giỏ hàng trực tuyến</h2>
+  <div class="container">
+
+    <!-- Sản phẩm 1 -->
+    <div class="product" data-price="120000">
+      <div class="info">
+        <h3>Bàn phím cơ</h3>
+        <p>Đơn giá: <span class="price">120000</span> VND</p>
+        <p>Số lượng: <span class="quantity">1</span></p>
+        <p>Thành tiền: <span class="subtotal">120000</span> VND</p>
+      </div>
+      <div class="controls">
+        <button class="increase">+</button>
+        <button class="decrease">-</button>
+      </div>
+    </div>
+
+    <!-- Sản phẩm 2 -->
+    <div class="product" data-price="250000">
+      <div class="info">
+        <h3>Tai nghe Gaming</h3>
+        <p>Đơn giá: <span class="price">250000</span> VND</p>
+        <p>Số lượng: <span class="quantity">1</span></p>
+        <p>Thành tiền: <span class="subtotal">250000</span> VND</p>
+      </div>
+      <div class="controls">
+        <button class="increase">+</button>
+        <button class="decrease">-</button>
+      </div>
+    </div>
+
+    <!-- Sản phẩm 3 -->
+    <div class="product" data-price="80000">
+      <div class="info">
+        <h3>Chuột không dây</h3>
+        <p>Đơn giá: <span class="price">80000</span> VND</p>
+        <p>Số lượng: <span class="quantity">1</span></p>
+        <p>Thành tiền: <span class="subtotal">80000</span> VND</p>
+      </div>
+      <div class="controls">
+        <button class="increase">+</button>
+        <button class="decrease">-</button>
+      </div>
+    </div>
+
+    <!-- Tổng hóa đơn -->
+    <div class="total">
+      Tổng hóa đơn: <span id="grandTotal">450000</span> VND
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      function updateSubtotal(productDiv) {
+        let price = parseInt(productDiv.data("price"));
+        let quantity = parseInt(productDiv.find(".quantity").text());
+        let subtotal = price * quantity;
+        productDiv.find(".subtotal").text(subtotal);
+      }
+
+      function updateGrandTotal() {
+        let total = 0;
+        $(".product").each(function() {
+          total += parseInt($(this).find(".subtotal").text());
+        });
+        $("#grandTotal").text(total);
+      }
+
+      $(".increase").click(function() {
+        let productDiv = $(this).closest(".product");
+        let quantity = parseInt(productDiv.find(".quantity").text());
+        productDiv.find(".quantity").text(quantity + 1);
+        updateSubtotal(productDiv);
+        updateGrandTotal();
+      });
+
+      $(".decrease").click(function() {
+        let productDiv = $(this).closest(".product");
+        let quantity = parseInt(productDiv.find(".quantity").text());
+        if (quantity > 1) { // không cho nhỏ hơn 1
+          productDiv.find(".quantity").text(quantity - 1);
+          updateSubtotal(productDiv);
+          updateGrandTotal();
+        }
+      });
+
+      // Khởi tạo tổng ban đầu
+      updateGrandTotal();
+    });
+  </script>
+</body>
+</html>

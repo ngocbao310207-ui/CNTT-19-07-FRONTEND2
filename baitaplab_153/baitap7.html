@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Bài lab 07 - DOM cơ bản</title>
+  <style>
+    body{font-family: Arial, Helvetica, sans-serif; padding:20px}
+    .card{border:1px solid #ddd; padding:16px; max-width:600px}
+    .highlight{background:#fffbcc}
+    img{max-width:100%; height:auto}
+    .controls{margin-top:12px}
+    button{margin-right:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="mainTitle">Tiêu đề ban đầu</h1>
+    <p id="desc">Đây là đoạn mô tả ban đầu. Nhấn nút để thay đổi nội dung và thuộc tính.</p>
+    <img id="heroImg" src="https://via.placeholder.com/600x200?text=Hinh+ban+dau" alt="Hình minh họa">
+
+    <div class="controls">
+      <button id="btnChange">Thay đổi nội dung</button>
+      <button id="btnAlternate">Chế độ khác</button>
+      <button id="btnRestore">Khôi phục ban đầu</button>
+    </div>
+  </div>
+
+  <script>
+    // Lấy tham chiếu đến phần tử
+    const title = document.getElementById('mainTitle');
+    const desc = document.querySelector('#desc');
+    const img = document.getElementById('heroImg');
+    const btnChange = document.getElementById('btnChange');
+    const btnAlt = document.getElementById('btnAlternate');
+    const btnRestore = document.getElementById('btnRestore');
+
+    // Lưu trạng thái ban đầu để có thể khôi phục
+    const state = {
+      titleText: title.innerText,
+      descText: desc.textContent,
+      imgSrc: img.src,
+      imgAlt: img.alt
+    };
+
+    btnChange.addEventListener('click', function(){
+      title.innerText = 'Tiêu đề đã được thay đổi';
+      desc.textContent = 'Nội dung mô tả mới được cập nhật bằng textContent. Bạn có thể thấy thay đổi ngay lập tức.';
+      img.src = 'https://via.placeholder.com/600x200/87CEEB/000000?text=Hinh+da+thay+doi';
+      img.alt = 'Hình đã thay đổi';
+      title.classList.add('highlight');
+    });
+
+    btnAlt.addEventListener('click', function(){
+      title.innerText = 'Chế độ hiển thị thứ hai';
+      desc.textContent = 'Chế độ này thay đổi cả văn bản và class để áp dụng kiểu khác.';
+      img.src = 'https://via.placeholder.com/600x200/FFD700/000000?text=Che+do+khac';
+      // chuyển trạng thái class
+      title.classList.toggle('highlight');
+    });
+
+    btnRestore.addEventListener('click', function(){
+      title.innerText = state.titleText;
+      desc.textContent = state.descText;
+      img.src = state.imgSrc;
+      img.alt = state.imgAlt;
+      title.classList.remove('highlight');
+    });
+  </script>
+</body>
+</html>

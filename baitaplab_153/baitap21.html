@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 21 - CRUD với jQuery Ajax</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .table-section {
+            margin-top: 30px;
+        }
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+        input.form-control, textarea.form-control {
+            margin-bottom: 10px;
+        }
+        .search-section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Quản Lý Sinh Viên - CRUD với jQuery Ajax</h1>
+        
+        <!-- Alert Message -->
+        <div id="alertMessage"></div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <h3>Nhập/Cập Nhật Thông Tin</h3>
+            <form id="studentForm">
+                <input type="hidden" id="studentId">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="studentName" class="form-label">Tên Sinh Viên</label>
+                        <input type="text" class="form-control" id="studentName" placeholder="Nhập tên sinh viên" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="studentEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="studentEmail" placeholder="Nhập email" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="studentPhone" class="form-label">Số Điện Thoại</label>
+                        <input type="text" class="form-control" id="studentPhone" placeholder="Nhập số điện thoại">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="studentAddress" class="form-label">Địa Chỉ</label>
+                        <input type="text" class="form-control" id="studentAddress" placeholder="Nhập địa chỉ">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" id="submitBtn">Thêm Mới</button>
+                        <button type="button" class="btn btn-secondary" id="resetBtn">Hủy</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm theo tên sinh viên">
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <h3>Danh Sách Sinh Viên</h3>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Địa Chỉ</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable">
+                    <tr>
+                        <td colspan="6" class="text-center">Đang tải dữ liệu...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // API Configuration
+        const API_URL = 'https://jsonplaceholder.typicode.com/users';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let allStudents = [];
+
+        // Initialize
+        $(document).ready(function() {
+            loadStudents();
+            setupEventListeners();
+        });
+
+        // Event Listeners
+        function setupEventListeners() {
+            $('#submitBtn').click(function() {
+                const id = $('#studentId').val();
+                if (id) {
+                    updateStudent();
+                } else {
+                    addStudent();
+                }
+            });
+
+            $('#resetBtn').click(resetForm);
+            $('#searchInput').on('keyup', searchStudents);
+        }
+
+        // Load Students
+        function loadStudents() {
+            $.ajax({
+                url: API_URL,
+                type: 'GET',
+                success: function(data) {
+                    allStudents = data;
+                    renderStudents(data);
+                    hideAlert();
+                },
+                error: function() {
+                    showAlert('Lỗi khi tải dữ liệu', 'danger');
+                }
+            });
+        }
+
+        // Render Students Table
+        function renderStudents(data) {
+            const tbody = $('#studentTable');
+            tbody.empty();
+
+            if (data.length === 0) {
+                tbody.html('<tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>');
+                return;
+            }
+
+            data.forEach(student => {
+                const row = `
+                    <tr>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.email}</td>
+                        <td>${student.phone || '-'}</td>
+                        <td>${student.address || '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning btn-action" onclick="editStudent(${student.id})">Sửa</button>
+                            <button class="btn btn-sm btn-danger btn-action" onclick="deleteStudent(${student.id})">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        // Add Student
+        function addStudent() {
+            const name = $('#studentName').val();
+            const email = $('#studentEmail').val();
+            const phone = $('#studentPhone').val();
+            const address = $('#studentAddress').val();
+
+            if (!name || !email) {
+                showAlert('Vui lòng nhập đủ thông tin', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: API_URL,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: address
+                }),
+                success: function() {
+                    showAlert('Thêm sinh viên thành công', 'success');
+                    resetForm();
+                    loadStudents();
+                },
+                error: function() {
+                    showAlert('Lỗi khi thêm sinh viên', 'danger');
+                }
+            });
+        }
+
+        // Edit Student
+        function editStudent(id) {
+            const student = allStudents.find(s => s.id == id);
+            if (student) {
+                $('#studentId').val(student.id);
+                $('#studentName').val(student.name);
+                $('#studentEmail').val(student.email);
+                $('#studentPhone').val(student.phone || '');
+                $('#studentAddress').val(student.address || '');
+                $('#submitBtn').text('Cập Nhật');
+                $('html, body').animate({scrollTop: 0}, 300);
+            }
+        }
+
+        // Update Student
+        function updateStudent() {
+            const id = $('#studentId').val();
+            const name = $('#studentName').val();
+            const email = $('#studentEmail').val();
+            const phone = $('#studentPhone').val();
+            const address = $('#studentAddress').val();
+
+            if (!name || !email) {
+                showAlert('Vui lòng nhập đủ thông tin', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: `${API_URL}/${id}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: address
+                }),
+                success: function() {
+                    showAlert('Cập nhật sinh viên thành công', 'success');
+                    resetForm();
+                    loadStudents();
+                },
+                error: function() {
+                    showAlert('Lỗi khi cập nhật sinh viên', 'danger');
+                }
+            });
+        }
+
+        // Delete Student
+        function deleteStudent(id) {
+            if (confirm('Bạn chắc chắn muốn xóa sinh viên này?')) {
+                $.ajax({
+                    url: `${API_URL}/${id}`,
+                    type: 'DELETE',
+                    success: function() {
+                        showAlert('Xóa sinh viên thành công', 'success');
+                        loadStudents();
+                    },
+                    error: function() {
+                        showAlert('Lỗi khi xóa sinh viên', 'danger');
+                    }
+                });
+            }
+        }
+
+        // Search Students
+        function searchStudents() {
+            const keyword = $('#searchInput').val().toLowerCase();
+            const filtered = allStudents.filter(student => 
+                student.name.toLowerCase().includes(keyword)
+            );
+            renderStudents(filtered);
+        }
+
+        // Reset Form
+        function resetForm() {
+            $('#studentForm')[0].reset();
+            $('#studentId').val('');
+            $('#submitBtn').text('Thêm Mới');
+        }
+
+        // Show Alert
+        function showAlert(message, type) {
+            const alertDiv = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+            $('#alertMessage').html(alertDiv);
+        }
+
+        // Hide Alert
+        function hideAlert() {
+            $('#alertMessage').empty();
+        }
+    </script>
+</body>
+</html>

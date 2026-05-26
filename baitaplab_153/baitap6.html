@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài lab 06 - Quy trình tính đơn hàng bằng callback</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { font-size: 1.4rem; }
+        pre { background: #f5f5f5; padding: 15px; border: 1px solid #ddd; }
+        button { margin-right: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Bài lab 06 - Quy trình tính đơn hàng bằng callback</h1>
+    <p>Nhấn vào một trong hai tình huống để thực hiện tính toán đơn hàng.</p>
+    <button id="case1">Tình huống 1</button>
+    <button id="case2">Tình huống 2</button>
+    <pre id="output"></pre>
+
+    <script>
+        function calculateSubtotal(order, callback) {
+            const subtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            callback(subtotal);
+        }
+
+        function applyDiscount(subtotal, discountInfo, callback) {
+            let discountAmount = 0;
+            if (discountInfo.type === 'percent') {
+                discountAmount = subtotal * discountInfo.value / 100;
+            } else if (discountInfo.type === 'fixed') {
+                discountAmount = discountInfo.value;
+            }
+            const afterDiscount = Math.max(subtotal - discountAmount, 0);
+            callback({ afterDiscount, discountAmount });
+        }
+
+        function applyShipping(amountAfterDiscount, shippingInfo, callback) {
+            const shippingFee = shippingInfo.type === 'flat' ? shippingInfo.value : Math.max(10, amountAfterDiscount * shippingInfo.value / 100);
+            const totalWithShipping = amountAfterDiscount + shippingFee;
+            callback({ totalWithShipping, shippingFee });
+        }
+
+        function applyPromotion(amountAfterDiscount, promoCode, callback) {
+            let promoAmount = 0;
+            if (promoCode === 'PROMO10') {
+                promoAmount = 10000;
+            } else if (promoCode === 'SAVE20') {
+                promoAmount = amountAfterDiscount * 0.2;
+            }
+            const afterPromotion = Math.max(amountAfterDiscount - promoAmount, 0);
+            callback({ afterPromotion, promoAmount, promoCode });
+        }
+
+        function applyTax(amountWithShipping, taxRate, callback) {
+            const taxAmount = amountWithShipping * taxRate / 100;
+            const finalTotal = amountWithShipping + taxAmount;
+            callback({ finalTotal, taxAmount });
+        }
+
+        function processOrder(order, callback) {
+            const lines = [];
+            lines.push('Thông tin đơn hàng: ' + order.name);
+            lines.push('Sản phẩm:');
+            order.items.forEach(item => {
+                lines.push(` - ${item.name}: ${item.quantity} x ${item.price} = ${item.quantity * item.price}`);
+            });
+
+            calculateSubtotal(order, subtotal => {
+                lines.push('Tổng tiền gốc: ' + subtotal);
+                applyDiscount(subtotal, order.discount, discountResult => {
+                    lines.push('Giảm giá: ' + discountResult.discountAmount);
+                    lines.push('Tiền sau giảm giá: ' + discountResult.afterDiscount);
+                    applyPromotion(discountResult.afterDiscount, order.promoCode, promoResult => {
+                        lines.push('Ưu đãi mã khuyến mãi (' + promoResult.promoCode + '): ' + promoResult.promoAmount);
+                        lines.push('Tiền sau ưu đãi: ' + promoResult.afterPromotion);
+                        applyShipping(promoResult.afterPromotion, order.shipping, shippingResult => {
+                            lines.push('Phí vận chuyển: ' + shippingResult.shippingFee);
+                            lines.push('Tiền sau phí vận chuyển: ' + shippingResult.totalWithShipping);
+                            applyTax(shippingResult.totalWithShipping, order.taxRate, taxResult => {
+                                lines.push('Thuế: ' + taxResult.taxAmount.toFixed(2));
+                                lines.push('Tổng thanh toán cuối cùng: ' + taxResult.finalTotal.toFixed(2));
+                                callback(lines.join('\n'));
+                            });
+                        });
+                    });
+                });
+            });
+        }
+
+        function showResult(text) {
+            document.getElementById('output').textContent = text;
+        }
+
+        const order1 = {
+            name: 'Đơn hàng A',
+            items: [
+                { name: 'Sách', quantity: 2, price: 120000 },
+                { name: 'Bút', quantity: 5, price: 8000 }
+            ],
+            discount: { type: 'percent', value: 10 },
+            promoCode: 'PROMO10',
+            shipping: { type: 'flat', value: 15000 },
+            taxRate: 5
+        };
+
+        const order2 = {
+            name: 'Đơn hàng B',
+            items: [
+                { name: 'Chuột', quantity: 1, price: 220000 },
+                { name: 'Bàn phím', quantity: 1, price: 300000 },
+                { name: 'Tai nghe', quantity: 1, price: 180000 }
+            ],
+            discount: { type: 'fixed', value: 50000 },
+            promoCode: 'SAVE20',
+            shipping: { type: 'percent', value: 5 },
+            taxRate: 8
+        };
+
+        document.getElementById('case1').addEventListener('click', function () {
+            processOrder(order1, showResult);
+        });
+
+        document.getElementById('case2').addEventListener('click', function () {
+            processOrder(order2, showResult);
+        });
+
+        processOrder(order1, showResult);
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Đếm Tương Tác</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .counter-display {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 30px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #f5f5f5;
+        }
+        
+        .counter-display.positive {
+            color: #27ae60;
+        }
+        
+        .counter-display.negative {
+            color: #e74c3c;
+        }
+        
+        .counter-display.zero {
+            color: #333;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .button-group.full {
+            grid-template-columns: 1fr;
+        }
+        
+        button {
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-increase {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-increase:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-decrease {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-decrease:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-increase-fast {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-increase-fast:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-reset {
+            background: #95a5a6;
+            color: white;
+            grid-column: 1 / -1;
+        }
+        
+        .btn-reset:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 Bộ Đếm Tương Tác</h1>
+        
+        <div class="counter-display zero" id="counterDisplay">0</div>
+        
+        <div class="button-group">
+            <button class="btn-decrease" id="btnDecrease">➖ Giảm</button>
+            <button class="btn-increase" id="btnIncrease">➕ Tăng</button>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-increase-fast" id="btnIncreaseFast">⚡ Tăng +5</button>
+        </div>
+        
+        <div class="button-group full">
+            <button class="btn-reset" id="btnReset">🔄 Đặt lại</button>
+        </div>
+        
+        <div class="info">Nhấn các nút để thay đổi giá trị bộ đếm</div>
+    </div>
+    
+    <script>
+        // Biến lưu trạng thái
+        let counter = 0;
+        
+        // Lấy các phần tử DOM
+        const counterDisplay = document.getElementById('counterDisplay');
+        const btnIncrease = document.getElementById('btnIncrease');
+        const btnDecrease = document.getElementById('btnDecrease');
+        const btnIncreaseFast = document.getElementById('btnIncreaseFast');
+        const btnReset = document.getElementById('btnReset');
+        
+        // Hàm render để cập nhật giao diện
+        function render() {
+            counterDisplay.textContent = counter;
+            
+            // Cập nhật màu sắc theo giá trị
+            counterDisplay.classList.remove('positive', 'negative', 'zero');
+            
+            if (counter > 0) {
+                counterDisplay.classList.add('positive');
+            } else if (counter < 0) {
+                counterDisplay.classList.add('negative');
+            } else {
+                counterDisplay.classList.add('zero');
+            }
+        }
+        
+        // Gắn sự kiện cho nút tăng
+        btnIncrease.addEventListener('click', function() {
+            counter++;
+            render();
+        });
+        
+        // Gắn sự kiện cho nút giảm
+        btnDecrease.addEventListener('click', function() {
+            counter--;
+            render();
+        });
+        
+        // Gắn sự kiện cho nút tăng nhanh (+5)
+        btnIncreaseFast.addEventListener('click', function() {
+            counter += 5;
+            render();
+        });
+        
+        // Gắn sự kiện cho nút đặt lại
+        btnReset.addEventListener('click', function() {
+            counter = 0;
+            render();
+        });
+        
+        // Render lần đầu tiên
+        render();
+    </script>
+</body>
+</html>

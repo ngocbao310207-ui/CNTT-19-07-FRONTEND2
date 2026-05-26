@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+        .badge-discount {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            font-size: 0.9rem;
+        }
+        .product-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        .price-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .sale-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-5">
+        <div class="container">
+            <!-- Header -->
+            <div class="mb-5 text-center">
+                <h1 class="display-4 fw-bold mb-3">Danh sách sản phẩm</h1>
+                <p class="lead text-muted">Khám phá bộ sưu tập sản phẩm chất lượng cao</p>
+            </div>
+
+            <!-- Filter Categories (Expanded requirement) -->
+            <div class="mb-4 d-flex justify-content-center gap-2 flex-wrap">
+                <button class="btn btn-outline-primary active" data-filter="all">Tất cả</button>
+                <button class="btn btn-outline-primary" data-filter="electronics">Điện tử</button>
+                <button class="btn btn-outline-primary" data-filter="fashion">Thời trang</button>
+                <button class="btn btn-outline-primary" data-filter="home">Nhà cửa</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row g-4">
+                <!-- Product 1 -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="card shadow-sm rounded-3 overflow-hidden" data-category="electronics">
+                        <div class="product-image-wrapper">
+                            <img src="https://via.placeholder.com/300x250/007bff/ffffff?text=Laptop+Pro" class="card-img-top" alt="Laptop Pro">
+                            <span class="badge badge-discount">-20%</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Laptop Pro 15"</h5>
+                            <p class="card-text text-muted small">Hiệu năng cao, pin lâu</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price">24.990.000₫</span>
+                                <span class="sale-price">19.990.000₫</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                    <i class="bi bi-eye"></i> Xem nhanh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="card shadow-sm rounded-3 overflow-hidden" data-category="electronics">
+                        <div class="product-image-wrapper">
+                            <img src="https://via.placeholder.com/300x250/6c757d/ffffff?text=Smartphone+X" class="card-img-top" alt="Smartphone X">
+                            <span class="badge badge-discount">-15%</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Smartphone X 5G</h5>
+                            <p class="card-text text-muted small">Camera 108MP, sạc nhanh</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price">12.990.000₫</span>
+                                <span class="sale-price">11.040.000₫</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                    <i class="bi bi-eye"></i> Xem nhanh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="card shadow-sm rounded-3 overflow-hidden" data-category="fashion">
+                        <div class="product-image-wrapper">
+                            <img src="https://via.placeholder.com/300x250/28a745/ffffff?text=Áo+Thun+Premium" class="card-img-top" alt="Áo Thun Premium">
+                            <span class="badge badge-discount">-30%</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Áo Thun Premium</h5>
+                            <p class="card-text text-muted small">Chất liệu cotton 100%</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price">399.000₫</span>
+                                <span class="sale-price">279.300₫</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                    <i class="bi bi-eye"></i> Xem nhanh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="card shadow-sm rounded-3 overflow-hidden" data-category="home">
+                        <div class="product-image-wrapper">
+                            <img src="https://via.placeholder.com/300x250/ffc107/ffffff?text=Đèn+LED+Smart" class="card-img-top" alt="Đèn LED Smart">
+                            <span class="badge badge-discount">-25%</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Đèn LED Smart RGB</h5>
+                            <p class="card-text text-muted small">Điều khiển bằng app, tiết kiệm điện</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price">599.000₫</span>
+                                <span class="sale-price">449.250₫</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                    <i class="bi bi-eye"></i> Xem nhanh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="card shadow-sm rounded-3 overflow-hidden" data-category="fashion">
+                        <div class="product-image-wrapper">
+                            <img src="https://via.placeholder.com/300x250/17a2b8/ffffff?text=Giày+Thể+Thao" class="card-img-top" alt="Giày Thể Thao">
+                            <span class="badge badge-discount">-40%</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Giày Thể Thao Comfort</h5>
+                            <p class="card-text text-muted small">Thiết kế hiện đại, thoải mái</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price">899.000₫</span>
+                                <span class="sale-price">539.400₫</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                    <i class="bi bi-eye"></i> Xem nhanh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="card shadow-sm rounded-3 overflow-hidden" data-category="home">
+                        <div class="product-image-wrapper">
+                            <img src="https://via.placeholder.com/300x250/e83e8c/ffffff?text=Gối+Ergonomic" class="card-img-top" alt="Gối Ergonomic">
+                            <span class="badge badge-discount">-35%</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Gối Ergonomic Memory Foam</h5>
+                            <p class="card-text text-muted small">Hỗ trợ cột sống, giảm đau</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price">799.000₫</span>
+                                <span class="sale-price">519.350₫</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                    <i class="bi bi-eye"></i> Xem nhanh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div class="modal fade" id="quickViewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xem nhanh sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="https://via.placeholder.com/400x400/007bff/ffffff?text=Product+Image" class="img-fluid rounded" alt="Product">
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Tên sản phẩm</h4>
+                            <p class="text-muted">Mô tả chi tiết sản phẩm sẽ được hiển thị ở đây.</p>
+                            <div class="price-section mb-3">
+                                <span class="original-price fs-5">999.999₫</span>
+                                <span class="sale-price fs-4">799.999₫</span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số lượng:</label>
+                                <div class="input-group" style="width: 120px;">
+                                    <button class="btn btn-outline-secondary" type="button">-</button>
+                                    <input type="text" class="form-control text-center" value="1">
+                                    <button class="btn btn-outline-secondary" type="button">+</button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100">
+                                <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Category Filter
+            $('[data-filter]').on('click', function() {
+                const filter = $(this).data('filter');
+                
+                $('[data-filter]').removeClass('active');
+                $(this).addClass('active');
+                
+                if (filter === 'all') {
+                    $('.card').fadeIn();
+                } else {
+                    $('.card').fadeOut();
+                    $('[data-category="' + filter + '"]').fadeIn();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

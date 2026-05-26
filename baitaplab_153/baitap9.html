@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý công việc cá nhân</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        #taskInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        #taskInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        #addBtn {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        #addBtn:hover {
+            background: #5568d3;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        #taskList {
+            list-style: none;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .task-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+        
+        .task-item.completed {
+            opacity: 0.6;
+            background: #f0f0f0;
+        }
+        
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 15px;
+            accent-color: #667eea;
+        }
+        
+        .task-text {
+            flex: 1;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .delete-btn {
+            padding: 6px 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+            font-size: 16px;
+        }
+        
+        .task-stats {
+            display: flex;
+            justify-content: space-around;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Quản lý công việc</h1>
+        
+        <div class="input-group">
+            <input 
+                type="text" 
+                id="taskInput" 
+                placeholder="Nhập nội dung công việc..."
+                autocomplete="off"
+            >
+            <button id="addBtn">Thêm</button>
+        </div>
+        
+        <div class="filter-group">
+            <button class="filter-btn active" data-filter="all">Tất cả</button>
+            <button class="filter-btn" data-filter="active">Chưa hoàn thành</button>
+            <button class="filter-btn" data-filter="completed">Đã hoàn thành</button>
+        </div>
+        
+        <ul id="taskList"></ul>
+        
+        <div class="task-stats">
+            <div class="stat-item">
+                <div>Tổng công việc</div>
+                <div class="stat-number" id="totalTasks">0</div>
+            </div>
+            <div class="stat-item">
+                <div>Đã hoàn thành</div>
+                <div class="stat-number" id="completedTasks">0</div>
+            </div>
+            <div class="stat-item">
+                <div>Chưa hoàn thành</div>
+                <div class="stat-number" id="activeTasks">0</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Dữ liệu công việc
+        let tasks = [];
+        let currentFilter = 'all';
+        
+        // Lấy dữ liệu từ localStorage
+        function loadTasks() {
+            const saved = localStorage.getItem('tasks');
+            if (saved) {
+                tasks = JSON.parse(saved);
+            }
+        }
+        
+        // Lưu dữ liệu vào localStorage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+        
+        // Thêm công việc mới
+        function addTask(text) {
+            if (text.trim() === '') {
+                alert('Vui lòng nhập nội dung công việc');
+                return;
+            }
+            
+            const task = {
+                id: Date.now(),
+                text: text.trim(),
+                completed: false
+            };
+            
+            tasks.push(task);
+            saveTasks();
+            render();
+            
+            document.getElementById('taskInput').value = '';
+            document.getElementById('taskInput').focus();
+        }
+        
+        // Xóa công việc
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasks();
+            render();
+        }
+        
+        // Đánh dấu hoàn thành
+        function toggleComplete(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+                render();
+            }
+        }
+        
+        // Lọc công việc
+        function getFilteredTasks() {
+            switch(currentFilter) {
+                case 'completed':
+                    return tasks.filter(t => t.completed);
+                case 'active':
+                    return tasks.filter(t => !t.completed);
+                default:
+                    return tasks;
+            }
+        }
+        
+        // Cập nhật thống kê
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const active = total - completed;
+            
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('activeTasks').textContent = active;
+        }
+        
+        // Render danh sách công việc
+        function render() {
+            const taskList = document.getElementById('taskList');
+            const filteredTasks = getFilteredTasks();
+            
+            taskList.innerHTML = '';
+            
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-message">Không có công việc nào</div>';
+                updateStats();
+                return;
+            }
+            
+            filteredTasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'task-item' + (task.completed ? ' completed' : '');
+                
+                li.innerHTML = `
+                    <input 
+                        type="checkbox" 
+                        class="task-checkbox" 
+                        ${task.completed ? 'checked' : ''}
+                        onchange="toggleComplete(${task.id})"
+                    >
+                    <span class="task-text">${escapeHtml(task.text)}</span>
+                    <div class="task-actions">
+                        <button class="delete-btn" onclick="deleteTask(${task.id})">Xóa</button>
+                    </div>
+                `;
+                
+                taskList.appendChild(li);
+            });
+            
+            updateStats();
+        }
+        
+        // Escape HTML để tránh XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Event listeners
+        document.getElementById('addBtn').addEventListener('click', () => {
+            const input = document.getElementById('taskInput');
+            addTask(input.value);
+        });
+        
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask(e.target.value);
+            }
+        });
+        
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                render();
+            });
+        });
+        
+        // Initialize
+        loadTasks();
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 14 - Hiệu Ứng Giao Diện với jQuery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .content-block {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .content-block h2 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        
+        .content-block p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .notification {
+            background: #e8f4f8;
+            border: 2px solid #17a2b8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            color: #0c5460;
+            display: none;
+        }
+        
+        .notification.highlight {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .button-group.full {
+            grid-template-columns: 1fr;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #764ba2;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #653a89;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+        
+        .controls-section {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .controls-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Hiệu Ứng jQuery</h1>
+        
+        <!-- Thông báo -->
+        <div class="notification" id="notification">
+            <strong>🎉 Thông báo:</strong> Nhấn các nút bên dưới để xem các hiệu ứng khác nhau!
+        </div>
+        
+        <!-- Khối nội dung 1 -->
+        <div class="content-block" id="block1">
+            <h2>📝 Khối Nội Dung 1</h2>
+            <p>Đây là khối nội dung thứ nhất. Sử dụng hiệu ứng fadeIn/fadeOut để làm mờ dần và hiển thị nội dung một cách mượt mà. Hiệu ứng này rất hữu ích cho các thông báo hoặc cảnh báo.</p>
+        </div>
+        
+        <!-- Khối nội dung 2 -->
+        <div class="content-block" id="block2">
+            <h2>🎨 Khối Nội Dung 2</h2>
+            <p>Đây là khối nội dung thứ hai. Sử dụng hiệu ứng slideDown/slideUp để tạo hiệu ứng trượt mượt mà. Hiệu ứng này phù hợp cho menu thả xuống hoặc bảng điều khiển.</p>
+        </div>
+        
+        <!-- Khối nội dung 3 -->
+        <div class="content-block" id="block3">
+            <h2>🚀 Khối Nội Dung 3</h2>
+            <p>Đây là khối nội dung thứ ba. Kết hợp nhiều hiệu ứng liên tiếp (chaining) để tạo các hoạt động phức tạp hơn. Bạn có thể tạo các chuỗi hiệu ứng đẹp mắt.</p>
+        </div>
+        
+        <!-- Khối điều khiển -->
+        <div class="controls-section">
+            <h3>🎮 Điều Khiển Hiệu Ứng</h3>
+            
+            <h4 style="color: #667eea; margin: 15px 0 10px 0; font-size: 14px;">Hiệu Ứng Mờ Dần (FadeIn/FadeOut)</h4>
+            <div class="button-group">
+                <button class="btn-primary" id="fadeInBtn">Hiện (FadeIn)</button>
+                <button class="btn-danger" id="fadeOutBtn">Ẩn (FadeOut)</button>
+            </div>
+            
+            <h4 style="color: #667eea; margin: 15px 0 10px 0; font-size: 14px;">Hiệu Ứng Trượt (Slide)</h4>
+            <div class="button-group">
+                <button class="btn-secondary" id="slideDownBtn">Trượt Xuống</button>
+                <button class="btn-warning" id="slideUpBtn">Trượt Lên</button>
+            </div>
+            
+            <h4 style="color: #667eea; margin: 15px 0 10px 0; font-size: 14px;">Hiệu Ứng Toggle & Chaining</h4>
+            <div class="button-group">
+                <button class="btn-success" id="toggleBtn">Toggle Trượt</button>
+                <button class="btn-primary" id="chainingBtn">Hiệu Ứng Kết Hợp</button>
+            </div>
+            
+            <h4 style="color: #667eea; margin: 15px 0 10px 0; font-size: 14px;">Hiệu Ứng Highlight</h4>
+            <div class="button-group full">
+                <button class="btn-warning" id="highlightBtn">Highlight Thông Báo</button>
+            </div>
+            
+            <h4 style="color: #667eea; margin: 15px 0 10px 0; font-size: 14px;">Điều Khiển Khác</h4>
+            <div class="button-group full">
+                <button class="btn-danger" id="resetBtn">Đặt Lại Tất Cả</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Hiệu ứng FadeIn cho khối 1
+            $('#fadeInBtn').click(function() {
+                $('#block1').fadeIn(800);
+            });
+            
+            // Hiệu ứng FadeOut cho khối 1
+            $('#fadeOutBtn').click(function() {
+                $('#block1').fadeOut(800);
+            });
+            
+            // Hiệu ứng SlideDown cho khối 2
+            $('#slideDownBtn').click(function() {
+                $('#block2').slideDown(600);
+            });
+            
+            // Hiệu ứng SlideUp cho khối 2
+            $('#slideUpBtn').click(function() {
+                $('#block2').slideUp(600);
+            });
+            
+            // Hiệu ứng SlideToggle cho khối 3
+            $('#toggleBtn').click(function() {
+                $('#block3').slideToggle(600);
+            });
+            
+            // Hiệu ứng Chaining - kết hợp nhiều hiệu ứng liên tiếp
+            $('#chainingBtn').click(function() {
+                $('#notification')
+                    .fadeIn(400)
+                    .delay(500)
+                    .fadeOut(400)
+                    .delay(300)
+                    .fadeIn(400);
+            });
+            
+            // Hiệu ứng Highlight - thêm/loại bỏ class CSS
+            $('#highlightBtn').click(function() {
+                $('#notification').toggleClass('highlight', 1000);
+            });
+            
+            // Đặt lại tất cả
+            $('#resetBtn').click(function() {
+                $('#block1, #block2, #block3').hide();
+                $('#notification').removeClass('highlight').show();
+            });
+            
+            // Hiển thị thông báo khi tải trang
+            $('#notification').fadeIn(1000);
+        });
+    </script>
+</body>
+</html>
