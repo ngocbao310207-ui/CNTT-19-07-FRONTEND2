@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hiệu Ứng Giao Diện Với jQuery</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 600px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .button-group {
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      .box {
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 10px;
+        border-left: 6px solid #007bff;
+        margin-top: 20px;
+      }
+
+      .highlight {
+        background: yellow;
+        transition: 0.5s;
+      }
+
+      img {
+        width: 250px;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>HIỆU ỨNG jQuery</h1>
+
+      <!-- Các nút điều khiển -->
+      <div class="button-group">
+        <button id="fadeOutBtn">Fade Out</button>
+
+        <button id="fadeInBtn">Fade In</button>
+
+        <button id="slideUpBtn">Slide Up</button>
+
+        <button id="slideDownBtn">Slide Down</button>
+
+        <button id="toggleBtn">Slide Toggle</button>
+
+        <button id="effectBtn">Hiệu ứng liên tiếp</button>
+      </div>
+
+      <!-- Khối nội dung -->
+      <div class="box" id="contentBox">
+        <h2>jQuery Animation</h2>
+
+        <p>
+          Đây là khối nội dung sử dụng các hiệu ứng fade và slide của jQuery.
+        </p>
+
+        <img src="https://picsum.photos/300/200" alt="Ảnh minh họa" />
+      </div>
+    </div>
+
+    <script>
+      // Fade Out
+      $("#fadeOutBtn").click(function () {
+        $("#contentBox").fadeOut(1000);
+      });
+
+      // Fade In
+      $("#fadeInBtn").click(function () {
+        $("#contentBox").fadeIn(1000);
+      });
+
+      // Slide Up
+      $("#slideUpBtn").click(function () {
+        $("#contentBox").slideUp(1000);
+      });
+
+      // Slide Down
+      $("#slideDownBtn").click(function () {
+        $("#contentBox").slideDown(1000);
+      });
+
+      // Slide Toggle
+      $("#toggleBtn").click(function () {
+        $("#contentBox").slideToggle(1000);
+      });
+
+      // Hiệu ứng liên tiếp + highlight
+      $("#effectBtn").click(function () {
+        $("#contentBox")
+          .slideUp(800)
+
+          .slideDown(800)
+
+          .fadeOut(500)
+
+          .fadeIn(500)
+
+          .addClass("highlight");
+
+        // Xóa highlight sau 2 giây
+        setTimeout(function () {
+          $("#contentBox").removeClass("highlight");
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>

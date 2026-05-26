@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thao Tác DOM</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 500px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        color: #007bff;
+      }
+
+      p {
+        font-size: 18px;
+        margin: 15px 0;
+      }
+
+      img {
+        width: 250px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        transition: 0.3s;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 10px 5px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      .dark-mode {
+        background: #222;
+        color: white;
+      }
+
+      .dark-mode h1 {
+        color: yellow;
+      }
+
+      .highlight {
+        color: crimson;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="container">
+      <h1 id="title">Chào mừng đến với JavaScript DOM</h1>
+
+      <p id="description">Đây là nội dung mô tả ban đầu.</p>
+
+      <img id="image" src="https://picsum.photos/300/200" alt="Hình ảnh" />
+
+      <br />
+
+      <button onclick="thayDoiNoiDung()">Thay đổi nội dung</button>
+
+      <button onclick="doiGiaoDien()">Đổi giao diện</button>
+
+      <button onclick="khoiPhuc()">Khôi phục</button>
+    </div>
+
+    <script>
+      // Lấy phần tử DOM
+      const title = document.getElementById("title");
+
+      const description = document.querySelector("#description");
+
+      const image = document.getElementById("image");
+
+      const container = document.getElementById("container");
+
+      // Hàm thay đổi nội dung
+      function thayDoiNoiDung() {
+        // Thay đổi tiêu đề
+        title.innerText = "DOM đã thay đổi nội dung thành công!";
+
+        // Thay đổi đoạn mô tả
+        description.textContent =
+          "Bạn vừa sử dụng JavaScript để cập nhật giao diện động.";
+
+        // Đổi class
+        description.classList.add("highlight");
+
+        // Đổi ảnh
+        image.src = "https://picsum.photos/300/201";
+      }
+
+      // Đổi giao diện
+      function doiGiaoDien() {
+        container.classList.toggle("dark-mode");
+      }
+
+      // Khôi phục trạng thái ban đầu
+      function khoiPhuc() {
+        title.innerText = "Chào mừng đến với JavaScript DOM";
+
+        description.textContent = "Đây là nội dung mô tả ban đầu.";
+
+        description.classList.remove("highlight");
+
+        image.src = "https://picsum.photos/300/200";
+
+        container.classList.remove("dark-mode");
+      }
+    </script>
+  </body>
+</html>

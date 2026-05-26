@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ẩn Hiện Nội Dung Với jQuery</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 500px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .content {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+      }
+
+      img {
+        width: 250px;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      #status {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #dc3545;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>ẨN / HIỆN NỘI DUNG VỚI jQuery</h1>
+
+      <!-- Các nút điều khiển -->
+      <button id="hideBtn">Ẩn</button>
+
+      <button id="showBtn">Hiện</button>
+
+      <button id="toggleBtn">Toggle</button>
+
+      <button id="checkBtn">Kiểm tra trạng thái</button>
+
+      <!-- Nội dung -->
+      <div class="content" id="box">
+        <h2>JavaScript & jQuery</h2>
+
+        <p>Đây là khối nội dung có thể ẩn hoặc hiện bằng jQuery.</p>
+
+        <img src="https://picsum.photos/300/200" alt="Ảnh minh họa" />
+      </div>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      // Ẩn nội dung
+      $("#hideBtn").click(function () {
+        $("#box").hide(500);
+
+        $("#status").text("Nội dung đang bị ẩn");
+      });
+
+      // Hiện nội dung
+      $("#showBtn").click(function () {
+        $("#box").show(500);
+
+        $("#status").text("Nội dung đang hiển thị");
+      });
+
+      // Toggle nội dung
+      $("#toggleBtn").click(function () {
+        $("#box").toggle(500);
+
+        // Đổi text nút theo trạng thái
+        if ($("#box").is(":visible")) {
+          $("#status").text("Nội dung đang hiển thị");
+        } else {
+          $("#status").text("Nội dung đang bị ẩn");
+        }
+      });
+
+      // Kiểm tra trạng thái
+      $("#checkBtn").click(function () {
+        if ($("#box").is(":visible")) {
+          alert("Nội dung đang HIỂN THỊ");
+        } else {
+          alert("Nội dung đang BỊ ẨN");
+        }
+      });
+    </script>
+  </body>
+</html>

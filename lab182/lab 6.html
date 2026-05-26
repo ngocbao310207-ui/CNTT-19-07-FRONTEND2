@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính Toán Đơn Hàng Bằng Callback</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 700px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 10px 5px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      .result {
+        margin-top: 20px;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        line-height: 1.8;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>QUY TRÌNH TÍNH TOÁN ĐƠN HÀNG</h2>
+
+      <button onclick="xuLyDonHang(donHang1)">Kiểm thử đơn hàng 1</button>
+
+      <button onclick="xuLyDonHang(donHang2)">Kiểm thử đơn hàng 2</button>
+
+      <div id="result" class="result"></div>
+    </div>
+
+    <script>
+      // Dữ liệu đơn hàng mẫu
+      const donHang1 = {
+        customer: "Nguyễn Văn A",
+        products: [
+          { name: "Laptop", price: 15000000, quantity: 1 },
+          { name: "Chuột", price: 500000, quantity: 2 },
+        ],
+      };
+
+      const donHang2 = {
+        customer: "Trần Thị B",
+        products: [
+          { name: "Điện thoại", price: 8000000, quantity: 1 },
+          { name: "Tai nghe", price: 1200000, quantity: 1 },
+        ],
+      };
+
+      // Format tiền
+      function formatMoney(number) {
+        return number.toLocaleString("vi-VN") + " VNĐ";
+      }
+
+      // Bước 1: Tính tiền gốc
+      function tinhTienGoc(order, callback) {
+        let subtotal = 0;
+
+        order.products.forEach((product) => {
+          subtotal += product.price * product.quantity;
+        });
+
+        callback(subtotal);
+      }
+
+      // Bước 2: Tính giảm giá
+      function tinhGiamGia(subtotal, callback) {
+        let discount = 0;
+
+        if (subtotal >= 10000000) {
+          discount = subtotal * 0.1;
+        } else if (subtotal >= 5000000) {
+          discount = subtotal * 0.05;
+        }
+
+        callback(discount);
+      }
+
+      // Bước 3: Tính phí vận chuyển
+      function tinhPhiVanChuyen(subtotal, callback) {
+        let shipping = 30000;
+
+        if (subtotal >= 15000000) {
+          shipping = 0;
+        }
+
+        callback(shipping);
+      }
+
+      // Bước 4: Tính thuế VAT
+      function tinhThue(subtotal, callback) {
+        let vat = subtotal * 0.08;
+
+        callback(vat);
+      }
+
+      // Hàm xử lý toàn bộ đơn hàng
+      function xuLyDonHang(order) {
+        let result = document.getElementById("result");
+
+        // Hiển thị danh sách sản phẩm
+        let productHTML = "";
+
+        order.products.forEach((product) => {
+          let total = product.price * product.quantity;
+
+          productHTML += `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${formatMoney(product.price)}</td>
+                        <td>${product.quantity}</td>
+                        <td>${formatMoney(total)}</td>
+                    </tr>
+                `;
+        });
+
+        // Callback chain
+        tinhTienGoc(order, function (subtotal) {
+          tinhGiamGia(subtotal, function (discount) {
+            tinhPhiVanChuyen(subtotal, function (shipping) {
+              tinhThue(subtotal, function (vat) {
+                let finalTotal = subtotal - discount + shipping + vat;
+
+                result.innerHTML = `
+
+                                <h3>Thông tin đơn hàng</h3>
+
+                                <strong>Khách hàng:</strong>
+                                ${order.customer}
+
+                                <table>
+
+                                    <thead>
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th>Giá</th>
+                                            <th>Số lượng</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        ${productHTML}
+                                    </tbody>
+
+                                </table>
+
+                                <hr>
+
+                                <strong>Tiền gốc:</strong>
+                                ${formatMoney(subtotal)} <br>
+
+                                <strong>Giảm giá:</strong>
+                                ${formatMoney(discount)} <br>
+
+                                <strong>Phí vận chuyển:</strong>
+                                ${formatMoney(shipping)} <br>
+
+                                <strong>Thuế VAT (8%):</strong>
+                                ${formatMoney(vat)} <br>
+
+                                <strong>Tổng thanh toán:</strong>
+                                ${formatMoney(finalTotal)}
+
+                            `;
+              });
+            });
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

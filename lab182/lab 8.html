@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bộ Đếm Tương Tác</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 400px;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      #counter {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 20px 0;
+        transition: 0.3s;
+      }
+
+      .positive {
+        color: green;
+      }
+
+      .negative {
+        color: red;
+      }
+
+      .zero {
+        color: #333;
+      }
+
+      button {
+        padding: 12px 18px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        color: white;
+      }
+
+      #increase {
+        background: #28a745;
+      }
+
+      #decrease {
+        background: #dc3545;
+      }
+
+      #reset {
+        background: #6c757d;
+      }
+
+      #increase5 {
+        background: #007bff;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>BỘ ĐẾM TƯƠNG TÁC</h1>
+
+      <div id="counter" class="zero">0</div>
+
+      <button id="increase">+1</button>
+
+      <button id="decrease">-1</button>
+
+      <button id="increase5">+5</button>
+
+      <button id="reset">Reset</button>
+    </div>
+
+    <script>
+      // Biến trạng thái
+      let count = 0;
+
+      // Lấy phần tử DOM
+      const counter = document.getElementById("counter");
+
+      const increaseBtn = document.getElementById("increase");
+
+      const decreaseBtn = document.getElementById("decrease");
+
+      const resetBtn = document.getElementById("reset");
+
+      const increase5Btn = document.getElementById("increase5");
+
+      // Hàm cập nhật giao diện
+      function render() {
+        counter.innerText = count;
+
+        // Đổi màu theo trạng thái
+        if (count > 0) {
+          counter.className = "positive";
+        } else if (count < 0) {
+          counter.className = "negative";
+        } else {
+          counter.className = "zero";
+        }
+      }
+
+      // Sự kiện tăng
+      increaseBtn.addEventListener("click", function () {
+        count++;
+
+        render();
+      });
+
+      // Sự kiện giảm
+      decreaseBtn.addEventListener("click", function () {
+        count--;
+
+        render();
+      });
+
+      // Tăng nhanh +5
+      increase5Btn.addEventListener("click", function () {
+        count += 5;
+
+        render();
+      });
+
+      // Reset
+      resetBtn.addEventListener("click", function () {
+        count = 0;
+
+        render();
+      });
+
+      // Hiển thị ban đầu
+      render();
+    </script>
+  </body>
+</html>

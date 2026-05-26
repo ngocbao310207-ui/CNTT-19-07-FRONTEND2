@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính Khuyến Mãi Đơn Hàng</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 400px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: #007bff;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+        line-height: 1.8;
+      }
+
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>TÍNH KHUYẾN MÃI</h2>
+
+      <input
+        type="number"
+        id="orderValue"
+        placeholder="Nhập giá trị đơn hàng"
+      />
+
+      <select id="memberType">
+        <option value="normal">Thành viên thường</option>
+        <option value="silver">Thành viên bạc</option>
+        <option value="gold">Thành viên vàng</option>
+      </select>
+
+      <button onclick="tinhKhuyenMai()">Tính toán</button>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      function formatMoney(number) {
+        return number.toLocaleString("vi-VN") + " VNĐ";
+      }
+
+      function tinhKhuyenMai() {
+        let orderValue = Number(document.getElementById("orderValue").value);
+        let memberType = document.getElementById("memberType").value;
+
+        let result = document.getElementById("result");
+
+        // Kiểm tra dữ liệu
+        if (orderValue <= 0 || isNaN(orderValue)) {
+          result.innerHTML = "Vui lòng nhập giá trị đơn hàng hợp lệ!";
+          result.className = "error";
+          return;
+        }
+
+        let discountPercent = 0;
+
+        // Khuyến mãi theo giá trị đơn hàng
+        if (orderValue >= 1000000) {
+          discountPercent = 15;
+        } else if (orderValue >= 500000) {
+          discountPercent = 10;
+        } else if (orderValue >= 200000) {
+          discountPercent = 5;
+        } else {
+          discountPercent = 0;
+        }
+
+        // Thêm ưu đãi theo hạng thành viên
+        if (memberType === "silver") {
+          discountPercent += 3;
+        } else if (memberType === "gold") {
+          discountPercent += 5;
+        }
+
+        // Tính tiền giảm
+        let discountMoney = (orderValue * discountPercent) / 100;
+
+        // Miễn phí vận chuyển nếu trên 2 triệu
+        let shippingFee = 30000;
+
+        if (orderValue >= 2000000) {
+          shippingFee = 0;
+        }
+
+        // Tổng thanh toán
+        let finalTotal = orderValue - discountMoney + shippingFee;
+
+        // Hiển thị kết quả
+        result.className = "";
+
+        result.innerHTML = `
+                <strong>Giá trị đơn hàng:</strong> ${formatMoney(
+                  orderValue
+                )} <br>
+
+                <strong>Tỷ lệ giảm:</strong> ${discountPercent}% <br>
+
+                <strong>Số tiền giảm:</strong> ${formatMoney(
+                  discountMoney
+                )} <br>
+
+                <strong>Phí vận chuyển:</strong> ${formatMoney(
+                  shippingFee
+                )} <br>
+
+                <strong>Tổng thanh toán:</strong> ${formatMoney(finalTotal)}
+            `;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Sản Phẩm</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input,
+      select,
+      button {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        border: none;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+
+      #totalStock {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>QUẢN LÝ DANH SÁCH SẢN PHẨM</h2>
+
+      <!-- Tìm kiếm -->
+      <input type="text" id="searchName" placeholder="Nhập tên sản phẩm" />
+
+      <button onclick="timSanPham()">Tìm kiếm</button>
+
+      <!-- Lọc giá -->
+      <input type="number" id="maxPrice" placeholder="Giá tối đa" />
+
+      <button onclick="locTheoGia()">Lọc theo giá</button>
+
+      <!-- Sắp xếp -->
+      <select id="sortOption" onchange="sapXep()">
+        <option value="">-- Sắp xếp --</option>
+        <option value="asc">Giá tăng dần</option>
+        <option value="desc">Giá giảm dần</option>
+      </select>
+
+      <button onclick="hienThiTatCa()">Hiển thị tất cả</button>
+
+      <!-- Bảng sản phẩm -->
+      <table>
+        <thead>
+          <tr>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+          </tr>
+        </thead>
+
+        <tbody id="productList"></tbody>
+      </table>
+
+      <div id="totalStock"></div>
+    </div>
+
+    <script>
+      // Mảng sản phẩm
+      let products = [
+        { name: "Laptop", price: 15000000, quantity: 5 },
+        { name: "Điện thoại", price: 8000000, quantity: 10 },
+        { name: "Tai nghe", price: 1200000, quantity: 15 },
+        { name: "Chuột", price: 500000, quantity: 20 },
+        { name: "Bàn phím", price: 900000, quantity: 12 },
+      ];
+
+      // Format tiền
+      function formatMoney(number) {
+        return number.toLocaleString("vi-VN") + " VNĐ";
+      }
+
+      // Hiển thị sản phẩm
+      function renderProducts(data) {
+        let productList = document.getElementById("productList");
+
+        productList.innerHTML = "";
+
+        data.map((product) => {
+          let total = product.price * product.quantity;
+
+          productList.innerHTML += `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${formatMoney(product.price)}</td>
+                        <td>${product.quantity}</td>
+                        <td>${formatMoney(total)}</td>
+                    </tr>
+                `;
+        });
+
+        // Tổng giá trị tồn kho
+        let totalStockValue = data.reduce((sum, product) => {
+          return sum + product.price * product.quantity;
+        }, 0);
+
+        document.getElementById("totalStock").innerHTML =
+          "Tổng giá trị tồn kho: " + formatMoney(totalStockValue);
+      }
+
+      // Tìm sản phẩm
+      function timSanPham() {
+        let keyword = document.getElementById("searchName").value.toLowerCase();
+
+        let found = products.filter((product) =>
+          product.name.toLowerCase().includes(keyword)
+        );
+
+        renderProducts(found);
+      }
+
+      // Lọc theo giá
+      function locTheoGia() {
+        let maxPrice = Number(document.getElementById("maxPrice").value);
+
+        let filtered = products.filter((product) => product.price <= maxPrice);
+
+        renderProducts(filtered);
+      }
+
+      // Sắp xếp
+      function sapXep() {
+        let option = document.getElementById("sortOption").value;
+
+        let sortedProducts = [...products];
+
+        if (option === "asc") {
+          sortedProducts.sort((a, b) => a.price - b.price);
+        } else if (option === "desc") {
+          sortedProducts.sort((a, b) => b.price - a.price);
+        }
+
+        renderProducts(sortedProducts);
+      }
+
+      // Hiển thị tất cả
+      function hienThiTatCa() {
+        renderProducts(products);
+      }
+
+      // Hiển thị lần đầu
+      renderProducts(products);
+    </script>
+  </body>
+</html>

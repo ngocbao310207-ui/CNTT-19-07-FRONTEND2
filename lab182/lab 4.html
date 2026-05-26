@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xử Lý Điểm Sinh Viên</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 450px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        background: #007bff;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #result {
+        margin-top: 20px;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        line-height: 1.8;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>XỬ LÝ ĐIỂM SINH VIÊN</h2>
+
+      <input type="number" id="newScore" placeholder="Nhập điểm mới" />
+
+      <button onclick="themDiem()">Thêm điểm</button>
+
+      <button onclick="tinhKetQua()">Tính kết quả</button>
+
+      <button onclick="xoaDiemThapNhat()">Loại bỏ điểm thấp nhất</button>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      // Mảng điểm ban đầu
+      let scores = [8, 7.5, 9, 6.5, 8.5];
+
+      // Hiển thị dữ liệu
+      function hienThi() {
+        let result = document.getElementById("result");
+
+        // Tính tổng
+        let total = scores.reduce((sum, score) => sum + score, 0);
+
+        // Tính trung bình
+        let average = total / scores.length;
+
+        average = average.toFixed(2);
+
+        // Phân loại
+        let classification = "";
+
+        if (average < 5) {
+          classification = "Yếu";
+        } else if (average < 6.5) {
+          classification = "Trung bình";
+        } else if (average < 8) {
+          classification = "Khá";
+        } else {
+          classification = "Giỏi";
+        }
+
+        // Hiển thị danh sách điểm
+        let scoreList = "";
+
+        scores.forEach((score, index) => {
+          scoreList += `<li>Môn ${index + 1}: ${score}</li>`;
+        });
+
+        result.innerHTML = `
+                <strong>Danh sách điểm:</strong>
+
+                <ul>
+                    ${scoreList}
+                </ul>
+
+                <strong>Tổng điểm:</strong> ${total.toFixed(2)} <br>
+
+                <strong>Điểm trung bình:</strong> ${average} <br>
+
+                <strong>Xếp loại:</strong> ${classification}
+            `;
+      }
+
+      // Thêm điểm mới
+      function themDiem() {
+        let newScore = Number(document.getElementById("newScore").value);
+
+        if (newScore < 0 || newScore > 10 || isNaN(newScore)) {
+          alert("Vui lòng nhập điểm hợp lệ từ 0 đến 10!");
+
+          return;
+        }
+
+        scores.push(newScore);
+
+        document.getElementById("newScore").value = "";
+
+        hienThi();
+      }
+
+      // Xóa điểm thấp nhất
+      function xoaDiemThapNhat() {
+        if (scores.length <= 1) {
+          alert("Không thể xóa thêm điểm!");
+
+          return;
+        }
+
+        let minScore = Math.min(...scores);
+
+        let index = scores.indexOf(minScore);
+
+        scores.splice(index, 1);
+
+        hienThi();
+      }
+
+      // Tính kết quả
+      function tinhKetQua() {
+        hienThi();
+      }
+
+      // Hiển thị lần đầu
+      hienThi();
+    </script>
+  </body>
+</html>

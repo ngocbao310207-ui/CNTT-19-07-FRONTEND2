@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tra Cứu Thông Tin</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .search-box {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      .card {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #007bff;
+        line-height: 1.8;
+      }
+
+      .error {
+        color: red;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .loading {
+        color: #007bff;
+        text-align: center;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>TRA CỨU THÔNG TIN</h1>
+
+      <div class="search-box">
+        <input type="text" id="userId" placeholder="Nhập mã định danh..." />
+
+        <button onclick="traCuu()">Tra cứu</button>
+
+        <button onclick="xoaNoiDung()">Xóa</button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      // URL API mẫu
+      // Thay bằng API mockapi.io của bạn
+      const BASE_URL = "https://664f2c62fafad45dfae0b6c2.mockapi.io/users";
+
+      // Hàm tra cứu
+      async function traCuu() {
+        const userId = document.getElementById("userId").value.trim();
+
+        const result = document.getElementById("result");
+
+        // Kiểm tra dữ liệu
+        if (userId === "") {
+          result.innerHTML =
+            "<div class='error'>Vui lòng nhập mã định danh!</div>";
+
+          return;
+        }
+
+        // Loading
+        result.innerHTML = "<div class='loading'>Đang tải dữ liệu...</div>";
+
+        try {
+          // URL động
+          const response = await fetch(`${BASE_URL}/${userId}`);
+
+          // Kiểm tra lỗi
+          if (!response.ok) {
+            throw new Error("Không tìm thấy dữ liệu");
+          }
+
+          // Chuyển JSON
+          const user = await response.json();
+
+          // Hiển thị dữ liệu
+          result.innerHTML = `
+                    <div class="card">
+
+                        <h2>${user.name}</h2>
+
+                        <p>
+                            <strong>ID:</strong>
+                            ${user.id}
+                        </p>
+
+                        <p>
+                            <strong>Email:</strong>
+                            ${user.email}
+                        </p>
+
+                        <p>
+                            <strong>Tuổi:</strong>
+                            ${user.age}
+                        </p>
+
+                    </div>
+                `;
+        } catch (error) {
+          result.innerHTML = `
+                    <div class="error">
+                        Không tìm thấy dữ liệu!
+                    </div>
+                `;
+
+          console.log(error);
+        }
+      }
+
+      // Xóa nội dung
+      function xoaNoiDung() {
+        document.getElementById("userId").value = "";
+
+        document.getElementById("result").innerHTML = "";
+      }
+    </script>
+  </body>
+</html>

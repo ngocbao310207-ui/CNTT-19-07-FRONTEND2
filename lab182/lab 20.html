@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thêm Dữ Liệu Bằng Ajax</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        grid-column: span 3;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      #message {
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+
+      tr:nth-child(even) {
+        background: #f9f9f9;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>THÊM SINH VIÊN BẰNG AJAX</h1>
+
+      <!-- Form nhập -->
+      <form id="studentForm">
+        <input type="text" id="name" placeholder="Họ tên" />
+
+        <input type="email" id="email" placeholder="Email" />
+
+        <input type="text" id="className" placeholder="Lớp" />
+
+        <button type="submit">Thêm sinh viên</button>
+      </form>
+
+      <!-- Thông báo -->
+      <div id="message"></div>
+
+      <!-- Bảng dữ liệu -->
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Lớp</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // API MockAPI
+      // Thay bằng API của bạn
+      const API_URL = "https://664f2c62fafad45dfae0b6c2.mockapi.io/students";
+
+      // Load danh sách
+      function loadStudents() {
+        $.ajax({
+          url: API_URL,
+
+          method: "GET",
+
+          success: function (data) {
+            renderStudents(data);
+          },
+
+          error: function () {
+            $("#message").html(
+              "<div class='error'>Không thể tải dữ liệu!</div>"
+            );
+          },
+        });
+      }
+
+      // Render bảng
+      function renderStudents(students) {
+        let html = "";
+
+        $.each(students, function (index, student) {
+          html += `
+                    <tr>
+
+                        <td>${student.id}</td>
+
+                        <td>${student.name}</td>
+
+                        <td>${student.email}</td>
+
+                        <td>${student.className}</td>
+
+                    </tr>
+                `;
+        });
+
+        $("#studentTable").html(html);
+      }
+
+      // Submit form
+      $("#studentForm").submit(function (event) {
+        // Ngăn reload trang
+        event.preventDefault();
+
+        // Lấy dữ liệu
+        const name = $("#name").val().trim();
+
+        const email = $("#email").val().trim();
+
+        const className = $("#className").val().trim();
+
+        // Kiểm tra rỗng
+        if (name === "" || email === "" || className === "") {
+          $("#message").html(
+            "<div class='error'>Vui lòng nhập đầy đủ thông tin!</div>"
+          );
+
+          return;
+        }
+
+        // Object dữ liệu
+        const newStudent = {
+          name: name,
+
+          email: email,
+
+          className: className,
+        };
+
+        // Ajax POST
+        $.ajax({
+          url: API_URL,
+
+          method: "POST",
+
+          contentType: "application/json",
+
+          data: JSON.stringify(newStudent),
+
+          success: function () {
+            $("#message").html(
+              "<div class='success'>Thêm sinh viên thành công!</div>"
+            );
+
+            // Reset form
+            $("#studentForm")[0].reset();
+
+            // Load lại dữ liệu
+            loadStudents();
+          },
+
+          error: function () {
+            $("#message").html(
+              "<div class='error'>Không thể thêm dữ liệu!</div>"
+            );
+          },
+        });
+      });
+
+      // Tải dữ liệu khi mở trang
+      loadStudents();
+    </script>
+  </body>
+</html>

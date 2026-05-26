@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Sinh Viên</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      .delete-btn {
+        background: #dc3545;
+      }
+
+      .edit-btn {
+        background: #28a745;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+
+      .loading {
+        text-align: center;
+        color: #007bff;
+        font-weight: bold;
+      }
+
+      .error {
+        color: red;
+        text-align: center;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>QUẢN LÝ SINH VIÊN</h1>
+
+      <!-- Form thêm sinh viên -->
+      <div class="form-group">
+        <input type="text" id="name" placeholder="Tên sinh viên" />
+
+        <input type="email" id="email" placeholder="Email" />
+
+        <input type="text" id="className" placeholder="Lớp" />
+      </div>
+
+      <button onclick="addStudent()">Thêm sinh viên</button>
+
+      <div id="message"></div>
+
+      <!-- Bảng sinh viên -->
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Lớp</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentList"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // API MockAPI
+      // Thay URL bằng API của bạn
+      const API_URL = "https://664f2c62fafad45dfae0b6c2.mockapi.io/students";
+
+      // Load danh sách sinh viên
+      async function loadStudents() {
+        const studentList = document.getElementById("studentList");
+
+        const message = document.getElementById("message");
+
+        message.innerHTML = "<div class='loading'>Đang tải dữ liệu...</div>";
+
+        try {
+          const response = await fetch(API_URL);
+
+          const students = await response.json();
+
+          message.innerHTML = "";
+
+          renderStudents(students);
+        } catch (error) {
+          message.innerHTML = "<div class='error'>Không thể tải dữ liệu!</div>";
+
+          console.log(error);
+        }
+      }
+
+      // Hiển thị danh sách
+      function renderStudents(students) {
+        const studentList = document.getElementById("studentList");
+
+        studentList.innerHTML = "";
+
+        students.forEach((student) => {
+          studentList.innerHTML += `
+                    <tr>
+
+                        <td>${student.id}</td>
+
+                        <td>${student.name}</td>
+
+                        <td>${student.email}</td>
+
+                        <td>${student.className}</td>
+
+                        <td>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteStudent('${student.id}')"
+                            >
+                                Xóa
+                            </button>
+
+                        </td>
+
+                    </tr>
+                `;
+        });
+      }
+
+      // Thêm sinh viên
+      async function addStudent() {
+        const name = document.getElementById("name").value;
+
+        const email = document.getElementById("email").value;
+
+        const className = document.getElementById("className").value;
+
+        // Kiểm tra dữ liệu
+        if (name === "" || email === "" || className === "") {
+          alert("Vui lòng nhập đầy đủ thông tin!");
+
+          return;
+        }
+
+        const newStudent = {
+          name,
+          email,
+          className,
+        };
+
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify(newStudent),
+          });
+
+          // Reset form
+          document.getElementById("name").value = "";
+
+          document.getElementById("email").value = "";
+
+          document.getElementById("className").value = "";
+
+          // Load lại dữ liệu
+          loadStudents();
+        } catch (error) {
+          console.log(error);
+
+          alert("Không thể thêm sinh viên!");
+        }
+      }
+
+      // Xóa sinh viên
+      async function deleteStudent(id) {
+        const confirmDelete = confirm("Bạn có chắc muốn xóa?");
+
+        if (!confirmDelete) {
+          return;
+        }
+
+        try {
+          await fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+          });
+
+          loadStudents();
+        } catch (error) {
+          console.log(error);
+
+          alert("Không thể xóa sinh viên!");
+        }
+      }
+
+      // Tải dữ liệu khi mở trang
+      loadStudents();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý thành viên</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 30px;
+      }
+
+      .container {
+        width: 700px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 15px;
+      }
+
+      #addBtn {
+        background: #4caf50;
+        color: white;
+      }
+
+      .edit {
+        background: orange;
+        color: white;
+      }
+
+      .delete {
+        background: #f44336;
+        color: white;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fafafa;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+
+      .member-name {
+        font-size: 18px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 5px;
+      }
+
+      #search {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Quản Lý Thành Viên</h1>
+
+      <!-- Ô tìm kiếm -->
+      <input type="text" id="search" placeholder="Tìm kiếm thành viên..." />
+
+      <!-- Form thêm -->
+      <div class="form-group">
+        <input type="text" id="memberName" placeholder="Nhập tên thành viên" />
+
+        <button id="addBtn">Thêm</button>
+      </div>
+
+      <!-- Danh sách -->
+      <ul id="memberList"></ul>
+    </div>
+
+    <script>
+      // Hàm cập nhật số thứ tự
+      function updateIndex() {
+        $("#memberList li").each(function (index) {
+          $(this)
+            .find(".index")
+            .text(index + 1);
+        });
+      }
+
+      // Thêm thành viên
+      $("#addBtn").click(function () {
+        let name = $("#memberName").val().trim();
+
+        if (name == "") {
+          alert("Vui lòng nhập tên!");
+          return;
+        }
+
+        // Tạo phần tử mới
+        let newMember = `
+                <li>
+
+                    <div>
+                        <span class="index"></span>.
+                        <span class="member-name">${name}</span>
+                    </div>
+
+                    <div class="actions">
+                        <button class="edit">Sửa</button>
+                        <button class="delete">Xóa</button>
+                    </div>
+
+                </li>
+            `;
+
+        // Thêm vào danh sách
+        $("#memberList").append(newMember);
+
+        // Cập nhật STT
+        updateIndex();
+
+        // Xóa nội dung input
+        $("#memberName").val("");
+      });
+
+      // Xóa thành viên
+      $("#memberList").on("click", ".delete", function () {
+        $(this).closest("li").remove();
+
+        updateIndex();
+      });
+
+      // Sửa thành viên
+      $("#memberList").on("click", ".edit", function () {
+        let li = $(this).closest("li");
+
+        let currentName = li.find(".member-name").text();
+
+        let newName = prompt("Nhập tên mới:", currentName);
+
+        if (newName != null && newName.trim() != "") {
+          li.find(".member-name").text(newName);
+        }
+      });
+
+      // Tìm kiếm thành viên
+      $("#search").on("keyup", function () {
+        let keyword = $(this).val().toLowerCase();
+
+        $("#memberList li").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
+        });
+      });
+    </script>
+  </body>
+</html>

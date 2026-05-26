@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trò Chơi Dự Đoán Số</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 400px;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        background: #007bff;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #message {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      #history {
+        margin-top: 15px;
+        text-align: left;
+        background: #f9f9f9;
+        padding: 10px;
+        border-radius: 5px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+
+      .warning {
+        color: orange;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>TRÒ CHƠI DỰ ĐOÁN SỐ</h2>
+
+      <label>Chọn độ khó:</label>
+
+      <select id="difficulty" onchange="batDauGame()">
+        <option value="10">Dễ (1 - 10)</option>
+        <option value="50">Trung bình (1 - 50)</option>
+        <option value="100">Khó (1 - 100)</option>
+      </select>
+
+      <input type="number" id="guessInput" placeholder="Nhập số dự đoán" />
+
+      <button onclick="kiemTra()">Kiểm tra</button>
+
+      <button onclick="batDauGame()">Chơi lại</button>
+
+      <div id="message"></div>
+
+      <div id="history">
+        <strong>Lịch sử đoán:</strong>
+        <ul id="historyList"></ul>
+      </div>
+    </div>
+
+    <script>
+      let secretNumber;
+      let attempts;
+      let maxNumber;
+      let maxAttempts = 7;
+
+      // Khởi tạo game
+      function batDauGame() {
+        maxNumber = Number(document.getElementById("difficulty").value);
+
+        secretNumber = Math.floor(Math.random() * maxNumber) + 1;
+
+        attempts = 0;
+
+        document.getElementById("message").innerHTML = "Game mới bắt đầu!";
+
+        document.getElementById("message").className = "";
+
+        document.getElementById("historyList").innerHTML = "";
+
+        document.getElementById("guessInput").value = "";
+
+        console.log("Số bí mật:", secretNumber);
+      }
+
+      // Kiểm tra dự đoán
+      function kiemTra() {
+        let guess = Number(document.getElementById("guessInput").value);
+
+        let message = document.getElementById("message");
+
+        let historyList = document.getElementById("historyList");
+
+        // Kiểm tra dữ liệu
+        if (guess <= 0 || guess > maxNumber || isNaN(guess)) {
+          message.innerHTML = `Vui lòng nhập số từ 1 đến ${maxNumber}`;
+
+          message.className = "error";
+
+          return;
+        }
+
+        attempts++;
+
+        // Thêm lịch sử
+        let li = document.createElement("li");
+        li.innerHTML = `Lần ${attempts}: ${guess}`;
+        historyList.appendChild(li);
+
+        // So sánh
+        if (guess < secretNumber) {
+          message.innerHTML = "Số bạn đoán NHỎ hơn số bí mật!";
+          message.className = "warning";
+        } else if (guess > secretNumber) {
+          message.innerHTML = "Số bạn đoán LỚN hơn số bí mật!";
+          message.className = "warning";
+        } else {
+          message.innerHTML = `🎉 Chính xác! Bạn đoán đúng sau ${attempts} lần.`;
+
+          message.className = "success";
+
+          return;
+        }
+
+        // Giới hạn số lần chơi
+        if (attempts >= maxAttempts) {
+          message.innerHTML = `❌ Bạn đã hết lượt chơi! Số đúng là ${secretNumber}`;
+
+          message.className = "error";
+        }
+      }
+
+      // Chạy game lần đầu
+      batDauGame();
+    </script>
+  </body>
+</html>

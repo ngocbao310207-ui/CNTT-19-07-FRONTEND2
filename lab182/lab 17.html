@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng đơn giản</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        padding: 30px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .cart {
+        width: 700px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .product {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .product-info {
+        width: 200px;
+      }
+
+      .quantity {
+        display: flex;
+        align-items: center;
+      }
+
+      button {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .minus {
+        background: #f44336;
+        color: white;
+      }
+
+      .plus {
+        background: #4caf50;
+        color: white;
+      }
+
+      .qty {
+        margin: 0 10px;
+        font-size: 18px;
+        width: 30px;
+        text-align: center;
+      }
+
+      .price,
+      .total {
+        font-weight: bold;
+      }
+
+      .grand-total {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cart">
+      <h1>Giỏ Hàng Đơn Giản</h1>
+
+      <!-- Sản phẩm 1 -->
+      <div class="product" data-price="150000">
+        <div class="product-info">
+          <h3>Chuột Gaming</h3>
+          <p>150.000 VNĐ</p>
+        </div>
+
+        <div class="quantity">
+          <button class="minus">-</button>
+
+          <span class="qty">1</span>
+
+          <button class="plus">+</button>
+        </div>
+
+        <div class="total">150000 VNĐ</div>
+      </div>
+
+      <!-- Sản phẩm 2 -->
+      <div class="product" data-price="300000">
+        <div class="product-info">
+          <h3>Bàn Phím Cơ</h3>
+          <p>300.000 VNĐ</p>
+        </div>
+
+        <div class="quantity">
+          <button class="minus">-</button>
+
+          <span class="qty">1</span>
+
+          <button class="plus">+</button>
+        </div>
+
+        <div class="total">300000 VNĐ</div>
+      </div>
+
+      <!-- Tổng hóa đơn -->
+      <div class="grand-total">
+        Tổng cộng: <span id="grandTotal">450000</span> VNĐ
+      </div>
+    </div>
+
+    <script>
+      // Hàm cập nhật tổng tiền từng sản phẩm
+      function updateProductTotal(product) {
+        let price = parseInt(product.attr("data-price"));
+
+        let qty = parseInt(product.find(".qty").text());
+
+        let total = price * qty;
+
+        product.find(".total").text(total + " VNĐ");
+      }
+
+      // Hàm cập nhật tổng hóa đơn
+      function updateGrandTotal() {
+        let grandTotal = 0;
+
+        $(".product").each(function () {
+          let price = parseInt($(this).attr("data-price"));
+
+          let qty = parseInt($(this).find(".qty").text());
+
+          grandTotal += price * qty;
+        });
+
+        $("#grandTotal").text(grandTotal);
+      }
+
+      // Nút tăng
+      $(".plus").click(function () {
+        let product = $(this).closest(".product");
+
+        let qtyElement = product.find(".qty");
+
+        let qty = parseInt(qtyElement.text());
+
+        qty++;
+
+        qtyElement.text(qty);
+
+        updateProductTotal(product);
+
+        updateGrandTotal();
+      });
+
+      // Nút giảm
+      $(".minus").click(function () {
+        let product = $(this).closest(".product");
+
+        let qtyElement = product.find(".qty");
+
+        let qty = parseInt(qtyElement.text());
+
+        // Không cho nhỏ hơn 1
+        if (qty > 1) {
+          qty--;
+
+          qtyElement.text(qty);
+
+          updateProductTotal(product);
+
+          updateGrandTotal();
+        }
+      });
+    </script>
+  </body>
+</html>

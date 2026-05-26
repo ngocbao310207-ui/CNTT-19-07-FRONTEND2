@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bộ Đếm Lượt Tương Tác</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 450px;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      #counter {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 25px 0;
+        transition: 0.3s;
+      }
+
+      .positive {
+        color: green;
+      }
+
+      .negative {
+        color: red;
+      }
+
+      .zero {
+        color: black;
+      }
+
+      button {
+        padding: 12px 18px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      #increaseBtn {
+        background: #28a745;
+      }
+
+      #decreaseBtn {
+        background: #dc3545;
+      }
+
+      #resetBtn {
+        background: #6c757d;
+      }
+
+      #increase10Btn {
+        background: #007bff;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      #status {
+        margin-top: 15px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>BỘ ĐẾM TƯƠNG TÁC</h1>
+
+      <!-- Hiển thị số đếm -->
+      <div id="counter" class="zero">0</div>
+
+      <!-- Các nút điều khiển -->
+      <button id="increaseBtn">+1</button>
+
+      <button id="decreaseBtn">-1</button>
+
+      <button id="resetBtn">Reset</button>
+
+      <button id="increase10Btn">+10</button>
+
+      <!-- Trạng thái -->
+      <div id="status">Giá trị hiện tại: 0</div>
+    </div>
+
+    <script>
+      // Biến trạng thái
+      let count = 0;
+
+      // Hàm cập nhật giao diện
+      function renderCounter() {
+        // Hiển thị số
+        $("#counter").text(count);
+
+        // Hiển thị trạng thái
+        $("#status").html("Giá trị hiện tại: <b>" + count + "</b>");
+
+        // Đổi màu theo giá trị
+        $("#counter").removeClass("positive negative zero");
+
+        if (count > 0) {
+          $("#counter").addClass("positive");
+        } else if (count < 0) {
+          $("#counter").addClass("negative");
+        } else {
+          $("#counter").addClass("zero");
+        }
+      }
+
+      // Tăng
+      $("#increaseBtn").click(function () {
+        count++;
+
+        renderCounter();
+      });
+
+      // Giảm
+      $("#decreaseBtn").click(function () {
+        count--;
+
+        renderCounter();
+      });
+
+      // Reset
+      $("#resetBtn").click(function () {
+        count = 0;
+
+        renderCounter();
+      });
+
+      // Tăng nhanh +10
+      $("#increase10Btn").click(function () {
+        count += 10;
+
+        renderCounter();
+      });
+
+      // Hiển thị ban đầu
+      renderCounter();
+    </script>
+  </body>
+</html>

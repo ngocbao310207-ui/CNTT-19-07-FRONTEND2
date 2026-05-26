@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajax Load Data</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        margin-bottom: 15px;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      #loading {
+        text-align: center;
+        color: #007bff;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .error {
+        color: red;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background: #007bff;
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+
+      tr:nth-child(even) {
+        background: #f9f9f9;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>DANH SÁCH SINH VIÊN AJAX</h1>
+
+      <button id="loadBtn">Tải dữ liệu</button>
+
+      <div id="loading"></div>
+
+      <!-- Bảng dữ liệu -->
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Lớp</th>
+          </tr>
+        </thead>
+
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // API MockAPI
+      // Thay bằng API của bạn
+      const API_URL = "https://664f2c62fafad45dfae0b6c2.mockapi.io/students";
+
+      // Hàm render dữ liệu
+      function renderStudents(students) {
+        let html = "";
+
+        $.each(students, function (index, student) {
+          html += `
+                    <tr>
+
+                        <td>${student.id}</td>
+
+                        <td>${student.name}</td>
+
+                        <td>${student.email}</td>
+
+                        <td>${student.className}</td>
+
+                    </tr>
+                `;
+        });
+
+        $("#studentTable").html(html);
+      }
+
+      // Hàm load dữ liệu bằng Ajax
+      function loadStudents() {
+        // Hiển thị loading
+        $("#loading").html("Đang tải dữ liệu...");
+
+        // Ajax GET
+        $.ajax({
+          url: API_URL,
+
+          method: "GET",
+
+          success: function (data) {
+            // Xóa loading
+            $("#loading").html("");
+
+            // Render dữ liệu
+            renderStudents(data);
+          },
+
+          error: function () {
+            $("#loading").html(
+              "<div class='error'>Không thể tải dữ liệu!</div>"
+            );
+          },
+        });
+      }
+
+      // Click nút tải dữ liệu
+      $("#loadBtn").click(function () {
+        loadStudents();
+      });
+
+      // Tự động tải khi mở trang
+      loadStudents();
+    </script>
+  </body>
+</html>
