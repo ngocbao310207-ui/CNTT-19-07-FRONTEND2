@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 16 - Bộ đếm lượt tương tác</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+        
+        .counter-box {
+            margin-bottom: 30px;
+        }
+        
+        #counter {
+            font-size: 70px;
+            font-weight: bold;
+            color: #111827;
+            transition: 0.3s;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        .increase {
+            background: #10b981;
+        }
+        
+        .decrease {
+            background: #ef4444;
+        }
+        
+        .reset {
+            background: #2563eb;
+        }
+        
+        .plus-ten {
+            background: #f59e0b;
+        }
+        
+        .status {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🎯 Bộ đếm lượt tương tác</h1>
+
+        <div class="counter-box">
+            <div id="counter">0</div>
+        </div>
+
+        <div class="buttons">
+
+            <button class="increase" id="increaseBtn">
+            +1
+        </button>
+
+            <button class="decrease" id="decreaseBtn">
+            -1
+        </button>
+
+            <button class="plus-ten" id="plusTenBtn">
+            +10
+        </button>
+
+            <button class="reset" id="resetBtn">
+            Reset
+        </button>
+
+        </div>
+
+        <div class="status">
+            Giá trị sẽ đổi màu khi âm hoặc dương
+        </div>
+
+    </div>
+
+
+    <!-- NHÚNG JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            // ================= BIẾN ĐẾM =================
+            let count = 0;
+
+
+            // ================= UPDATE UI =================
+            function updateCounter() {
+
+                $("#counter").text(count);
+
+                // đổi màu theo giá trị
+                if (count > 0) {
+
+                    $("#counter").css("color", "#10b981");
+
+                } else if (count < 0) {
+
+                    $("#counter").css("color", "#ef4444");
+
+                } else {
+
+                    $("#counter").css("color", "#111827");
+
+                }
+
+            }
+
+
+            // ================= TĂNG =================
+            $("#increaseBtn").click(function() {
+
+                count++;
+
+                updateCounter();
+
+            });
+
+
+            // ================= GIẢM =================
+            $("#decreaseBtn").click(function() {
+
+                count--;
+
+                updateCounter();
+
+            });
+
+
+            // ================= TĂNG 10 =================
+            $("#plusTenBtn").click(function() {
+
+                count += 10;
+
+                updateCounter();
+
+            });
+
+
+            // ================= RESET =================
+            $("#resetBtn").click(function() {
+
+                count = 0;
+
+                updateCounter();
+
+            });
+
+
+        });
+    </script>
+
+</body>
+
+</html>

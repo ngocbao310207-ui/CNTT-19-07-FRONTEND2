@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 14 - Hiệu ứng jQuery</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        .fade-in {
+            background: #10b981;
+        }
+        
+        .fade-out {
+            background: #ef4444;
+        }
+        
+        .slide-down {
+            background: #2563eb;
+        }
+        
+        .slide-up {
+            background: #f59e0b;
+        }
+        
+        .toggle {
+            background: #8b5cf6;
+        }
+        
+        .effect {
+            background: #111827;
+        }
+        
+        .card {
+            background: #eef2ff;
+            border: 2px solid #2563eb;
+            border-radius: 15px;
+            padding: 25px;
+            overflow: hidden;
+        }
+        
+        .card img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .card h2 {
+            margin-bottom: 10px;
+            color: #111827;
+        }
+        
+        .card p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+            transform: scale(1.02);
+            transition: 0.4s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>✨ Lab 14 - Hiệu ứng giao diện với jQuery</h1>
+
+        <div class="buttons">
+
+            <button class="fade-in" id="fadeInBtn">
+            Fade In
+        </button>
+
+            <button class="fade-out" id="fadeOutBtn">
+            Fade Out
+        </button>
+
+            <button class="slide-down" id="slideDownBtn">
+            Slide Down
+        </button>
+
+            <button class="slide-up" id="slideUpBtn">
+            Slide Up
+        </button>
+
+            <button class="toggle" id="toggleBtn">
+            Slide Toggle
+        </button>
+
+            <button class="effect" id="effectBtn">
+            Hiệu ứng đặc biệt
+        </button>
+
+        </div>
+
+        <!-- KHỐI NỘI DUNG -->
+        <div class="card" id="contentBox">
+
+            <img src="https://picsum.photos/600/300" alt="Ảnh demo">
+
+            <h2>jQuery Effects 🚀</h2>
+
+            <p>
+                jQuery hỗ trợ rất nhiều hiệu ứng giúp giao diện trở nên trực quan và sinh động hơn như: fade, slide, animate và chaining.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- NHÚNG JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+
+            // ================= FADE IN =================
+            $("#fadeInBtn").click(function() {
+
+                $("#contentBox").fadeIn(800);
+
+            });
+
+
+            // ================= FADE OUT =================
+            $("#fadeOutBtn").click(function() {
+
+                $("#contentBox").fadeOut(800);
+
+            });
+
+
+            // ================= SLIDE DOWN =================
+            $("#slideDownBtn").click(function() {
+
+                $("#contentBox").slideDown(800);
+
+            });
+
+
+            // ================= SLIDE UP =================
+            $("#slideUpBtn").click(function() {
+
+                $("#contentBox").slideUp(800);
+
+            });
+
+
+            // ================= TOGGLE =================
+            $("#toggleBtn").click(function() {
+
+                $("#contentBox").slideToggle(800);
+
+            });
+
+
+            // ================= CHAINING EFFECT =================
+            $("#effectBtn").click(function() {
+
+                $("#contentBox")
+
+                .fadeOut(300)
+                    .fadeIn(300)
+                    .slideUp(300)
+                    .slideDown(300);
+
+                // thêm highlight
+                $("#contentBox").addClass("highlight");
+
+                // xóa highlight sau 1.5 giây
+                setTimeout(function() {
+
+                    $("#contentBox").removeClass("highlight");
+
+                }, 1500);
+
+            });
+
+
+        });
+    </script>
+
+</body>
+
+</html>

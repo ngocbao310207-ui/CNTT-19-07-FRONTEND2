@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 20 - Thêm dữ liệu bằng Ajax POST</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+        
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .submit-btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #10b981;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #10b981;
+        }
+        
+        .error {
+            color: #ef4444;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        table th,
+        table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table th {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .loading {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📨 Lab 20 - Ajax POST</h1>
+
+        <!-- FORM -->
+        <div class="form-box">
+
+            <form id="studentForm">
+
+                <div class="form-group">
+
+                    <label>Họ tên</label>
+
+                    <input type="text" id="name" placeholder="Nhập họ tên">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input type="email" id="email" placeholder="Nhập email">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Lớp</label>
+
+                    <input type="text" id="className" placeholder="Nhập lớp">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Ảnh đại diện</label>
+
+                    <input type="text" id="avatar" placeholder="Link ảnh">
+
+                </div>
+
+                <button class="submit-btn">
+                ➕ Thêm sinh viên
+            </button>
+
+            </form>
+
+            <div class="message" id="message"></div>
+
+        </div>
+
+
+        <!-- LOADING -->
+        <div class="loading" id="loading">
+            Đang tải dữ liệu...
+        </div>
+
+
+        <!-- BẢNG -->
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Lớp</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="studentTable"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+
+            // ================= API =================
+            const API_URL =
+                "https://6666b2caa2f8516ff7a62b67.mockapi.io/students";
+
+
+            // ================= LOAD DATA =================
+            function loadStudents() {
+
+                $("#loading").show();
+
+                $.ajax({
+
+                    url: API_URL,
+
+                    method: "GET",
+
+                    success: function(data) {
+
+                        renderStudents(data);
+
+                        $("#loading").hide();
+
+                    },
+
+                    error: function() {
+
+                        $("#loading").hide();
+
+                        $("#message")
+                            .removeClass("success")
+                            .addClass("error")
+                            .text("❌ Không thể tải dữ liệu");
+
+                    }
+
+                });
+
+            }
+
+
+            // ================= RENDER =================
+            function renderStudents(students) {
+
+                let html = "";
+
+                students.forEach(student => {
+
+                    html += `
+            
+                <tr>
+
+                    <td>${student.id}</td>
+
+                    <td>
+                        <img 
+                            src="${student.avatar}" 
+                            class="avatar"
+                        >
+                    </td>
+
+                    <td>${student.name}</td>
+
+                    <td>${student.email}</td>
+
+                    <td>${student.className}</td>
+
+                </tr>
+            
+            `;
+
+                });
+
+                $("#studentTable").html(html);
+
+            }
+
+
+            // ================= SUBMIT FORM =================
+            $("#studentForm").submit(function(e) {
+
+                // ngăn reload trang
+                e.preventDefault();
+
+
+                // lấy dữ liệu
+                const name = $("#name").val().trim();
+
+                const email = $("#email").val().trim();
+
+                const className = $("#className")
+                    .val()
+                    .trim();
+
+                const avatar = $("#avatar")
+                    .val()
+                    .trim();
+
+
+                // validate
+                if (
+                    name === "" ||
+                    email === "" ||
+                    className === ""
+                ) {
+
+                    $("#message")
+                        .removeClass("success")
+                        .addClass("error")
+                        .text("⚠ Vui lòng nhập đầy đủ thông tin");
+
+                    return;
+
+                }
+
+
+                // object dữ liệu
+                const newStudent = {
+
+                    name: name,
+
+                    email: email,
+
+                    className: className,
+
+                    avatar: avatar ||
+                        "https://i.pravatar.cc/150?img=5"
+
+                };
+
+
+                // AJAX POST
+                $.ajax({
+
+                    url: API_URL,
+
+                    method: "POST",
+
+                    data: newStudent,
+
+                    success: function() {
+
+                        $("#message")
+                            .removeClass("error")
+                            .addClass("success")
+                            .text("✅ Thêm sinh viên thành công");
+
+
+                        // reset form
+                        $("#studentForm")[0].reset();
+
+
+                        // load lại danh sách
+                        loadStudents();
+
+                    },
+
+                    error: function() {
+
+                        $("#message")
+                            .removeClass("success")
+                            .addClass("error")
+                            .text("❌ Thêm sinh viên thất bại");
+
+                    }
+
+                });
+
+            });
+
+
+            // ================= START =================
+            loadStudents();
+
+
+        });
+    </script>
+
+</body>
+
+</html>

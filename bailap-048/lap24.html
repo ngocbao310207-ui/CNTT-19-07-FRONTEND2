@@ -1,0 +1,510 @@
+```html id="v9k2xp"
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 24 - Landing Page Sự Kiện</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ICON -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* NAVBAR */
+        
+        .navbar {
+            background: #111827;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 24px;
+        }
+        /* HERO */
+        
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("https://picsum.photos/1600/900?event");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 60px;
+            font-weight: bold;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+        /* SECTION */
+        
+        .section-title {
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+        /* FEATURE */
+        
+        .feature-card {
+            transition: 0.3s;
+            border: none;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-6px);
+        }
+        /* SCHEDULE */
+        
+        .schedule-item {
+            border-left: 4px solid #2563eb;
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+        /* SPEAKER */
+        
+        .speaker-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        /* CONTACT */
+        
+        .contact-section {
+            background: #f4f7fb;
+        }
+        /* FOOTER */
+        
+        footer {
+            background: #111827;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+
+        <div class="container">
+
+            <a class="navbar-brand" href="#">
+            Tech Event 2026
+        </a>
+
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">
+                        Giới thiệu
+                    </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#schedule">
+                        Lịch trình
+                    </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#speakers">
+                        Diễn giả
+                    </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#register">
+                        Đăng ký
+                    </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="container">
+
+            <h1>
+                🚀 Tech Event 2026
+            </h1>
+
+            <p>
+                Sự kiện công nghệ lớn dành cho sinh viên và lập trình viên trẻ
+            </p>
+
+            <button class="btn btn-primary btn-lg px-4">
+            Đăng ký ngay
+        </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+    <section class="py-5" id="about">
+
+        <div class="container">
+
+            <div class="text-center mb-5">
+
+                <h2 class="section-title">
+                    🌟 Điểm nổi bật
+                </h2>
+
+                <p class="text-muted">
+                    Những hoạt động hấp dẫn tại sự kiện
+                </p>
+
+            </div>
+
+            <div class="row g-4">
+
+                <!-- ITEM -->
+                <div class="col-md-4">
+
+                    <div class="card shadow rounded-4 p-4 feature-card h-100 text-center">
+
+                        <i class="bi bi-code-slash fs-1 text-primary mb-3"></i>
+
+                        <h4>Lập trình thực chiến</h4>
+
+                        <p class="text-muted">
+                            Workshop thực hành với chuyên gia.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="card shadow rounded-4 p-4 feature-card h-100 text-center">
+
+                        <i class="bi bi-people fs-1 text-success mb-3"></i>
+
+                        <h4>Kết nối cộng đồng</h4>
+
+                        <p class="text-muted">
+                            Giao lưu cùng hàng trăm sinh viên IT.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="card shadow rounded-4 p-4 feature-card h-100 text-center">
+
+                        <i class="bi bi-trophy fs-1 text-warning mb-3"></i>
+
+                        <h4>Mini Game & Quà tặng</h4>
+
+                        <p class="text-muted">
+                            Nhiều phần quà hấp dẫn và chứng nhận.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SCHEDULE -->
+    <section class="py-5 bg-light" id="schedule">
+
+        <div class="container">
+
+            <div class="text-center mb-5">
+
+                <h2 class="section-title">
+                    📅 Lịch trình sự kiện
+                </h2>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-8 mx-auto">
+
+                    <div class="schedule-item">
+
+                        <h5>08:00 - Khai mạc</h5>
+
+                        <p class="text-muted">
+                            Giới thiệu chương trình và khách mời.
+                        </p>
+
+                    </div>
+
+                    <div class="schedule-item">
+
+                        <h5>09:00 - Workshop AI</h5>
+
+                        <p class="text-muted">
+                            Ứng dụng AI trong lập trình hiện đại.
+                        </p>
+
+                    </div>
+
+                    <div class="schedule-item">
+
+                        <h5>11:00 - Networking</h5>
+
+                        <p class="text-muted">
+                            Giao lưu giữa sinh viên và doanh nghiệp.
+                        </p>
+
+                    </div>
+
+                    <div class="schedule-item">
+
+                        <h5>14:00 - Cuộc thi Coding</h5>
+
+                        <p class="text-muted">
+                            Thử thách lập trình với giải thưởng hấp dẫn.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SPEAKERS -->
+    <section class="py-5" id="speakers">
+
+        <div class="container">
+
+            <div class="text-center mb-5">
+
+                <h2 class="section-title">
+                    🎤 Diễn giả nổi bật
+                </h2>
+
+            </div>
+
+            <div class="row g-4 justify-content-center">
+
+                <!-- SPEAKER -->
+                <div class="col-md-4 text-center">
+
+                    <div class="card shadow border-0 rounded-4 p-4 h-100">
+
+                        <img src="https://picsum.photos/200?1" class="speaker-img mx-auto mb-3">
+
+                        <h4>Nguyễn Văn A</h4>
+
+                        <p class="text-primary">
+                            Senior Developer
+                        </p>
+
+                        <p class="text-muted">
+                            10 năm kinh nghiệm phát triển web.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 text-center">
+
+                    <div class="card shadow border-0 rounded-4 p-4 h-100">
+
+                        <img src="https://picsum.photos/200?2" class="speaker-img mx-auto mb-3">
+
+                        <h4>Trần Thị B</h4>
+
+                        <p class="text-success">
+                            AI Engineer
+                        </p>
+
+                        <p class="text-muted">
+                            Chuyên gia AI và Machine Learning.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 text-center">
+
+                    <div class="card shadow border-0 rounded-4 p-4 h-100">
+
+                        <img src="https://picsum.photos/200?3" class="speaker-img mx-auto mb-3">
+
+                        <h4>Lê Văn C</h4>
+
+                        <p class="text-warning">
+                            UI/UX Designer
+                        </p>
+
+                        <p class="text-muted">
+                            Nhà thiết kế giao diện hiện đại.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- REGISTER -->
+    <section class="py-5 contact-section" id="register">
+
+        <div class="container">
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-7">
+
+                    <div class="card shadow border-0 rounded-4 p-5">
+
+                        <div class="text-center mb-4">
+
+                            <h2 class="section-title">
+                                📝 Đăng ký tham gia
+                            </h2>
+
+                        </div>
+
+                        <form>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                Họ và tên
+                            </label>
+
+                                <input type="text" class="form-control" placeholder="Nhập họ tên">
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                Email
+                            </label>
+
+                                <input type="email" class="form-control" placeholder="Nhập email">
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                Số điện thoại
+                            </label>
+
+                                <input type="text" class="form-control" placeholder="Nhập số điện thoại">
+
+                            </div>
+
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+                                Ghi chú
+                            </label>
+
+                                <textarea class="form-control" rows="4" placeholder="Nhập ghi chú..."></textarea>
+
+                            </div>
+
+
+                            <button class="btn btn-primary w-100 py-2">
+
+                            Đăng ký ngay
+
+                        </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="py-4 text-center">
+
+        <div class="container">
+
+            <p class="mb-1">
+                © 2026 Tech Event
+            </p>
+
+            <small class="text-light">
+            Thiết kế bằng Bootstrap 5
+        </small>
+
+        </div>
+
+    </footer>
+
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+
+</html>
+```

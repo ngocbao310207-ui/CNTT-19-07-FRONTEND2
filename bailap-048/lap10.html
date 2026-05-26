@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 10 - Fetch API & JSON</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2563eb;
+        }
+        
+        .loading,
+        .error {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .error {
+            color: red;
+        }
+        
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .user-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: 0.3s;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .user-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .user-card h3 {
+            color: #111827;
+            margin-bottom: 10px;
+        }
+        
+        .user-card p {
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📦 Danh sách người dùng</h1>
+
+        <div id="loading" class="loading">
+            Đang tải dữ liệu...
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <div id="userList" class="user-list"></div>
+
+    </div>
+
+    <script>
+        // URL API mockapi
+        const API_URL = "https://6666b2caa2f8516ff7a62b67.mockapi.io/users";
+
+        const userList = document.getElementById("userList");
+        const loading = document.getElementById("loading");
+        const error = document.getElementById("error");
+
+
+        // ================= FETCH DATA =================
+        async function fetchUsers() {
+
+            try {
+
+                // gọi API
+                const response = await fetch(API_URL);
+
+                // kiểm tra lỗi
+                if (!response.ok) {
+                    throw new Error("Không thể tải dữ liệu");
+                }
+
+                // chuyển JSON -> JavaScript object
+                const users = await response.json();
+
+                // render dữ liệu
+                renderUsers(users);
+
+            } catch (err) {
+
+                error.textContent = err.message;
+
+            } finally {
+
+                loading.style.display = "none";
+
+            }
+
+        }
+
+
+        // ================= RENDER =================
+        function renderUsers(users) {
+
+            userList.innerHTML = "";
+
+            users.forEach(user => {
+
+                const card = document.createElement("div");
+
+                card.className = "user-card";
+
+                card.innerHTML = `
+        
+            <img src="${user.avatar}" alt="${user.name}">
+
+            <h3>${user.name}</h3>
+
+            <p><strong>Email:</strong> ${user.email}</p>
+
+            <p><strong>Tuổi:</strong> ${user.age}</p>
+
+            <p><strong>Thành phố:</strong> ${user.city}</p>
+
+        `;
+
+                userList.appendChild(card);
+
+            });
+
+        }
+
+
+        // ================= START =================
+        fetchUsers();
+    </script>
+
+</body>
+
+</html>

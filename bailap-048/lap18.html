@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 18 - Quản lý thành viên</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+        
+        .form-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-box input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .form-box button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .form-box button:hover {
+            background: #1d4ed8;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        .member-list {
+            list-style: none;
+        }
+        
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            background: #fafafa;
+            transition: 0.3s;
+        }
+        
+        .member-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .member-number {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .member-name {
+            font-size: 17px;
+            color: #111827;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .actions button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .actions button:hover {
+            opacity: 0.9;
+        }
+        
+        .edit-btn {
+            background: #f59e0b;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+        }
+        
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>👥 Quản lý danh sách thành viên</h1>
+
+        <!-- FORM -->
+        <div class="form-box">
+
+            <input type="text" id="memberInput" placeholder="Nhập tên thành viên...">
+
+            <button id="addBtn">
+            Thêm
+        </button>
+
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="search-box">
+
+            <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm thành viên...">
+
+        </div>
+
+
+        <!-- DANH SÁCH -->
+        <ul class="member-list" id="memberList">
+
+            <div class="empty">
+                Chưa có thành viên nào
+            </div>
+
+        </ul>
+
+    </div>
+
+
+    <!-- NHÚNG JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+
+            // ================= CẬP NHẬT STT =================
+            function updateNumbers() {
+
+                $(".member-item").each(function(index) {
+
+                    $(this)
+                        .find(".member-number")
+                        .text(index + 1);
+
+                });
+
+            }
+
+
+            // ================= KIỂM TRA EMPTY =================
+            function checkEmpty() {
+
+                if ($(".member-item").length === 0) {
+
+                    $("#memberList").html(`
+                <div class="empty">
+                    Chưa có thành viên nào
+                </div>
+            `);
+
+                }
+
+            }
+
+
+            // ================= THÊM THÀNH VIÊN =================
+            $("#addBtn").click(function() {
+
+                const name = $("#memberInput")
+                    .val()
+                    .trim();
+
+                if (name === "") {
+
+                    alert("Vui lòng nhập tên");
+
+                    return;
+
+                }
+
+                // xóa empty
+                $(".empty").remove();
+
+                // tạo item mới
+                const newItem = `
+        
+            <li class="member-item">
+
+                <div class="member-info">
+
+                    <div class="member-number">
+                        1
+                    </div>
+
+                    <div class="member-name">
+                        ${name}
+                    </div>
+
+                </div>
+
+                <div class="actions">
+
+                    <button class="edit-btn">
+                        Sửa
+                    </button>
+
+                    <button class="delete-btn">
+                        Xóa
+                    </button>
+
+                </div>
+
+            </li>
+        
+        `;
+
+                $("#memberList").append(newItem);
+
+                updateNumbers();
+
+                $("#memberInput").val("").focus();
+
+            });
+
+
+            // ================= XÓA =================
+            $("#memberList").on(
+                "click",
+                ".delete-btn",
+                function() {
+
+                    $(this)
+                        .closest(".member-item")
+                        .remove();
+
+                    updateNumbers();
+
+                    checkEmpty();
+
+                }
+            );
+
+
+            // ================= SỬA =================
+            $("#memberList").on(
+                "click",
+                ".edit-btn",
+                function() {
+
+                    const item = $(this)
+                        .closest(".member-item");
+
+                    const nameEl = item.find(".member-name");
+
+                    const oldName = nameEl.text();
+
+                    const newName = prompt(
+                        "Nhập tên mới:",
+                        oldName
+                    );
+
+                    if (
+                        newName !== null &&
+                        newName.trim() !== ""
+                    ) {
+
+                        nameEl.text(newName);
+
+                    }
+
+                }
+            );
+
+
+            // ================= TÌM KIẾM =================
+            $("#searchInput").on("keyup", function() {
+
+                const keyword = $(this)
+                    .val()
+                    .toLowerCase();
+
+                $(".member-item").filter(function() {
+
+                    $(this).toggle(
+
+                        $(this)
+                        .text()
+                        .toLowerCase()
+                        .indexOf(keyword) > -1
+
+                    );
+
+                });
+
+            });
+
+
+            // ================= ENTER ĐỂ THÊM =================
+            $("#memberInput").keypress(function(e) {
+
+                if (e.which === 13) {
+
+                    $("#addBtn").click();
+
+                }
+
+            });
+
+
+        });
+    </script>
+
+</body>
+
+</html>

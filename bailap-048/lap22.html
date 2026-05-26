@@ -1,0 +1,202 @@
+```html id="u7q2mx"
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 22 - Form đăng nhập Bootstrap</title>
+
+    <!-- BOOTSTRAP CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .left-side {
+            background: linear-gradient( 135deg, #2563eb, #4f46e5);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        
+        .left-side h1 {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .left-side p {
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .right-side {
+            padding: 40px;
+        }
+        
+        .form-title {
+            font-weight: bold;
+            color: #111827;
+        }
+        
+        .btn-login {
+            background: #2563eb;
+            border: none;
+        }
+        
+        .btn-login:hover {
+            background: #1d4ed8;
+        }
+        
+        .forgot-link {
+            text-decoration: none;
+        }
+        
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-9 col-md-10">
+
+                <div class="login-card">
+
+                    <div class="row g-0">
+
+                        <!-- LEFT -->
+                        <div class="col-md-5 d-none d-md-flex left-side">
+
+                            <h1>Welcome 👋</h1>
+
+                            <p>
+                                Biểu mẫu đăng nhập responsive sử dụng Bootstrap 5
+                            </p>
+
+                        </div>
+
+
+                        <!-- RIGHT -->
+                        <div class="col-md-7">
+
+                            <div class="right-side">
+
+                                <h2 class="form-title mb-4">
+                                    Đăng nhập
+                                </h2>
+
+                                <!-- FORM -->
+                                <form>
+
+                                    <!-- EMAIL -->
+                                    <div class="mb-3">
+
+                                        <label class="form-label">
+                                        Email
+                                    </label>
+
+                                        <input type="email" class="form-control" placeholder="Nhập email">
+
+                                    </div>
+
+
+                                    <!-- PASSWORD -->
+                                    <div class="mb-3">
+
+                                        <label class="form-label">
+                                        Mật khẩu
+                                    </label>
+
+                                        <input type="password" class="form-control" placeholder="Nhập mật khẩu">
+
+                                    </div>
+
+
+                                    <!-- CHECKBOX -->
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <div class="form-check">
+
+                                            <input class="form-check-input" type="checkbox" id="remember">
+
+                                            <label class="form-check-label" for="remember">
+                                            Ghi nhớ đăng nhập
+                                        </label>
+
+                                        </div>
+
+                                        <a href="#" class="forgot-link">
+                                        Quên mật khẩu?
+                                    </a>
+
+                                    </div>
+
+
+                                    <!-- BUTTON -->
+                                    <button type="submit" class="btn btn-login text-white w-100 py-2">
+                                    Đăng nhập
+                                </button>
+
+                                </form>
+
+
+                                <!-- FOOTER -->
+                                <div class="text-center mt-4">
+
+                                    <small class="text-muted">
+
+                                    Chưa có tài khoản?
+
+                                    <a href="#">
+                                        Đăng ký
+                                    </a>
+
+                                </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+
+</html>
+```

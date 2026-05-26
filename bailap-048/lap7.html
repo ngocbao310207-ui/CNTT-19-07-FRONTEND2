@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 07 - Thao tác DOM</title>
+    <style>
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+        
+        .box {
+            padding: 15px;
+            border: 1px solid #aaa;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="contentBox" class="box">
+        <h2 id="mainTitle">Tiêu đề ban đầu</h2>
+        <p id="description">Đoạn văn mô tả trạng thái gốc của trang tài liệu.</p>
+        <img id="statusImg" src="https://via.placeholder.com/150/0000FF/FFFFFF?text=Original" alt="Image" width="150">
+    </div>
+
+    <br>
+    <button onclick="changeContent()">Thay đổi giao diện</button>
+    <button onclick="resetContent()">Khôi phục mặc định</button>
+    <script>
+        function changeContent() {
+            document.getElementById('mainTitle').innerText = "Đã cập nhật tiêu đề mới!";
+            document.getElementById('description').textContent = "Nội dung văn bản đã được thay đổi động thông qua thuộc tính DOM.";
+            document.getElementById('statusImg').src = "https://via.placeholder.com/150/FF0000/FFFFFF?text=Updated";
+            // Thay đổi class
+            document.getElementById('contentBox').classList.add('dark-mode');
+        }
+
+        function resetContent() {
+            document.getElementById('mainTitle').innerText = "Tiêu đề ban đầu";
+            document.getElementById('description').textContent = "Đoạn văn mô tả trạng thái gốc của trang tài liệu.";
+            document.getElementById('statusImg').src = "https://via.placeholder.com/150/0000FF/FFFFFF?text=Original";
+            document.getElementById('contentBox').classList.remove('dark-mode');
+        }
+    </script>
+</body>
+
+</html>

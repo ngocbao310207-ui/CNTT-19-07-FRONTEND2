@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 08 - Bộ đếm tương tác</title>
+    <style>
+        #counterValue {
+            font-size: 48px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Ứng Dụng Bộ Đếm Tương Tác Trực Quan</h3>
+    <div id="counterValue">0</div>
+
+    <button id="btnDecrement">Giảm (-1)</button>
+    <button id="btnIncrement">Tăng (+1)</button>
+    <button id="btnReset">Đặt lại (0)</button>
+    <br>
+    <button id="btnStep5">Tăng nhanh (+5)</button>
+    <script>
+        let count = 0;
+        const counterDisplay = document.getElementById('counterValue');
+
+        function renderDOM() {
+            counterDisplay.innerText = count;
+            // Yêu cầu mở rộng: Đổi màu số đếm khi giá trị âm hoặc dương
+            if (count > 0) counterDisplay.style.color = "green";
+            else if (count < 0) counterDisplay.style.color = "red";
+            else counterDisplay.style.color = "black";
+        }
+
+        document.getElementById('btnIncrement').addEventListener('click', () => {
+            count++;
+            renderDOM();
+        });
+        document.getElementById('btnDecrement').addEventListener('click', () => {
+            count--;
+            renderDOM();
+        });
+        document.getElementById('btnReset').addEventListener('click', () => {
+            count = 0;
+            renderDOM();
+        });
+
+        // Yêu cầu mở rộng: Tăng theo bội số 5
+        document.getElementById('step5') || document.getElementById('btnStep5').addEventListener('click', () => {
+            count += 5;
+            renderDOM();
+        });
+    </script>
+</body>
+
+</html>

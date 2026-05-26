@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Chỉ Số BMI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        input[type="number"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        input[type="number"]:hover {
+            border-color: #b8c1ec;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .bmi-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .bmi-category {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .bmi-description {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #555;
+        }
+        /* Màu sắc theo phân loại */
+        
+        .underweight {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #d63031;
+        }
+        
+        .normal {
+            background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
+            color: #00695c;
+        }
+        
+        .overweight {
+            background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%);
+            color: #d63031;
+        }
+        
+        .obese {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: #6c1e3c;
+        }
+        
+        .error {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+        
+        .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .bmi-value {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🏥 Tính Chỉ Số BMI</h1>
+        <p class="subtitle">Body Mass Index Calculator</p>
+
+        <div class="input-group">
+            <label for="height">Chiều cao (m):</label>
+            <input type="number" id="height" placeholder="Ví dụ: 1.70" step="0.01" min="0">
+        </div>
+
+        <div class="input-group">
+            <label for="weight">Cân nặng (kg):</label>
+            <input type="number" id="weight" placeholder="Ví dụ: 65" step="0.1" min="0">
+        </div>
+
+        <button onclick="calculateBMI()">Tính BMI</button>
+
+        <div class="error" id="errorMsg"></div>
+
+        <div class="result" id="result">
+            <div class="icon" id="icon"></div>
+            <div class="bmi-value" id="bmiValue"></div>
+            <div class="bmi-category" id="category"></div>
+            <div class="bmi-description" id="description"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateBMI() {
+            // Lấy giá trị từ input
+            const heightInput = document.getElementById('height');
+            const weightInput = document.getElementById('weight');
+            const height = Number(heightInput.value);
+            const weight = Number(weightInput.value);
+
+            const errorMsg = document.getElementById('errorMsg');
+            const result = document.getElementById('result');
+
+            // Reset hiển thị
+            errorMsg.classList.remove('show');
+            result.classList.remove('show');
+
+            // Kiểm tra dữ liệu đầu vào
+            if (!height || !weight) {
+                showError('⚠️ Vui lòng nhập đầy đủ chiều cao và cân nặng!');
+                return;
+            }
+
+            if (height <= 0) {
+                showError('⚠️ Chiều cao phải lớn hơn 0!');
+                return;
+            }
+
+            if (weight <= 0) {
+                showError('⚠️ Cân nặng phải lớn hơn 0!');
+                return;
+            }
+
+            if (height > 3) {
+                showError('⚠️ Chiều cao không hợp lệ. Vui lòng nhập theo đơn vị mét (m)!');
+                return;
+            }
+
+            // Tính BMI
+            const bmi = weight / (height * height);
+            const bmiRounded = bmi.toFixed(2);
+
+            // Phân loại BMI
+            let category = '';
+            let description = '';
+            let className = '';
+            let icon = '';
+
+            if (bmi < 18.5) {
+                category = 'GẦY';
+                description = 'Bạn cần tăng cân. Hãy ăn uống đầy đủ dinh dưỡng và tham khảo ý kiến bác sĩ.';
+                className = 'underweight';
+                icon = '😟';
+            } else if (bmi >= 18.5 && bmi < 25) {
+                category = 'BÌNH THƯỜNG';
+                description = 'Tuyệt vời! Cân nặng của bạn nằm trong mức lý tưởng. Hãy duy trì lối sống lành mạnh.';
+                className = 'normal';
+                icon = '😊';
+            } else if (bmi >= 25 && bmi < 30) {
+                category = 'THỪA CÂN';
+                description = 'Bạn nên tập thể dục thường xuyên và điều chỉnh chế độ ăn uống.';
+                className = 'overweight';
+                icon = '😐';
+            } else {
+                category = 'BÉO PHÌ';
+                description = 'Cần chú ý đến sức khỏe. Hãy tham khảo ý kiến bác sĩ để có kế hoạch giảm cân phù hợp.';
+                className = 'obese';
+                icon = '😰';
+            }
+
+            // Hiển thị kết quả
+            document.getElementById('bmiValue').textContent = bmiRounded;
+            document.getElementById('category').textContent = category;
+            document.getElementById('description').textContent = description;
+            document.getElementById('icon').textContent = icon;
+
+            // Xóa class cũ và thêm class mới
+            result.className = 'result show ' + className;
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = message;
+            errorMsg.classList.add('show');
+        }
+
+        // Cho phép nhấn Enter để tính
+        document.getElementById('height').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateBMI();
+            }
+        });
+
+        document.getElementById('weight').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateBMI();
+            }
+        });
+    </script>
+</body>
+
+</html>

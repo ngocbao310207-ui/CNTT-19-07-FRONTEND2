@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 13 - jQuery Hide Show Toggle</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+        
+        .buttons {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        #hideBtn {
+            background: #ef4444;
+        }
+        
+        #showBtn {
+            background: #10b981;
+        }
+        
+        #toggleBtn {
+            background: #2563eb;
+        }
+        
+        #statusBtn {
+            background: #f59e0b;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .content-box {
+            background: #eef2ff;
+            border: 2px solid #2563eb;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .content-box img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .content-box h2 {
+            margin-bottom: 10px;
+            color: #111827;
+        }
+        
+        .content-box p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🎯 Lab 13 - jQuery Hide / Show / Toggle</h1>
+
+        <div class="buttons">
+
+            <button id="hideBtn">Ẩn</button>
+
+            <button id="showBtn">Hiện</button>
+
+            <button id="toggleBtn">Toggle</button>
+
+            <button id="statusBtn">Kiểm tra trạng thái</button>
+
+        </div>
+
+        <!-- Nội dung điều khiển -->
+        <div class="content-box" id="content">
+
+            <img src="https://picsum.photos/500/300" alt="Ảnh minh họa">
+
+            <h2>jQuery rất tiện lợi 🚀</h2>
+
+            <p>
+                jQuery giúp thao tác với DOM dễ dàng hơn so với JavaScript thuần bằng cú pháp ngắn gọn và trực quan.
+            </p>
+
+        </div>
+
+        <div class="status" id="statusText">
+            Trạng thái: Đang hiển thị
+        </div>
+
+    </div>
+
+
+    <!-- NHÚNG JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+
+            // ================= HIDE =================
+            $("#hideBtn").click(function() {
+
+                $("#content").hide(500);
+
+                $("#statusText").text(
+                    "Trạng thái: Đã ẩn nội dung"
+                );
+
+            });
+
+
+            // ================= SHOW =================
+            $("#showBtn").click(function() {
+
+                $("#content").show(500);
+
+                $("#statusText").text(
+                    "Trạng thái: Đang hiển thị"
+                );
+
+            });
+
+
+            // ================= TOGGLE =================
+            $("#toggleBtn").click(function() {
+
+                $("#content").toggle(500);
+
+                // kiểm tra trạng thái
+                if ($("#content").is(":visible")) {
+
+                    $("#statusText").text(
+                        "Trạng thái: Đang hiển thị"
+                    );
+
+                } else {
+
+                    $("#statusText").text(
+                        "Trạng thái: Đã ẩn nội dung"
+                    );
+
+                }
+
+            });
+
+
+            // ================= CHECK STATUS =================
+            $("#statusBtn").click(function() {
+
+                if ($("#content").is(":visible")) {
+
+                    alert("Nội dung hiện đang HIỂN THỊ");
+
+                } else {
+
+                    alert("Nội dung hiện đang BỊ ẨN");
+
+                }
+
+            });
+
+
+        });
+    </script>
+
+</body>
+
+</html>

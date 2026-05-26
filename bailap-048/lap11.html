@@ -1,0 +1,263 @@
+```html id="b4z3qn"
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 11 - Tra cứu thông tin</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2563eb;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        .search-box button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        #searchBtn {
+            background: #2563eb;
+            color: white;
+        }
+        
+        #searchBtn:hover {
+            background: #1d4ed8;
+        }
+        
+        #clearBtn {
+            background: #ef4444;
+            color: white;
+        }
+        
+        #clearBtn:hover {
+            background: #dc2626;
+        }
+        
+        .result {
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .card img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+        
+        .card h2 {
+            margin-bottom: 10px;
+            color: #111827;
+        }
+        
+        .card p {
+            margin-bottom: 8px;
+            color: #6b7280;
+        }
+        
+        .message {
+            text-align: center;
+            padding: 20px;
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🔎 Tra cứu người dùng</h1>
+
+        <div class="search-box">
+            <input type="text" id="userId" placeholder="Nhập mã định danh...">
+            <button id="searchBtn">Tra cứu</button>
+            <button id="clearBtn">Xóa</button>
+        </div>
+
+        <div id="result" class="result"></div>
+
+    </div>
+
+    <script>
+        // API mockapi
+        const API_URL = "https://6666b2caa2f8516ff7a62b67.mockapi.io/users";
+
+        const userIdInput = document.getElementById("userId");
+        const searchBtn = document.getElementById("searchBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const result = document.getElementById("result");
+
+
+        // ================= SEARCH =================
+        async function searchUser() {
+
+            const id = userIdInput.value.trim();
+
+            if (id === "") {
+                showMessage("Vui lòng nhập mã định danh");
+                return;
+            }
+
+            result.innerHTML = `
+        <div class="loading">
+            Đang tải dữ liệu...
+        </div>
+    `;
+
+            try {
+
+                // URL động theo id
+                const response = await fetch(`${API_URL}/${id}`);
+
+                // nếu không tìm thấy
+                if (!response.ok) {
+                    throw new Error("Không tìm thấy dữ liệu");
+                }
+
+                const user = await response.json();
+
+                renderUser(user);
+
+            } catch (error) {
+
+                showMessage(error.message);
+
+            }
+
+        }
+
+
+        // ================= RENDER =================
+        function renderUser(user) {
+
+            result.innerHTML = `
+    
+        <div class="card">
+
+            <img src="${user.avatar}" alt="${user.name}">
+
+            <h2>${user.name}</h2>
+
+            <p><strong>Email:</strong> ${user.email}</p>
+
+            <p><strong>Tuổi:</strong> ${user.age}</p>
+
+            <p><strong>Thành phố:</strong> ${user.city}</p>
+
+            <p><strong>ID:</strong> ${user.id}</p>
+
+        </div>
+    
+    `;
+
+        }
+
+
+        // ================= MESSAGE =================
+        function showMessage(message) {
+
+            result.innerHTML = `
+    
+        <div class="message">
+            ${message}
+        </div>
+    
+    `;
+
+        }
+
+
+        // ================= CLEAR =================
+        function clearSearch() {
+
+            userIdInput.value = "";
+            result.innerHTML = "";
+
+            userIdInput.focus();
+
+        }
+
+
+        // ================= EVENTS =================
+        searchBtn.addEventListener("click", searchUser);
+
+        clearBtn.addEventListener("click", clearSearch);
+
+
+        // Enter để tìm kiếm
+        userIdInput.addEventListener("keydown", (e) => {
+
+            if (e.key === "Enter") {
+                searchUser();
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>
+```

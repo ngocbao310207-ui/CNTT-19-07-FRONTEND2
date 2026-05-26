@@ -1,0 +1,651 @@
+```html id="r8x4mk"
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 21 - CRUD với jQuery Ajax</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+        
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .add-btn {
+            background: #10b981;
+        }
+        
+        .update-btn {
+            background: #f59e0b;
+        }
+        
+        .cancel-btn {
+            background: #6b7280;
+        }
+        
+        .edit-btn {
+            background: #2563eb;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #10b981;
+        }
+        
+        .error {
+            color: #ef4444;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        table th,
+        table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table th {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .loading {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🎓 CRUD Sinh viên với jQuery Ajax</h1>
+
+        <!-- FORM -->
+        <div class="form-box">
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Họ tên</label>
+
+                    <input type="text" id="name" placeholder="Nhập họ tên">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input type="email" id="email" placeholder="Nhập email">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Lớp</label>
+
+                    <input type="text" id="className" placeholder="Nhập lớp">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Ảnh đại diện</label>
+
+                    <input type="text" id="avatar" placeholder="Link ảnh">
+
+                </div>
+
+            </div>
+
+            <div class="buttons">
+
+                <button class="add-btn" id="addBtn">
+                ➕ Thêm sinh viên
+            </button>
+
+                <button class="update-btn" id="updateBtn" style="display:none;">
+                💾 Cập nhật
+            </button>
+
+                <button class="cancel-btn" id="cancelBtn" style="display:none;">
+                ❌ Hủy
+            </button>
+
+            </div>
+
+            <div class="message" id="message"></div>
+
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="search-box">
+
+            <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm theo tên...">
+
+        </div>
+
+
+        <!-- LOADING -->
+        <div class="loading" id="loading">
+            Đang tải dữ liệu...
+        </div>
+
+
+        <!-- TABLE -->
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Lớp</th>
+                    <th>Hành động</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="studentTable"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+
+            // ================= API =================
+            const API_URL =
+                "https://6666b2caa2f8516ff7a62b67.mockapi.io/students";
+
+
+            // ================= BIẾN =================
+            let editId = null;
+
+
+            // ================= LOAD DATA =================
+            function loadStudents() {
+
+                $("#loading").show();
+
+                $.ajax({
+
+                    url: API_URL,
+
+                    method: "GET",
+
+                    success: function(data) {
+
+                        renderStudents(data);
+
+                        $("#loading").hide();
+
+                    },
+
+                    error: function() {
+
+                        $("#loading").hide();
+
+                        showMessage(
+                            "❌ Không thể tải dữ liệu",
+                            "error"
+                        );
+
+                    }
+
+                });
+
+            }
+
+
+            // ================= RENDER =================
+            function renderStudents(students) {
+
+                let keyword = $("#searchInput")
+                    .val()
+                    .toLowerCase();
+
+                let html = "";
+
+                students
+                    .filter(student =>
+                        student.name
+                        .toLowerCase()
+                        .includes(keyword)
+                    )
+                    .forEach(student => {
+
+                        html += `
+            
+                <tr>
+
+                    <td>${student.id}</td>
+
+                    <td>
+                        <img 
+                            src="${student.avatar}" 
+                            class="avatar"
+                        >
+                    </td>
+
+                    <td>${student.name}</td>
+
+                    <td>${student.email}</td>
+
+                    <td>${student.className}</td>
+
+                    <td>
+
+                        <button 
+                            class="edit-btn"
+                            onclick="editStudent(
+                                '${student.id}',
+                                '${student.name}',
+                                '${student.email}',
+                                '${student.className}',
+                                '${student.avatar}'
+                            )"
+                        >
+                            Sửa
+                        </button>
+
+                        <button 
+                            class="delete-btn"
+                            onclick="deleteStudent(
+                                '${student.id}'
+                            )"
+                        >
+                            Xóa
+                        </button>
+
+                    </td>
+
+                </tr>
+            
+            `;
+
+                    });
+
+                $("#studentTable").html(html);
+
+            }
+
+
+            // ================= THÔNG BÁO =================
+            function showMessage(text, type) {
+
+                $("#message")
+                    .removeClass("success error")
+                    .addClass(type)
+                    .text(text);
+
+            }
+
+
+            // ================= RESET FORM =================
+            function resetForm() {
+
+                $("#name").val("");
+
+                $("#email").val("");
+
+                $("#className").val("");
+
+                $("#avatar").val("");
+
+                editId = null;
+
+                $("#addBtn").show();
+
+                $("#updateBtn").hide();
+
+                $("#cancelBtn").hide();
+
+            }
+
+
+            // ================= THÊM =================
+            $("#addBtn").click(function() {
+
+                const name = $("#name").val().trim();
+
+                const email = $("#email").val().trim();
+
+                const className =
+                    $("#className").val().trim();
+
+                const avatar =
+                    $("#avatar").val().trim();
+
+
+                if (
+                    name === "" ||
+                    email === "" ||
+                    className === ""
+                ) {
+
+                    showMessage(
+                        "⚠ Vui lòng nhập đầy đủ thông tin",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                const newStudent = {
+
+                    name,
+
+                    email,
+
+                    className,
+
+                    avatar: avatar ||
+                        "https://i.pravatar.cc/150?img=8"
+
+                };
+
+
+                $.ajax({
+
+                    url: API_URL,
+
+                    method: "POST",
+
+                    data: newStudent,
+
+                    success: function() {
+
+                        showMessage(
+                            "✅ Thêm sinh viên thành công",
+                            "success"
+                        );
+
+                        resetForm();
+
+                        loadStudents();
+
+                    },
+
+                    error: function() {
+
+                        showMessage(
+                            "❌ Thêm sinh viên thất bại",
+                            "error"
+                        );
+
+                    }
+
+                });
+
+            });
+
+
+            // ================= SỬA =================
+            window.editStudent = function(
+                id,
+                name,
+                email,
+                className,
+                avatar
+            ) {
+
+                editId = id;
+
+                $("#name").val(name);
+
+                $("#email").val(email);
+
+                $("#className").val(className);
+
+                $("#avatar").val(avatar);
+
+                $("#addBtn").hide();
+
+                $("#updateBtn").show();
+
+                $("#cancelBtn").show();
+
+            };
+
+
+            // ================= CẬP NHẬT =================
+            $("#updateBtn").click(function() {
+
+                const updatedStudent = {
+
+                    name: $("#name").val().trim(),
+
+                    email: $("#email").val().trim(),
+
+                    className: $("#className").val().trim(),
+
+                    avatar: $("#avatar").val().trim()
+
+                };
+
+
+                $.ajax({
+
+                    url: `${API_URL}/${editId}`,
+
+                    method: "PUT",
+
+                    data: updatedStudent,
+
+                    success: function() {
+
+                        showMessage(
+                            "✅ Cập nhật thành công",
+                            "success"
+                        );
+
+                        resetForm();
+
+                        loadStudents();
+
+                    },
+
+                    error: function() {
+
+                        showMessage(
+                            "❌ Cập nhật thất bại",
+                            "error"
+                        );
+
+                    }
+
+                });
+
+            });
+
+
+            // ================= XÓA =================
+            window.deleteStudent = function(id) {
+
+                const confirmDelete = confirm(
+                    "Bạn có chắc muốn xóa?"
+                );
+
+                if (!confirmDelete) return;
+
+
+                $.ajax({
+
+                    url: `${API_URL}/${id}`,
+
+                    method: "DELETE",
+
+                    success: function() {
+
+                        showMessage(
+                            "🗑 Xóa thành công",
+                            "success"
+                        );
+
+                        loadStudents();
+
+                    },
+
+                    error: function() {
+
+                        showMessage(
+                            "❌ Xóa thất bại",
+                            "error"
+                        );
+
+                    }
+
+                });
+
+            };
+
+
+            // ================= HỦY =================
+            $("#cancelBtn").click(function() {
+
+                resetForm();
+
+            });
+
+
+            // ================= TÌM KIẾM =================
+            $("#searchInput").on("keyup", function() {
+
+                loadStudents();
+
+            });
+
+
+            // ================= START =================
+            loadStudents();
+
+
+        });
+    </script>
+
+</body>
+
+</html>
+```

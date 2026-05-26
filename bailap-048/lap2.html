@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Khuyến Mãi Đơn Hàng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+            padding: 45px;
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        h1 {
+            color: #f5576c;
+            margin-bottom: 8px;
+            font-size: 2.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 0.95em;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        input[type="number"]:focus {
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        select:focus {
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+        
+        .member-badges {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .badge-bronze {
+            background: #cd7f32;
+            color: white;
+        }
+        
+        .badge-silver {
+            background: #c0c0c0;
+            color: #333;
+        }
+        
+        .badge-gold {
+            background: #ffd700;
+            color: #333;
+        }
+        
+        .badge-platinum {
+            background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
+            color: white;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(245, 87, 108, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 20px;
+            color: white;
+            display: none;
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result-header {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .result-row:last-child {
+            border-bottom: none;
+            margin-top: 15px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .result-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .result-value {
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+        
+        .total-value {
+            font-size: 1.8em !important;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .discount-badge {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+        }
+        
+        .error {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+        
+        .promotion-info {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .promotion-info h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        .promotion-list {
+            list-style: none;
+            color: #1b5e20;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+        
+        .promotion-list li:before {
+            content: "🎁 ";
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 1.6em;
+            }
+            .result-value {
+                font-size: 1em;
+            }
+            .total-value {
+                font-size: 1.5em !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Tính Khuyến Mãi</h1>
+            <p class="subtitle">Hệ thống tính toán ưu đãi theo hạng thành viên</p>
+        </div>
+
+        <div class="form-section">
+            <div class="input-group">
+                <label for="orderValue">💰 Giá trị đơn hàng (VNĐ):</label>
+                <input type="number" id="orderValue" placeholder="Nhập giá trị đơn hàng" step="1000" min="0">
+            </div>
+
+            <div class="input-group">
+                <label for="memberType">👤 Hạng thành viên:</label>
+                <select id="memberType">
+                    <option value="normal">Thành viên thường</option>
+                    <option value="bronze">Thành viên Đồng 🥉</option>
+                    <option value="silver">Thành viên Bạc 🥈</option>
+                    <option value="gold">Thành viên Vàng 🥇</option>
+                    <option value="platinum">Thành viên Bạch Kim 💎</option>
+                </select>
+                <div class="member-badges">
+                    <span class="badge badge-bronze">Đồng: +2%</span>
+                    <span class="badge badge-silver">Bạc: +5%</span>
+                    <span class="badge badge-gold">Vàng: +8%</span>
+                    <span class="badge badge-platinum">Bạch Kim: +12%</span>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="calculateDiscount()">🧮 Tính Toán Khuyến Mãi</button>
+
+        <div class="promotion-info">
+            <h3>📋 Chính sách khuyến mãi:</h3>
+            <ul class="promotion-list">
+                <li>Dưới 500,000đ: Không giảm giá</li>
+                <li>Từ 500,000đ - 1,000,000đ: Giảm 5%</li>
+                <li>Từ 1,000,000đ - 3,000,000đ: Giảm 10%</li>
+                <li>Từ 3,000,000đ - 5,000,000đ: Giảm 15%</li>
+                <li>Trên 5,000,000đ: Giảm 20%</li>
+            </ul>
+        </div>
+
+        <div class="error" id="errorMsg"></div>
+
+        <div class="result" id="result">
+            <div class="result-header">
+                🎉 KẾT QUẢ TÍNH TOÁN
+            </div>
+            <div class="result-row">
+                <span class="result-label">Giá trị đơn hàng:</span>
+                <span class="result-value" id="originalPrice"></span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Hạng thành viên:</span>
+                <span class="result-value" id="memberRank"></span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Tỷ lệ giảm giá:</span>
+                <span class="result-value discount-badge" id="discountRate"></span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Số tiền được giảm:</span>
+                <span class="result-value" id="discountAmount"></span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">💳 TỔNG THANH TOÁN:</span>
+                <span class="result-value total-value" id="finalPrice"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hàm định dạng số thành tiền tệ VNĐ
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        // Hàm tính tỷ lệ giảm giá theo giá trị đơn hàng
+        function getOrderDiscount(orderValue) {
+            if (orderValue < 500000) {
+                return 0;
+            } else if (orderValue >= 500000 && orderValue < 1000000) {
+                return 5;
+            } else if (orderValue >= 1000000 && orderValue < 3000000) {
+                return 10;
+            } else if (orderValue >= 3000000 && orderValue < 5000000) {
+                return 15;
+            } else {
+                return 20;
+            }
+        }
+
+        // Hàm tính tỷ lệ giảm giá theo hạng thành viên
+        function getMemberDiscount(memberType) {
+            const memberDiscounts = {
+                'normal': 0,
+                'bronze': 2,
+                'silver': 5,
+                'gold': 8,
+                'platinum': 12
+            };
+            return memberDiscounts[memberType] || 0;
+        }
+
+        // Hàm lấy tên hạng thành viên
+        function getMemberName(memberType) {
+            const memberNames = {
+                'normal': 'Thành viên thường',
+                'bronze': 'Thành viên Đồng 🥉',
+                'silver': 'Thành viên Bạc 🥈',
+                'gold': 'Thành viên Vàng 🥇',
+                'platinum': 'Thành viên Bạch Kim 💎'
+            };
+            return memberNames[memberType] || 'Không xác định';
+        }
+
+        // Hàm hiển thị thông báo lỗi
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = '⚠️ ' + message;
+            errorMsg.classList.add('show');
+
+            // Ẩn kết quả nếu đang hiển thị
+            document.getElementById('result').classList.remove('show');
+        }
+
+        // Hàm tính toán khuyến mãi
+        function calculateDiscount() {
+            // Lấy giá trị từ input
+            const orderValueInput = document.getElementById('orderValue');
+            const memberTypeSelect = document.getElementById('memberType');
+
+            const orderValue = Number(orderValueInput.value);
+            const memberType = memberTypeSelect.value;
+
+            const errorMsg = document.getElementById('errorMsg');
+            const result = document.getElementById('result');
+
+            // Reset hiển thị
+            errorMsg.classList.remove('show');
+            result.classList.remove('show');
+
+            // Kiểm tra dữ liệu đầu vào
+            if (!orderValue || orderValue <= 0) {
+                showError('Vui lòng nhập giá trị đơn hàng hợp lệ!');
+                return;
+            }
+
+            if (orderValue > 100000000) {
+                showError('Giá trị đơn hàng quá lớn! Vui lòng liên hệ bộ phận hỗ trợ.');
+                return;
+            }
+
+            // Tính toán
+            const orderDiscountRate = getOrderDiscount(orderValue);
+            const memberDiscountRate = getMemberDiscount(memberType);
+            const totalDiscountRate = orderDiscountRate + memberDiscountRate;
+
+            const discountAmount = orderValue * (totalDiscountRate / 100);
+            const finalPrice = orderValue - discountAmount;
+
+            // Hiển thị kết quả
+            document.getElementById('originalPrice').textContent = formatCurrency(orderValue);
+            document.getElementById('memberRank').textContent = getMemberName(memberType);
+            document.getElementById('discountRate').textContent = totalDiscountRate + '% (' + orderDiscountRate + '% + ' + memberDiscountRate + '%)';
+            document.getElementById('discountAmount').textContent = '- ' + formatCurrency(discountAmount);
+            document.getElementById('finalPrice').textContent = formatCurrency(finalPrice);
+
+            // Hiển thị kết quả
+            result.classList.add('show');
+
+            // Cuộn xuống kết quả
+            setTimeout(() => {
+                result.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }, 100);
+        }
+
+        // Cho phép nhấn Enter để tính
+        document.getElementById('orderValue').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateDiscount();
+            }
+        });
+    </script>
+</body>
+
+</html>
