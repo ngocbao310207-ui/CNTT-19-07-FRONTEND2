@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 21 - Mini Project CRUD hoàn chỉnh với Ajax jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .crud-form { background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 20px; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .form-row input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-action { padding: 8px 15px; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold; }
+        .btn-save { background-color: #27ae60; }
+        .btn-update { background-color: #3498db; display: none; }
+        .btn-cancel { background-color: #7f8c8d; display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #34495e; color: white; }
+        .btn-row-edit { background: #f39c12; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; margin-right:5px;}
+        .btn-row-del { background: #e74c3c; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hệ Thống Quản Lý Người Dùng Hoàn Chỉnh (CRUD API Ajax)</h2>
+        
+        <div class="crud-form">
+            <h4 style="margin-top:0; margin-bottom:10px;" id="formTitle">Thêm Thành Viên Mới</h4>
+            <input type="hidden" id="currentEditId">
+            <div class="form-row">
+                <input type="text" id="userName" placeholder="Nhập tên thành viên (Ví dụ: Duc Long)">
+                <input type="text" id="userJob" placeholder="Nhập vị trí nghề nghiệp chuyên môn">
+            </div>
+            <button class="btn-action btn-save" id="btnSubmitAdd">Lưu Thêm Mới (POST)</button>
+            <button class="btn-action btn-update" id="btnSubmitUpdate">Cập Nhật Thay Đổi (PUT)</button>
+            <button class="btn-action btn-cancel" id="btnCancelEdit">Hủy Bỏ</button>
+        </div>
+
+        <table id="userGrid">
+            <thead>
+                <tr>
+                    <th>Mã ID</th>
+                    <th>Họ và Tên</th>
+                    <th>Nghề nghiệp công việc</th>
+                    <th>Hành động xử lý hệ thống</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const endpoint = "https://reqres.in/api/users";
+
+        // 1. READ (GET): Tải nạp dữ liệu ban đầu từ API hiển thị lên bảng
+        function loadGridData() {
+            $("#userGrid tbody").empty();
+            $.ajax({
+                url: endpoint + "?page=1",
+                type: "GET",
+                success: function(response) {
+                    let list = response.data;
+                    $.each(list, function(i, item) {
+                        let row = `
+                            <tr id="tr_user_${item.id}">
+                                <td>${item.id}</td>
+                                <td class="td-name">${item.first_name} ${item.last_name}</td>
+                                <td class="td-job">Thành viên hệ thống</td>
+                                <td>
+                                    <button class="btn-row-edit" onclick="startEditView(${item.id}, '${item.first_name} ${item.last_name}', 'Nhân viên')">Sửa</button>
+                                    <button class="btn-row-del" onclick="deleteUserRow(${item.id})">Xóa</button>
+                                </td>
+                            </tr>
+                        `;
+                        $("#userGrid tbody").append(row);
+                    });
+                }
+            });
+        }
+
+        // 2. CREATE (POST): Gửi yêu cầu lưu dữ liệu thêm mới một bản ghi
+        $("#btnSubmitAdd").click(function() {
+            let name = $("#userName").val().trim();
+            let job = $("#userJob").val().trim();
+
+            if(!name || !job) { alert("Vui lòng điền thông tin trước!"); return; }
+
+            $.ajax({
+                url: endpoint,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ name: name, job: job }),
+                success: function(data) {
+                    alert(`Gửi lệnh POST thêm mới thành công thành viên giả lập!\nID sinh ra: #${data.id}`);
+                    
+                    // Thêm trực tiếp dòng dữ liệu mới vào bảng Client để kiểm chứng trực quan cấu trúc giao diện
+                    let newRow = `
+                        <tr style="background-color:#e8f8f5;">
+                            <td>${data.id}</td>
+                            <td>${name}</td>
+                            <td>${job}</td>
+                            <td>
+                                <button class="btn-row-edit" onclick="alert('Bản ghi tạm thời!')">Sửa</button>
+                                <button class="btn-row-del" onclick="alert('Bản ghi tạm thời!')">Xóa</button>
+                            </td>
+                        </tr>
+                    `;
+                    $("#userGrid tbody").prepend(newRow);
+                    resetFormState();
+                }
+            });
+        });
+
+        // Kích hoạt chế độ điền thông tin lên Form chuyển giao diện sang chế độ UPDATE (PUT)
+        function startEditView(id, name, job) {
+            $("#formTitle").text(`Chỉnh Sửa Cập Nhật Thành Viên (ID: #${id})`);
+            $("#currentEditId").val(id);
+            $("#userName").val(name);
+            $("#userJob").val(job);
+
+            $("#btnSubmitAdd").hide();
+            $("#btnSubmitUpdate, #btnCancelEdit").show();
+        }
+
+        // 3. UPDATE (PUT): Gửi yêu cầu cập nhật sửa đổi dữ liệu theo mã ID lựa chọn
+        $("#btnSubmitUpdate").click(function() {
+            let id = $("#currentEditId").val();
+            let name = $("#userName").val().trim();
+            let job = $("#userJob").val().trim();
+
+            $.ajax({
+                url: `${endpoint}/${id}`,
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify({ name: name, job: job }),
+                success: function(data) {
+                    alert(`Gửi lệnh PUT chỉnh sửa cập nhật thông tin thành công lên hệ thống server ảo!\nThời điểm cập nhật: ${data.updatedAt}`);
+                    
+                    // Cập nhật đổi chữ hiển thị trực tiếp đồng bộ dòng dữ liệu trên bảng grid HTML client
+                    let targetRow = $(`#tr_user_${id}`);
+                    targetRow.find(".td-name").text(name);
+                    targetRow.find(".td-job").text(job + " (Đã sửa)");
+                    targetRow.css("background-color", "#ebf5fb");
+
+                    resetFormState();
+                }
+            });
+        });
+
+        // 4. DELETE: Gửi lệnh yêu cầu xóa gỡ bỏ phần tử theo ID
+        function deleteUserRow(id) {
+            if(!confirm(`Xác nhận thực hiện gửi gói tin DELETE gỡ bỏ thành viên #${id} không?`)) return;
+
+            $.ajax({
+                url: `${endpoint}/${id}`,
+                type: "DELETE",
+                success: function() {
+                    alert(`Gửi lệnh DELETE thành công! Loại bỏ dòng ID #${id} trên màn hình client.`);
+                    $(`#tr_user_${id}`).remove(); // Xóa bỏ dòng tr tương thích trên cây DOM bảng biểu
+                }
+            });
+        }
+
+        function resetFormState() {
+            $("#formTitle").text("Thêm Thành Viên Mới");
+            $("#currentEditId").val("");
+            $("#userName").val("");
+            $("#userJob").val("");
+
+            $("#btnSubmitAdd").show();
+            $("#btnSubmitUpdate, #btnCancelEdit").hide();
+        }
+
+        $("#btnCancelEdit").click(resetFormState);
+
+        // Khởi động nạp dữ liệu lần đầu tiên tự động
+        $(document).ready(loadGridData);
+    </script>
+</body>
+</html>

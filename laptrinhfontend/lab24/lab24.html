@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 24 - Trang Sự Kiện Công Nghệ 2026</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafbfc;
+        }
+        /* Tùy chỉnh Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)), 
+                        url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200') no-repeat center center/cover;
+            padding: 160px 0 120px 0;
+            color: #fff;
+        }
+        /* Hiệu ứng hover cho Card điểm nổi bật */
+        .feature-card {
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        }
+        /* Tùy chỉnh dòng thời gian lịch trình */
+        .timeline-item {
+            border-left: 3px solid #0d6efd;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase tracking-wider" href="#">
+                <i class="fas fa-cubes text-primary me-2"></i>TechFuture 2026
+            </a>
+            <button class="navbar-collapse-btn navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto fw-medium">
+                    <li class="nav-item"><a class="nav-link" href="#hero">Tổng quan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Điểm nổi bật</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Lịch trình</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm px-3 ms-lg-3 rounded-pill" href="#register">Đăng ký ngay</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <section id="hero" class="hero-section text-center text-lg-start">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill mb-3 fw-semibold text-uppercase tracking-wide">Sự kiện công nghệ lớn nhất năm</span>
+                    <h1 class="display-4 fw-extrabold mb-3 text-white lh-sm">Định Hình Tương Lai <br><span class="text-primary">Kỷ Nguyên Trí Tuệ Nhân Tạo</span></h1>
+                    <p class="lead text-gray-300 mb-4 opacity-75">Cơ hội gặp gỡ các chuyên gia hàng đầu toàn cầu, trải nghiệm các giải pháp AI đột phá và kết nối hệ sinh thái công nghệ tương lai.</p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                        <a href="#register" class="btn btn-primary btn-lg px-4 rounded-3 fw-bold">Mua vé tham dự</a>
+                        <button class="btn btn-outline-light btn-lg px-4 rounded-3 fw-medium" data-bs-toggle="modal" data-bs-target="#infoModal">
+                            <i class="fas fa-play me-2 fs-6"></i>Xem video giới thiệu
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600" alt="Tech Event" class="img-fluid rounded-4 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="features" class="py-5 mt-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-dark">Giá Trị Bạn Nhận Được</h2>
+                <p class="text-muted">Những đặc quyền dành riêng cho khách tham dự sự kiện</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm p-4 text-center rounded-4">
+                        <div class="p-3 bg-primary-subtle text-primary rounded-circle d-inline-block mx-auto mb-3">
+                            <i class="fas fa-lightbulb fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Kiến thức chuyên sâu</h5>
+                        <p class="text-muted mb-0 small">Cập nhật xu hướng AI, Big Data và Cloud Computing mới nhất từ các tập đoàn công nghệ lớn.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm p-4 text-center rounded-4">
+                        <div class="p-3 bg-success-subtle text-success rounded-circle d-inline-block mx-auto mb-3">
+                            <i class="fas fa-network-wired fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Mở rộng Networking</h5>
+                        <p class="text-muted mb-0 small">Cơ hội kết nối trực tiếp với hơn 500+ nhà phát triển, kỹ sư và CEO công nghệ danh tiếng.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm p-4 text-center rounded-4">
+                        <div class="p-3 bg-warning-subtle text-warning rounded-circle d-inline-block mx-auto mb-3">
+                            <i class="fas fa-certificate fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Chứng nhận bản quyền</h5>
+                        <p class="text-muted mb-0 small">Nhận chứng chỉ điện tử tham gia sự kiện phục vụ cho hồ sơ năng lực cá nhân của bạn.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="schedule" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-dark">Lịch Trình Sự Kiện</h2>
+                <p class="text-muted">Chi tiết các phiên thảo luận diễn ra trong ngày</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="list-group shadow-sm rounded-4 overflow-hidden">
+                        
+                        <div class="list-group-item p-4 timeline-item border-0 bg-white mb-2 shadow-sm rounded-3">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between mb-2">
+                                <h5 class="fw-bold text-primary mb-1">08:00 - 09:00</h5>
+                                <span class="badge bg-secondary-subtle text-secondary align-self-start py-1.5 px-3 rounded-pill small">Hội trường chính</span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Đón tiếp khách mời & Khai mạc sự kiện</h6>
+                            <p class="text-muted mb-0 small text-justify">Check-in nhận tài liệu và thưởng thức trà nước teabreak buổi sáng trước khi vào chương trình chính thức.</p>
+                        </div>
+
+                        <div class="list-group-item p-4 timeline-item border-0 bg-white mb-2 shadow-sm rounded-3">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between mb-2">
+                                <h5 class="fw-bold text-primary mb-1">09:00 - 11:30</h5>
+                                <span class="badge bg-danger-subtle text-danger align-self-start py-1.5 px-3 rounded-pill small">Keynote Session</span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Xu hướng phát triển Trí Tuệ Nhân Tạo (Generative AI)</h6>
+                            <p class="text-muted mb-0 small text-justify">Phiên tham luận chính đến từ Giám đốc Công nghệ (CTO) của tập đoàn công nghệ lớn thảo luận về tương lai của các mô hình ngôn ngữ lớn.</p>
+                        </div>
+
+                        <div class="list-group-item p-4 timeline-item border-0 bg-white shadow-sm rounded-3">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between mb-2">
+                                <h5 class="fw-bold text-primary mb-1">13:30 - 16:30</h5>
+                                <span class="badge bg-success-subtle text-success align-self-start py-1.5 px-3 rounded-pill small">Workshop thực hành</span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Xây dựng Ứng dụng đầu tiên ứng dụng API mã nguồn mở</h6>
+                            <p class="text-muted mb-0 small text-justify">Phòng Lab thực hành máy tính trực tiếp, hướng dẫn lập trình sản phẩm thực tế dưới sự chỉ dẫn từ các chuyên gia.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="register" class="py-5 my-4">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-7 col-lg-8 col-md-10">
+                    <div class="card border-0 shadow-lg p-4 p-sm-5 rounded-4 bg-white">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-dark">Đăng Ký Giữ Chỗ Ngay</h2>
+                            <p class="text-muted small">Số lượng ghế ngồi trực tiếp tại hội trường có hạn, vui lòng để lại thông tin sớm nhất.</p>
+                        </div>
+                        <form action="#" method="POST">
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <label class="form-label fw-semibold text-secondary small">Họ và tên</label>
+                                    <input type="text" class="form-control p-3 fs-6 rounded-3" placeholder="Nguyễn Văn A" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label fw-semibold text-secondary small">Số điện thoại</label>
+                                    <input type="tel" class="form-control p-3 fs-6 rounded-3" placeholder="0987xxxxxx" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold text-secondary small">Địa chỉ Email</label>
+                                    <input type="email" class="form-control p-3 fs-6 rounded-3" placeholder="name@example.com" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold text-secondary small">Bạn là?</label>
+                                    <select class="form-select p-3 fs-6 rounded-3">
+                                        <option selected>Sinh viên</option>
+                                        <option>Người đi làm / Lập trình viên</option>
+                                        <option>Quản lý / Doanh nghiệp</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold py-3 shadow">Gửi Đăng Ký Yêu Cầu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="bg-dark text-white py-4 text-center">
+        <div class="container">
+            <p class="mb-1 small">&copy; 2026 TechFuture Event. Toàn bộ bản quyền được bảo lưu.</p>
+            <p class="text-muted small mb-0">Thiết kế bằng hệ thống lưới Bootstrap 5.3</p>
+        </div>
+    </footer>
+
+
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 bg-dark text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-video me-2 text-primary"></i>Video Trailer Sự Kiện</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-toggle="modal-dismiss" data-bs-target="#infoModal" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <p class="text-muted">Hệ thống đang chuẩn bị phát video giới thiệu sự kiện TechFuture 2026.</p>
+                    <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center border rounded-3">
+                        <span class="text-muted fw-medium"><i class="fas fa-film me-1"></i> [Mô phỏng trình phát Video]</span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Đóng lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 13 - Thao tác ẩn hiện jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 40px; background-color: #f4f7f6; }
+        .control-panel { margin-bottom: 20px; }
+        button { font-size: 15px; padding: 8px 15px; margin: 5px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: white;}
+        button:hover { background-color: #eee; }
+        .box-content { max-width: 400px; margin: 0 auto; padding: 30px; background-color: #3498db; color: white; font-size: 18px; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <h2>Điều Khiển Ẩn Hiện Khối Nội Dung</h2>
+    
+    <div class="control-panel">
+        <button id="btnHide">Ẩn khối nội dung (Hide)</button>
+        <button id="btnShow">Hiện khối nội dung (Show)</button>
+        <button id="btnToggle" style="background-color: #e74c3c; color: white;">Chuyển đổi trạng thái (Toggle)</button>
+    </div>
+
+    <div class="box-content" id="targetBox">
+        Khoa Công Nghệ Thông Tin<br>Trường Đại học Đại Nam
+    </div>
+
+    <script>
+        // Đảm bảo chạy mã script sau khi cấu trúc cây DOM được xây dựng hoàn thiện thành công
+        $(document).ready(function() {
+            // Sự kiện Click dùng hàm ẩn phần tử nội dung
+            $("#btnHide").click(function() {
+                $("#targetBox").hide();
+            });
+
+            // Sự kiện Click dùng hàm hiển thị lại phần tử nội dung
+            $("#btnShow").click(function() {
+                $("#targetBox").show();
+            });
+
+            // Yêu cầu mở rộng: Sử dụng hàm chuyển đổi qua lại toggle thay đổi nhãn nút trạng thái
+            $("#btnToggle").click(function() {
+                $("#targetBox").toggle();
+            });
+        });
+    </script>
+</body>
+</html>

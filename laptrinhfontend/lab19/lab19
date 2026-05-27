@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 19 - Kết nối tải dữ liệu Ajax jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 650px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #2980b9; color: white; }
+        .loading-status { font-weight: bold; color: #7f8c8d; text-align: center; padding: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Danh Sách Sản Phẩm (Kết Nối Ajax GET)</h2>
+        <button id="btnLoadData" style="background-color:#2980b9; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Tải lại danh sách</button>
+        
+        <div class="loading-status" id="ajaxStatus" style="display:none;">Đang gửi lệnh yêu cầu kết nối lấy dữ liệu từ server ảo...</div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Mã số định danh</th>
+                    <th>Tên sản phẩm thiết bị</th>
+                    <th>Nhóm phân loại sản phẩm</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function loadDataByAjax() {
+                $("#ajaxStatus").show(); // Bật thông báo trạng thái chờ đợi tải dữ liệu
+                $("#dataTable tbody").empty(); // Xóa rỗng các hàng dữ liệu cũ trong bảng biểu
+
+                // Triển khai cú pháp cấu hình $.ajax chuyên biệt truyền tải dữ liệu của thư viện jQuery
+                $.ajax({
+                    url: "https://reqres.in/api/unknown", // Sử dụng API dữ liệu danh mục mẫu miễn phí có sẵn
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        $("#ajaxStatus").hide(); // Ẩn thông báo trạng thái sau khi phản hồi thành công
+                        let listData = response.data;
+
+                        // Duyệt mảng và kết xuất hiển thị ít nhất 3 cột thông tin rõ ràng
+                        $.each(listData, function(index, item) {
+                            let tableRow = `<tr>
+                                <td><b>#${item.id}</b></td>
+                                <td style="color:${item.color}; font-weight:bold;">${item.name.toUpperCase()}</td>
+                                <td>${item.pantone_value}</td>
+                            </tr>`;
+                            $("#dataTable tbody").append(tableRow);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        $("#ajaxStatus").hide();
+                        alert("Không thể tải kết xuất dữ liệu thành công từ Server ảo! Chi tiết lỗi: " + error);
+                    }
+                });
+            }
+
+            // Gắn lắng nghe tương tác kích hoạt gọi hàm tải dữ liệu khi bấm nút hoặc tải trang ban đầu
+            $("#btnLoadData").click(loadDataByAjax);
+            loadDataByAjax();
+        });
+    </script>
+</body>
+</html>

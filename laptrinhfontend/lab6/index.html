@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiêu đề trang web</title>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #box{
+            width: 300px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 2px solid black;
+        }
+
+        /* Class nổi bật */
+        .highlight{
+            background-color: yellow;
+            color: red;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2 id="title">Đây là tiêu đề ban đầu</h2>
+
+    <div id="box">
+        Đây là một thẻ div chứa nội dung ban đầu
+    </div>
+
+    <br>
+
+    <label for="name">Nhập tên của bạn: </label>
+    <input type="text" id="name" name="name" value="Nguyễn Đức Long">
+
+    <br><br>
+
+    <button id="btn-text">Dùng Text</button>
+    <button id="btn-html">Dùng HTML</button>
+    <button id="btn-css">Dùng CSS</button>
+    <button id="btn-addClass">Thêm Class (Nổi bật)</button>
+    <button id="btn-removeClass">Xóa Class</button>
+
+    <script>
+        $(document).ready(function(){
+
+            // Dùng text()
+            $("#btn-text").click(function(){
+                let ten = $("#name").val();
+
+                $("#title").text("Xin chào " + ten);
+
+                $("#box").text("Nội dung đã được thay đổi bằng text()");
+            });
+
+            // Dùng html()
+            $("#btn-html").click(function(){
+                let ten = $("#name").val();
+
+                $("#box").html(
+                    "<h3>Chào bạn <span style='color:blue'>" 
+                    + ten + 
+                    "</span></h3><p>Đây là nội dung được thêm bằng HTML</p>"
+                );
+            });
+
+            // Dùng css()
+            $("#btn-css").click(function(){
+                $("#box").css({
+                    "background-color": "lightblue",
+                    "color": "darkblue",
+                    "font-size": "20px",
+                    "padding": "20px"
+                });
+            });
+
+            // addClass()
+            $("#btn-addClass").click(function(){
+                $("#box").addClass("highlight");
+            });
+
+            // removeClass()
+            $("#btn-removeClass").click(function(){
+                $("#box").removeClass("highlight");
+            });
+
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 02 - Tính toán khuyến mãi</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 450px; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #2980b9; color: white; border: none; padding: 10px 15px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #2573a7; }
+        .invoice { margin-top: 20px; padding: 15px; border-top: 2px dashed #ccc; background-color: #fafafa; display: none; }
+        .invoice-line { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .total-pay { font-size: 18px; font-weight: bold; color: #c0392b; border-top: 1px solid #eee; padding-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hóa Đơn Tính Khuyến Mãi</h2>
+        <div class="form-group">
+            <label for="orderValue">Giá trị đơn hàng (VND):</label>
+            <input type="number" id="orderValue" min="0" placeholder="Nhập tổng số tiền hàng">
+        </div>
+        <div class="form-group">
+            <label for="memberRank">Hạng thành viên:</label>
+            <select id="memberRank">
+                <option value="Bronze">Đồng (Bronze)</option>
+                <option value="Silver">Bạc (Silver)</option>
+                <option value="Gold">Vàng (Gold)</option>
+            </select>
+        </div>
+        <button onclick="processInvoice()">Tính hóa đơn</button>
+
+        <div class="invoice" id="invoice">
+            <div class="invoice-line"><span>Tiền gốc:</span> <span id="lblOriginal" style="font-weight:bold;">0đ</span></div>
+            <div class="invoice-line"><span>Tỷ lệ giảm:</span> <span id="lblRate" style="color:green;">0%</span></div>
+            <div class="invoice-line"><span>Số tiền giảm:</span> <span id="lblDiscount">-0đ</span></div>
+            <div class="invoice-line"><span>Phí vận chuyển:</span> <span id="lblShipping">0đ</span></div>
+            <div class="invoice-line total-pay"><span>Tổng thanh toán:</span> <span id="lblTotal">0đ</span></div>
+        </div>
+    </div>
+
+    <script>
+        function formatVND(amount) {
+            return amount.toLocaleString('vi-VN') + " đ";
+        }
+
+        function calculateDiscountRate(value, rank) {
+            let rate = 0;
+            // Quy tắc 3 mức khuyến mãi theo khoảng tiền phối hợp hạng thành viên
+            if (value >= 1000000) {
+                rate = (rank === "Gold") ? 0.20 : (rank === "Silver") ? 0.15 : 0.10;
+            } else if (value >= 500000) {
+                rate = (rank === "Gold") ? 0.12 : (rank === "Silver") ? 0.08 : 0.05;
+            } else if (value >= 200000) {
+                rate = (rank === "Gold") ? 0.05 : (rank === "Silver") ? 0.03 : 0.01;
+            }
+            return rate;
+        }
+
+        function processInvoice() {
+            const valueInput = document.getElementById('orderValue').value;
+            if (!valueInput || Number(valueInput) < 0) {
+                alert("Vui lòng nhập giá trị đơn hàng hợp lệ!");
+                return;
+            }
+
+            const originalValue = Number(valueInput);
+            const rank = document.getElementById('memberRank').value;
+
+            // Tính toán chiết khấu bằng hàm riêng biệt
+            const rate = calculateDiscountRate(originalValue, rank);
+            const discountAmount = originalValue * rate;
+            
+            // Yêu cầu mở rộng: Miễn phí vận chuyển khi đơn hàng vượt 800.000đ, ngược lại phí 30.000đ
+            let shippingFee = (originalValue >= 800000) ? 0 : 30000;
+            const finalTotal = originalValue - discountAmount + shippingFee;
+
+            // Hiển thị kết quả lên giao diện
+            document.getElementById('lblOriginal').innerText = formatVND(originalValue);
+            document.getElementById('lblRate').innerText = (rate * 100) + "%";
+            document.getElementById('lblDiscount').innerText = "-" + formatVND(discountAmount);
+            document.getElementById('lblShipping').innerText = shippingFee === 0 ? "Miễn phí" : formatVND(shippingFee);
+            document.getElementById('lblTotal').innerText = formatVND(finalTotal);
+            
+            document.getElementById('invoice').style.display = "block";
+        }
+    </script>
+</body>
+</html>

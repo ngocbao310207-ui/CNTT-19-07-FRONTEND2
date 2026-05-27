@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 09 - To-do List cá nhân</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 450px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .input-group input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .input-group button { background: #2980b9; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; background: #fafafa; margin-bottom: 5px; border-radius: 4px; }
+        .todo-text { cursor: pointer; flex: 1; }
+        /* Định dạng css khi hoàn thành công việc */
+        .completed { text-decoration: line-through; color: #7f8c8d; font-style: italic; }
+        .btn-delete { background: #e74c3c; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ứng Dụng Quản Lý Công Việc</h2>
+        <div class="input-group">
+            <input type="text" id="todoInput" placeholder="Nhập tên công việc mới...">
+            <button onclick="addTodoItem()">Thêm việc</button>
+        </div>
+        <ul id="todoList"></ul>
+    </div>
+
+    <script>
+        function addTodoItem() {
+            const input = document.getElementById('todoInput');
+            const taskText = input.value.trim();
+
+            if (taskText === "") {
+                alert("Vui lòng nhập nội dung công việc!");
+                return;
+            }
+
+            const ul = document.getElementById('todoList');
+
+            // Tạo thẻ <li> mới bằng phương thức createElement
+            const li = document.createElement('li');
+
+            // Tạo thẻ nội dung chứa chữ văn bản công việc
+            const span = document.createElement('span');
+            span.innerText = taskText;
+            span.className = "todo-text";
+            // Gắn sự kiện click để bật/tắt trạng thái gạch ngang hoàn thành nhiệm vụ
+            span.onclick = function() {
+                span.classList.toggle('completed');
+            };
+
+            // Tạo nút xóa công việc
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerText = "Xóa";
+            deleteBtn.className = "btn-delete";
+            // Hàm xử lý loại bỏ nút li khỏi danh sách cha ul
+            deleteBtn.onclick = function() {
+                ul.removeChild(li);
+            };
+
+            // Tiến hành lắp ghép cấu trúc thẻ lồng nhau và hiển thị
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            ul.appendChild(li);
+
+            // Xóa rỗng ô nhập liệu sau khi thêm mới thành công
+            input.value = "";
+        }
+    </script>
+</body>
+</html>

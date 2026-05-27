@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 05 - Quản lý danh sách sản phẩm</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 650px; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .filter-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .filter-group input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 150px; }
+        .filter-group button { background: #34495e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .filter-group button:hover { background: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .inventory-summary { margin-top: 15px; padding: 10px; background: #fdf2e9; border: 1px solid #f5b041; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Quản Lý Danh Sách Sản Phẩm</h2>
+        
+        <div class="filter-group">
+            <input type="text" id="searchName" placeholder="Tìm kiếm theo tên sản phẩm...">
+            <button onclick="searchProduct()">Tìm kiếm</button>
+            
+            <input type="number" id="maxPrice" placeholder="Giá tối đa cần lọc...">
+            <button onclick="filterProductByPrice()">Lọc giá</button>
+            
+            <button style="background-color: #27ae60;" onclick="renderTable(products)">Hiển thị tất cả</button>
+        </div>
+
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá tiền (VND)</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="inventory-summary" id="stockSummary"></div>
+    </div>
+
+    <script>
+        // Khai báo mảng đối tượng chứa 5 sản phẩm mẫu mặc định ban đầu
+        const products = [
+            { name: "Điện thoại iPhone 15", price: 22000000, quantity: 12 },
+            { name: "Laptop ThinkPad P14s", price: 28500000, quantity: 5 },
+            { name: "Chuột không dây Logitech", price: 650000, quantity: 45 },
+            { name: "Bàn phím cơ AKKO", price: 1500000, quantity: 20 },
+            { name: "Tai nghe Sony WH-1000XM5", price: 6900000, quantity: 8 }
+        ];
+
+        function renderTable(dataList) {
+            const tbody = document.querySelector("#productTable tbody");
+            tbody.innerHTML = "";
+
+            dataList.forEach(function(item) {
+                let row = `<tr>
+                    <td>${item.name}</td>
+                    <td>${item.price.toLocaleString('vi-VN')} đ</td>
+                    <td>${item.quantity}</td>
+                    <td>${(item.price * item.quantity).toLocaleString('vi-VN')} đ</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            calculateTotalInventory();
+        }
+
+        // Sử dụng phương thức find() hoặc filter() tìm sản phẩm theo tên tương đối
+        function searchProduct() {
+            const term = document.getElementById('searchName').value.trim().toLowerCase();
+            if(!term) {
+                alert("Vui lòng nhập từ khóa tìm kiếm!");
+                return;
+            }
+            const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+            renderTable(filtered);
+        }
+
+        // Sử dụng phương thức filter() lọc sản phẩm theo ngưỡng giá tối đa nhập vào
+        function filterProductByPrice() {
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value);
+            if (isNaN(maxPrice) || maxPrice <= 0) {
+                alert("Vui lòng nhập giá tối đa hợp lệ!");
+                return;
+            }
+            const filtered = products.filter(p => p.price <= maxPrice);
+            renderTable(filtered);
+        }
+
+        function calculateTotalInventory() {
+            let total = 0;
+            products.forEach(p => {
+                total += (p.price * p.quantity);
+            });
+            document.getElementById('stockSummary').innerText = "Tổng giá trị tồn kho hệ thống: " + total.toLocaleString('vi-VN') + " đ";
+        }
+
+        // Tự động tải toàn bộ danh sách khi khởi động trang web
+        window.onload = function() {
+            renderTable(products);
+        };
+    </script>
+</body>
+</html>

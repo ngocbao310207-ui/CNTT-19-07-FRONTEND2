@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 15 - Kiểm tra hợp lệ Form biểu mẫu</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .form-card { max-width: 400px; margin: 0 auto; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 14px;}
+        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .error-msg { color: #c0392b; font-size: 12px; margin-top: 4px; font-weight: bold; display: none; }
+        button { width: 100%; background: #2980b9; color: white; border: none; padding: 10px; font-size: 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #2471a3; }
+        /* Định dạng class đổi màu viền input linh hoạt */
+        .input-error { border-color: #c0392b !important; background-color: #fdf2f2; }
+        .input-success { border-color: #27ae60 !important; background-color: #f4fbf7; }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2 style="margin-top:0;">Đăng Ký Tài Khoản</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullName">Họ và tên của bạn:</label>
+                <input type="text" id="fullName" placeholder="Nhập đầy đủ họ tên">
+                <div class="error-msg" id="errName">Không được bỏ trống trường họ tên!</div>
+            </div>
+            <div class="form-group">
+                <label for="email">Địa chỉ Email:</label>
+                <input type="text" id="email" placeholder="Ví dụ: dnu@domain.com">
+                <div class="error-msg" id="errEmail">Định dạng email không hợp lệ!</div>
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu bảo mật:</label>
+                <input type="password" id="password" placeholder="Tối thiểu 6 ký tự">
+                <div class="error-msg" id="errPassword">Mật khẩu yêu cầu độ dài tối thiểu phải từ 6 ký tự trở lên!</div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Xác nhận lại mật khẩu:</label>
+                <input type="password" id="confirmPassword" placeholder="Nhập lại chính xác mật khẩu">
+                <div class="error-msg" id="errConfirm">Giá trị xác nhận mật khẩu không trùng khớp!</div>
+            </div>
+            <button type="submit">Đăng ký ngay</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#registerForm").submit(function(event) {
+                // Chặn hành vi gửi submit biểu mẫu tải lại trang mặc định của HTML Form
+                event.preventDefault();
+
+                // Đọc dữ liệu đầu vào loại bỏ khoảng trống thừa bằng hàm trim() của jQuery
+                let name = $("#fullName").val().trim();
+                let email = $("#email").val().trim();
+                let pwd = $("#password").val().trim();
+                let confirmPwd = $("#confirmPassword").val().trim();
+
+                let isValid = true;
+
+                // 1. Kiểm tra tính hợp lệ dữ liệu rỗng trường họ tên
+                if (name === "") {
+                    $("#fullName").addClass("input-error").removeClass("input-success");
+                    $("#errName").show();
+                    isValid = false;
+                } else {
+                    $("#fullName").addClass("input-success").removeClass("input-error");
+                    $("#errName").hide();
+                }
+
+                // 2. Kiểm tra định dạng cấu trúc Email bằng biểu thức chính quy Regex chuyên biệt
+                let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    $("#email").addClass("input-error").removeClass("input-success");
+                    $("#errEmail").show();
+                    isValid = false;
+                } else {
+                    $("#email").addClass("input-success").removeClass("input-error");
+                    $("#errEmail").hide();
+                }
+
+                // 3. Kiểm tra độ dài an toàn tối thiểu của chuỗi ký tự mật khẩu
+                if (pwd.length < 6) {
+                    $("#password").addClass("input-error").removeClass("input-success");
+                    $("#errPassword").show();
+                    isValid = false;
+                } else {
+                    $("#password").addClass("input-success").removeClass("input-error");
+                    $("#errPassword").hide();
+                }
+
+                // 4. Kiểm tra đối chiếu xác nhận mật khẩu có trùng khớp hoàn toàn hay không
+                if (confirmPwd === "" || confirmPwd !== pwd) {
+                    $("#confirmPassword").addClass("input-error").removeClass("input-success");
+                    $("#errConfirm").show();
+                    isValid = false;
+                } else {
+                    $("#confirmPassword").addClass("input-success").removeClass("input-error");
+                    $("#errConfirm").hide();
+                }
+
+                // Nếu vượt qua toàn bộ các bước kiểm thử dữ liệu thành công hoàn chỉnh
+                if (isValid) {
+                    alert("Chúc mừng bạn! Biểu mẫu đăng ký hợp lệ và đã được gửi đi thành công.");
+                    // Bạn có thể khôi phục lại form trống trạng thái ban đầu tại đây
+                    $("#registerForm")[0].reset();
+                    $("input").removeClass("input-success");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

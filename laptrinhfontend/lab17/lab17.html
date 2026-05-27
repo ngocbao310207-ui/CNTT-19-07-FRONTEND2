@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 17 - Giỏ Hàng Có Hình Ảnh</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .cart-container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 700px; /* Tăng width để chứa thêm ảnh */
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Định dạng từng dòng sản phẩm */
+        .product-row {
+            display: flex;
+            align-items: center; /* Căn giữa theo chiều dọc */
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Thêm style cho cột hình ảnh sản phẩm */
+        .product-image {
+            flex: 0 0 100px; /* Cố định chiều rộng cột ảnh là 100px */
+            margin-right: 20px;
+        }
+
+        .product-image img {
+            width: 100%; /* Ảnh chiếm hết chiều rộng cột */
+            height: auto;
+            border-radius: 4px;
+            object-fit: cover; /* Đảm bảo ảnh không bị méo */
+        }
+
+        .product-info {
+            flex: 3; /* Tăng flex để chừa chỗ cho cột ảnh */
+        }
+
+        .product-info strong {
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .product-info p {
+            margin: 5px 0 0 0;
+            color: #7f8c8d;
+        }
+
+        /* Khu vực điều chỉnh số lượng */
+        .quantity-controls {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .quantity-controls button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .quantity-controls .quantity {
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Hiển thị thành tiền từng món */
+        .item-total {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        /* Hiển thị tổng hóa đơn (Yêu cầu mở rộng) */
+        .grand-total {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .grand-total span {
+            color: #d35400;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart-container">
+        <h2>Giỏ Hàng Của Bạn</h2>
+
+        <div class="product-row" data-price="250000">
+            <div class="product-image">
+                <img src="https://dongphucbonmua.com/wp-content/uploads/2024/11/ao-so-mi-nam-dong-phuc-cong-so.jpg" alt="Áo Sơ Mi Nam">
+            </div>
+            <div class="product-info">
+                <strong>Áo Sơ Mi Nam</strong>
+                <p>Đơn giá: 250,000 VNĐ</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="btn-decrease">-</button>
+                <span class="quantity">1</span>
+                <button class="btn-increase">+</button>
+            </div>
+            <div class="item-total">
+                <span class="item-sum">250,000</span> VNĐ
+            </div>
+        </div>
+
+        <div class="product-row" data-price="400000">
+            <div class="product-image">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYNayBfjnKpI3r9x5QQi66IBdCLqmZxwIolw&s" alt="Quần Jeans">
+            </div>
+            <div class="product-info">
+                <strong>Quần Jeans</strong>
+                <p>Đơn giá: 400,000 VNĐ</p>
+            </div>
+            <div class="quantity-controls">
+                <button class="btn-decrease">-</button>
+                <span class="quantity">1</span>
+                <button class="btn-increase">+</button>
+            </div>
+            <div class="item-total">
+                <span class="item-sum">400,000</span> VNĐ
+            </div>
+        </div>
+
+        <div class="grand-total">
+            Tổng Hóa Đơn: <span id="final-total">650,000</span> VNĐ
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            // Hàm định dạng số có dấu phẩy cho đẹp (VD: 250000 -> 250,000)
+            function formatMoney(number) {
+                return number.toLocaleString('en-US');
+            }
+
+            // Hàm tính toán lại Tổng hóa đơn (Cộng tất cả các "Thành tiền")
+            function updateGrandTotal() {
+                let total = 0;
+                // Lặp qua từng sản phẩm trong giỏ
+                $('.product-row').each(function() {
+                    let price = parseInt($(this).data('price')); // Lấy giá gốc từ data-price
+                    let qty = parseInt($(this).find('.quantity').text()); // Lấy số lượng
+                    total += (price * qty);
+                });
+                // Cập nhật lên giao diện
+                $('#final-total').text(formatMoney(total));
+            }
+
+            // Sự kiện khi bấm nút Tăng số lượng (+)
+            $('.btn-increase').click(function() {
+                // Tìm dòng sản phẩm chứa nút vừa bấm bằng .closest()
+                let $row = $(this).closest('.product-row');
+                
+                // Lấy giá trị hiện tại và tăng lên 1
+                let $qtySpan = $row.find('.quantity');
+                let currentQty = parseInt($qtySpan.text());
+                currentQty++;
+                $qtySpan.text(currentQty);
+
+                // Tính toán và cập nhật lại "Thành tiền" của món đó
+                let price = parseInt($row.data('price'));
+                let itemTotal = price * currentQty;
+                $row.find('.item-sum').text(formatMoney(itemTotal));
+
+                // Cập nhật lại Tổng hóa đơn
+                updateGrandTotal();
+            });
+
+            // Sự kiện khi bấm nút Giảm số lượng (-)
+            $('.btn-decrease').click(function() {
+                let $row = $(this).closest('.product-row');
+                let $qtySpan = $row.find('.quantity');
+                let currentQty = parseInt($qtySpan.text());
+                
+                // Ràng buộc: Không cho phép số lượng nhỏ hơn 1
+                if (currentQty > 1) {
+                    currentQty--;
+                    $qtySpan.text(currentQty);
+
+                    // Tính toán và cập nhật lại "Thành tiền"
+                    let price = parseInt($row.data('price'));
+                    let itemTotal = price * currentQty;
+                    $row.find('.item-sum').text(formatMoney(itemTotal));
+
+                    // Cập nhật lại Tổng hóa đơn
+                    updateGrandTotal();
+                } else {
+                    alert("Số lượng sản phẩm tối thiểu là 1.");
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

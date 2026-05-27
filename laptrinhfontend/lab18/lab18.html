@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 18 - Quản Lý Thành Viên</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .app-container {
+            background: #fff;
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Khu vực thêm và tìm kiếm */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        #search-input {
+            width: 100%;
+            margin-bottom: 10px;
+            border-color: #3498db;
+        }
+
+        button.btn-add {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button.btn-add:hover { background-color: #27ae60; }
+
+        /* Danh sách thành viên */
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .stt {
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-right: 10px;
+            min-width: 25px;
+        }
+
+        .member-name {
+            flex: 1;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        /* Ô input khi đang ở chế độ sửa */
+        .edit-input {
+            flex: 1;
+            padding: 5px;
+            margin-right: 10px;
+            border: 1px solid #f39c12;
+            border-radius: 3px;
+        }
+
+        /* Nút hành động trong danh sách */
+        .actions button {
+            padding: 6px 12px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .btn-edit { background-color: #f39c12; }
+        .btn-edit:hover { background-color: #e67e22; }
+        
+        .btn-save { background-color: #3498db; }
+        .btn-save:hover { background-color: #2980b9; }
+
+        .btn-delete { background-color: #e74c3c; }
+        .btn-delete:hover { background-color: #c0392b; }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h2>Quản Lý Thành Viên</h2>
+
+        <input type="text" id="search-input" placeholder="🔍 Tìm kiếm thành viên...">
+
+        <div class="controls">
+            <input type="text" id="name-input" placeholder="Nhập tên thành viên mới...">
+            <button class="btn-add" id="btn-add">Thêm</button>
+        </div>
+
+        <ul id="member-list">
+            <li>
+                <span class="stt">1</span>
+                <span class="member-name">Nguyễn Văn A</span>
+                <div class="actions">
+                    <button class="btn-edit">Sửa</button>
+                    <button class="btn-delete">Xóa</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            // Hàm tự động cập nhật Số Thứ Tự (Yêu cầu mở rộng)
+            function updateNumbering() {
+                $('#member-list li').each(function(index) {
+                    // Dùng .find() để tìm class .stt trong thẻ li hiện tại và gán số thứ tự
+                    $(this).find('.stt').text(index + 1);
+                });
+            }
+
+            // 1. Chức năng THÊM thành viên
+            $('#btn-add').click(function() {
+                let name = $('#name-input').val().trim();
+                
+                if (name === "") {
+                    alert("Vui lòng nhập tên thành viên!");
+                    return;
+                }
+
+                // Tạo chuỗi HTML cho thành viên mới
+                let newRow = `
+                    <li>
+                        <span class="stt"></span>
+                        <span class="member-name">${name}</span>
+                        <div class="actions">
+                            <button class="btn-edit">Sửa</button>
+                            <button class="btn-delete">Xóa</button>
+                        </div>
+                    </li>
+                `;
+
+                // Kiến thức: Dùng hàm append() để chèn vào cuối danh sách
+                $('#member-list').append(newRow);
+                
+                // Xóa trắng ô nhập và cập nhật lại số thứ tự
+                $('#name-input').val('');
+                updateNumbering();
+            });
+
+            // LƯU Ý: Vì các nút Sửa/Xóa có thể được tạo động bằng lệnh append, 
+            // ta phải dùng EVENT DELEGATION: $(parent).on('click', 'child', function)
+
+            // 2. Chức năng XÓA thành viên
+            $('#member-list').on('click', '.btn-delete', function() {
+                if(confirm("Bạn có chắc chắn muốn xóa thành viên này?")) {
+                    // Kiến thức: Dùng .closest() tìm thẻ <li> bọc ngoài cùng và .remove() nó
+                    $(this).closest('li').remove();
+                    updateNumbering(); // Đánh số lại sau khi xóa
+                }
+            });
+
+            // 3. Chức năng SỬA (Chuyển sang chế độ nhập liệu)
+            $('#member-list').on('click', '.btn-edit', function() {
+                let $li = $(this).closest('li');
+                let $nameSpan = $li.find('.member-name');
+                let currentName = $nameSpan.text();
+
+                // Tạo thẻ input để sửa trực tiếp tại chỗ
+                let inputHtml = `<input type="text" class="edit-input" value="${currentName}">`;
+                
+                // Thay thế thẻ span bằng thẻ input
+                $nameSpan.replaceWith(inputHtml);
+
+                // Đổi nút "Sửa" thành nút "Lưu"
+                $(this).removeClass('btn-edit').addClass('btn-save').text('Lưu');
+            });
+
+            // 4. Chức năng LƯU (Sau khi sửa xong)
+            $('#member-list').on('click', '.btn-save', function() {
+                let $li = $(this).closest('li');
+                
+                // Kiến thức: Dùng .closest() và .find() (hoặc có thể dùng prev() nếu HTML cấu trúc liền kề)
+                let $input = $li.find('.edit-input'); 
+                let newName = $input.val().trim();
+
+                if (newName === "") {
+                    alert("Tên không được để trống!");
+                    return;
+                }
+
+                // Tạo lại thẻ span hiển thị tên
+                let spanHtml = `<span class="member-name">${newName}</span>`;
+                $input.replaceWith(spanHtml);
+
+                // Đổi nút "Lưu" ngược lại thành nút "Sửa"
+                $(this).removeClass('btn-save').addClass('btn-edit').text('Sửa');
+            });
+
+            // 5. Yêu cầu mở rộng: Chức năng TÌM KIẾM
+            $('#search-input').on('keyup', function() {
+                let keyword = $(this).val().toLowerCase();
+                
+                // Lọc qua từng thẻ li
+                $('#member-list li').filter(function() {
+                    // Dấu các dòng không chứa từ khóa, hiện các dòng có chứa
+                    $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
+                });
+            });
+
+            // Gọi hàm đánh số thứ tự ngay khi trang tải xong cho dữ liệu mẫu
+            updateNumbering();
+        });
+    </script>
+</body>
+</html>

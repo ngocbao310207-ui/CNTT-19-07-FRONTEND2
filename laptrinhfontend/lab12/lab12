@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 12 - Quản lý sinh viên API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 700px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .form-add { display: flex; gap: 10px; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #ddd; }
+        .form-add input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; }
+        .form-add button { background-color: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn-del { background-color: #c0392b; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hệ Thống Quản Lý Danh Sách Sinh Viên (Mock API)</h2>
+        
+        <div class="form-add">
+            <input type="text" id="stuName" placeholder="Nhập họ tên sinh viên...">
+            <input type="text" id="stuJob" placeholder="Nhập ngành học / công việc...">
+            <button onclick="createNewStudent()">Thêm Mới</button>
+        </div>
+
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>Mã số ID</th>
+                    <th>Họ và Tên</th>
+                    <th>Ngành học / Công việc</th>
+                    <th>Hành động quản lý</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sử dụng API Endpoint giả lập công khai của Reqres để chạy thử nghiệm các phương thức kết nối trực tiếp
+        const baseApi = "https://reqres.in/api/users";
+
+        // 1. Thao tác GET: Đọc dữ liệu danh sách hiển thị lên bảng biểu cấu trúc HTML
+        function loadStudents() {
+            fetch(baseApi + "?page=1")
+                .then(res => res.json())
+                .then(resData => {
+                    const list = resData.data;
+                    const tbody = document.querySelector("#studentTable tbody");
+                    tbody.innerHTML = "";
+
+                    list.forEach(student => {
+                        let row = `<tr>
+                            <td>${student.id}</td>
+                            <td>${student.first_name} ${student.last_name}</td>
+                            <td>Thành viên hệ thống</td>
+                            <td><button class="btn-del" onclick="deleteStudent(${student.id})">Xóa bỏ</button></td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+
+        // 2. Thao tác POST: Tạo mới bản ghi gửi gói tin JSON lên server ảo
+        function createNewStudent() {
+            const name = document.getElementById('stuName').value.trim();
+            const job = document.getElementById('stuJob').value.trim();
+
+            if (!name || !job) {
+                alert("Vui lòng điền đầy đủ họ tên và ngành học của sinh viên!");
+                return;
+            }
+
+            fetch(baseApi, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name, job: job })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(`Thêm mới thành công thành viên lên máy chủ server ảo thành công!\nID mới sinh: ${data.id}\nThời gian khởi tạo: ${data.createdAt}`);
+                
+                // Đồng bộ cập nhật thêm dòng mới trực tiếp vào bảng hiển thị phía giao diện Client
+                const tbody = document.querySelector("#studentTable tbody");
+                let row = `<tr style="background-color: #e8f8f5;">
+                    <td>${data.id}</td>
+                    <td>${name}</td>
+                    <td>${job} (Mới thêm)</td>
+                    <td><button class="btn-del" onclick="alert('Bản ghi tạm thời trên client!')">Xóa bỏ</button></td>
+                </tr>`;
+                tbody.innerHTML = row + tbody.innerHTML; // Đẩy lên đầu danh sách bảng
+
+                // Reset trường thông tin
+                document.getElementById('stuName').value = "";
+                document.getElementById('stuJob').value = "";
+            });
+        }
+
+        // 3. Thao tác DELETE: Gửi yêu cầu gỡ bỏ xóa phần tử dữ liệu theo ID
+        function deleteStudent(id) {
+            if(!confirm(`Bạn chắc chắn muốn tiến hành xóa bỏ sinh viên có mã ID #${id} không?`)) return;
+
+            fetch(`${baseApi}/${id}`, { method: "DELETE" })
+                .then(res => {
+                    if(res.status === 204 || res.ok) {
+                        alert(`Gửi gói tin DELETE lên server thành công gỡ bỏ ID #${id}!`);
+                        // Tiến hành tải lại danh sách hệ thống để đồng bộ hóa
+                        loadStudents();
+                    }
+                });
+        }
+
+        window.onload = loadStudents;
+    </script>
+</body>
+</html>

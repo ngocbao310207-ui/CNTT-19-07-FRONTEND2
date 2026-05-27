@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 08 - Bộ đếm tương tác DOM</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f4f7f6; }
+        .counter-container { max-width: 300px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        #counterValue { font-size: 64px; font-weight: bold; margin: 20px 0; color: #2c3e50; }
+        button { font-size: 16px; padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 4px; color: white; }
+        .btn-inc { background-color: #27ae60; }
+        .btn-dec { background-color: #c0392b; }
+        .btn-reset { background-color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="counter-container">
+        <h2>Bộ Đếm Tương Tác</h2>
+        <div id="counterValue">0</div>
+        <button class="btn-dec" id="btnDecrease">Giảm (-1)</button>
+        <button class="btn-reset" id="btnReset">Đặt lại</button>
+        <button class="btn-inc" id="btnIncrease">Tăng (+1)</button>
+    </div>
+
+    <script>
+        let count = 0;
+        const counterView = document.getElementById('counterValue');
+
+        // Hàm cập nhật trạng thái hiển thị giao diện và xử lý màu sắc
+        function renderCounter() {
+            counterView.innerText = count;
+            // Yêu cầu mở rộng: Tự động thay đổi màu chữ theo giá trị âm / dương / zero
+            if (count > 0) {
+                counterView.style.color = "#27ae60"; // Màu xanh lá khi dương
+            } else if (count < 0) {
+                counterView.style.color = "#c0392b"; // Màu đỏ khi âm
+            } else {
+                counterView.style.color = "#2c3e50"; // Màu xám mặc định tại số 0
+            }
+        }
+
+        // Gắn lắng nghe sự kiện bằng cách dùng addEventListener theo hướng dẫn
+        document.getElementById('btnIncrease').addEventListener('click', function() {
+            count++;
+            renderCounter();
+        });
+
+        document.getElementById('btnDecrease').addEventListener('click', function() {
+            count--;
+            renderCounter();
+        });
+
+        document.getElementById('btnReset').addEventListener('click', function() {
+            count = 0;
+            renderCounter();
+        });
+    </script>
+</body>
+</html>

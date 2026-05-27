@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 11 - Tra cứu đối tượng theo ID</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 450px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-box input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .search-box button { background-color: #e67e22; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .detail-box { padding: 15px; border: 1px dashed #3498db; background: #ebf5fb; border-radius: 4px; display: none; }
+        .error-box { padding: 15px; border: 1px solid #e74c3c; background: #fadbd8; color: #c0392b; border-radius: 4px; display: none; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tra Cứu Nhân Viên Theo ID</h2>
+        <div class="search-box">
+            <input type="number" id="userIdInput" min="1" max="12" placeholder="Nhập mã ID cần tìm (Thử 1 đến 10)">
+            <button onclick="searchUserById()">Tra cứu</button>
+        </div>
+
+        <div class="detail-box" id="resultDetail"></div>
+        <div class="error-box" id="resultError"></div>
+    </div>
+
+    <script>
+        function searchUserById() {
+            const idValue = document.getElementById('userIdInput').value.trim();
+            const detailBox = document.getElementById('resultDetail');
+            const errorBox = document.getElementById('resultError');
+
+            // Ẩn các khối thông báo kết quả cũ trước khi thực hiện tra cứu mới
+            detailBox.style.display = "none";
+            errorBox.style.display = "none";
+
+            if (!idValue) {
+                alert("Vui lòng điền mã số định danh ID trước khi bấm tìm!");
+                return;
+            }
+
+            // Tạo đường dẫn URL động bằng Template String theo tham số ID người dùng nhập
+            const targetUrl = `https://reqres.in/api/users/${idValue}`;
+
+            fetch(targetUrl)
+                .then(response => {
+                    // Nếu phản hồi là 404 hoặc không thành công đồng nghĩa không tồn tại bản ghi ID này
+                    if (!response.ok) {
+                        throw new Error("Không tồn tại đối tượng tương thích với mã định danh này trong hệ thống.");
+                    }
+                    return response.json();
+                })
+                .then(resData => {
+                    const user = resData.data;
+                    // Kết xuất hiển thị chi tiết thông tin đối tượng nếu tìm thấy thành công dữ liệu
+                    detailBox.innerHTML = `
+                        <h4 style="margin:0 0 10px 0; color:#2980b9;">Thông Tin Chi Tiết Nhân Viên</h4>
+                        <p><b>Mã số định danh (ID):</b> ${user.id}</p>
+                        <p><b>Họ và tên lót:</b> ${user.first_name}</p>
+                        <p><b>Tên thành viên:</b> ${user.last_name}</p>
+                        <p><b>Hộp thư điện tử:</b> ${user.email}</p>
+                        <p><img src="${user.avatar}" alt="Avatar" style="border-radius:4px; width:100px; height:100px;"></p>
+                    `;
+                    detailBox.style.display = "block";
+                })
+                .catch(err => {
+                    // Thông báo phù hợp rõ ràng nếu không tìm thấy dữ liệu hoặc xảy ra lỗi kết nối mạng
+                    errorBox.innerText = err.message;
+                    errorBox.style.display = "block";
+                });
+        }
+    </script>
+</body>
+</html>

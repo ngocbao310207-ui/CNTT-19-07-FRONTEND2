@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 03 - Trò chơi đoán số</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 400px; margin: 0 auto; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input { width: 70%; padding: 8px; font-size: 16px; text-align: center; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #8e44ad; color: white; border: none; padding: 8px 15px; font-size: 16px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background-color: #7d3c98; }
+        .btn-reset { background-color: #7f8c8d; }
+        .btn-reset:hover { background-color: #95a5a6; }
+        #message { font-size: 16px; font-weight: bold; color: #2c3e50; margin: 15px 0; min-height: 22px; }
+        #history { text-align: left; background: #f9f9f9; padding: 10px; font-size: 13px; max-height: 120px; overflow-y: auto; border-radius: 4px; border: 1px solid #eee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Trò Chơi Đoán Số</h2>
+        <p>Máy tính đã chọn một số ngẫu nhiên từ <b>1 đến 100</b>. Hãy đoán thử xem!</p>
+        <input type="number" id="guessInput" min="1" max="100" placeholder="Nhập số bạn đoán">
+        <br>
+        <button onclick="checkGuess()">Kiểm tra</button>
+        <button class="btn-reset" onclick="initGame()">Chơi lại</button>
+        <div id="message"></div>
+        
+        <h4 style="text-align: left; margin-bottom: 5px;">Lịch sử đoán:</h4>
+        <div id="history">Chưa có lượt đoán nào.</div>
+    </div>
+
+    <script>
+        let secretNumber;
+        let guessCount;
+        let guessHistory = [];
+
+        function initGame() {
+            // Sinh ngẫu nhiên một số bí mật từ 1 đến 100
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            guessCount = 0;
+            guessHistory = [];
+            document.getElementById('guessInput').value = "";
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('message').innerText = "Trận đấu mới bắt đầu! Hãy nhập số.";
+            document.getElementById('message').style.color = "#2c3e50";
+            document.getElementById('history').innerHTML = "Chưa có lượt đoán nào.";
+        }
+
+        function checkGuess() {
+            const input = document.getElementById('guessInput');
+            const userGuess = parseInt(input.value);
+            const msg = document.getElementById('message');
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                alert("Vui lòng nhập một số hợp lệ từ 1 đến 100!");
+                return;
+            }
+
+            guessCount++;
+            let clue = "";
+
+            // So sánh giá trị người dùng nhập với số bí mật để đưa ra gợi ý
+            if (userGuess < secretNumber) {
+                clue = "Nhỏ hơn số bí mật!";
+                msg.innerText = "Gợi ý: " + clue;
+                msg.style.color = "#e67e22";
+            } else if (userGuess > secretNumber) {
+                clue = "Lớn hơn số bí mật!";
+                msg.innerText = "Gợi ý: " + clue;
+                msg.style.color = "#e67e22";
+            } else {
+                clue = "Chính xác!";
+                msg.innerText = `Chúc mừng! Bạn đã đoán đúng số ${secretNumber} sau ${guessCount} lần thử.`;
+                msg.style.color = "#27ae60";
+                input.disabled = true; // Khóa input khi đoán chính xác
+            }
+
+            // Cập nhật mảng lịch sử hiển thị ra giao diện
+            guessHistory.push(`Lần ${guessCount}: Bạn đoán ${userGuess} → ${clue}`);
+            document.getElementById('history').innerHTML = guessHistory.join("<br>");
+        }
+
+        // Tự động khởi chạy trò chơi khi tải trang lần đầu
+        window.onload = initGame;
+    </script>
+</body>
+</html>

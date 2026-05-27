@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 07 - Thao tác DOM cơ bản</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; text-align: center; background-color: #f4f7f6;}
+        .card { max-width: 350px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #ccc; }
+        /* Class động dùng để chuyển đổi trạng thái giao diện */
+        .highlight { border-color: #e74c3c; background-color: #fdebd0; }
+        .card img { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; margin: 15px 0; }
+        button { background-color: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Thao Tác Đổi Nội Dung Qua DOM</h2>
+    <div class="card" id="myCard">
+        <h3 id="cardTitle">Xin chào sinh viên!</h3>
+        <p id="cardDesc">Đây là nội dung mô tả ban đầu của bài lab thực hành HTML DOM.</p>
+        <img id="cardImg" src="https://picsum.photos/id/1/150/150" alt="Hình ảnh mẫu">
+        <br>
+        <button onclick="changeContent()">Thay đổi giao diện</button>
+        <button style="background-color: #7f8c8d;" onclick="resetContent()">Khôi phục gốc</button>
+    </div>
+
+    <script>
+        function changeContent() {
+            // Thay đổi text văn bản bằng thuộc tính innerText
+            document.getElementById('cardTitle').innerText = "Đã cập nhật thành công!";
+            document.getElementById('cardDesc').innerText = "Giao diện đã chuyển sang chế độ đặc biệt (Highlight Card).";
+            
+            // Thay đổi đường dẫn ảnh động bằng thuộc tính src
+            document.getElementById('cardImg').src = "https://picsum.photos/id/10/150/150";
+            
+            // Thêm class định dạng CSS mới bằng classList
+            document.getElementById('myCard').classList.add('highlight');
+        }
+
+        function resetContent() {
+            // Khôi phục lại toàn bộ dữ liệu trạng thái ban đầu của thẻ card HTML
+            document.getElementById('cardTitle').innerText = "Xin chào sinh viên!";
+            document.getElementById('cardDesc').innerText = "Đây là nội dung mô tả ban đầu của bài lab thực hành HTML DOM.";
+            document.getElementById('cardImg').src = "https://picsum.photos/id/1/150/150";
+            document.getElementById('myCard').classList.remove('highlight');
+        }
+    </script>
+</body>
+</html>

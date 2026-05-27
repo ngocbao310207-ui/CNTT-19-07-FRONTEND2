@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 10 - Kết nối API hiển thị danh sách</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .loading { font-style: italic; color: #7f8c8d; text-align: center; padding: 15px; }
+        .user-card { border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 4px; background-color: #fafafa; }
+        .user-card h4 { margin: 0 0 5px 0; color: #2980b9; }
+        .user-card p { margin: 3px 0; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Danh Sách Người Dùng Từ API</h2>
+        <div id="displayArea">
+            <div class="loading">Đang tải dữ liệu từ máy chủ, vui lòng đợi...</div>
+        </div>
+    </div>
+
+    <script>
+        // Hàm bất đồng bộ Async/Await gọi kết nối dữ liệu từ API Mock công khai công cộng công nghệ
+        async function fetchUsersData() {
+            const displayArea = document.getElementById('displayArea');
+            // Sử dụng API mẫu từ reqres.in để đảm bảo chạy ngay không cần cài đặt mockapi.io
+            const apiEndpoint = "https://reqres.in/api/users?page=1";
+
+            try {
+                const response = await fetch(apiEndpoint);
+                if (!response.ok) {
+                    throw new Error("Không thể kết nối kết xuất dữ liệu thành công!");
+                }
+                const dataJSON = await response.json();
+                const usersList = dataJSON.data; // Mảng dữ liệu chứa thông tin người dùng
+
+                displayArea.innerHTML = ""; // Xóa dòng chữ thông báo trạng thái chờ đợi tải dữ liệu
+                
+                // Duyệt qua mảng dữ liệu để kết xuất hiển thị ít nhất 3 trường thông tin ra màn hình
+                usersList.forEach(user => {
+                    const card = `
+                        <div class="user-card">
+                            <h4>Mã số định danh: #${user.id} - ${user.first_name} ${user.last_name}</h4>
+                            <p><b>Hộp thư Email:</b> ${user.email}</p>
+                            <p><img src="${user.avatar}" alt="Avatar" style="width:50px; height:50px; border-radius:50%; margin-top:5px;"></p>
+                        </div>
+                    `;
+                    displayArea.innerHTML += card;
+                });
+
+            } catch (error) {
+                // Yêu cầu mở rộng: Bổ sung xử lý hiển thị thông báo lỗi hệ thống cụ thể trực quan
+                displayArea.innerHTML = `<div style="color:#c0392b; font-weight:bold; text-align:center;">Lỗi hệ thống: ${error.message}</div>`;
+            }
+        }
+
+        // Tự động gọi kết nối tải dữ liệu từ API ngay khi trang hoàn tất xử lý tải giao diện
+        window.onload = fetchUsersData;
+    </script>
+</body>
+</html>

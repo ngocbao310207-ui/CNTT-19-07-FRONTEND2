@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 16 - Bộ Đếm Tương Tác</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+    <style>
+        /* Phần CSS tạo giao diện cơ bản, căn giữa màn hình */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f7fa;
+            margin: 0;
+        }
+        
+        .counter-box {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        /* Vùng hiển thị số đếm */
+        #counter-value {
+            font-size: 5rem;
+            font-weight: bold;
+            display: block;
+            margin: 20px 0;
+            transition: color 0.3s ease;
+        }
+
+        /* Định nghĩa màu sắc theo Yêu cầu mở rộng */
+        .color-zero { color: #2c3e50; }     /* Mặc định bằng 0: Màu xám đậm */
+        .color-positive { color: #2ecc71; } /* Số dương: Màu xanh lá */
+        .color-negative { color: #e74c3c; } /* Số âm: Màu đỏ */
+
+        /* Khu vực nút bấm */
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        /* Màu sắc riêng cho từng nút */
+        #btn-decrease { background-color: #e67e22; color: white; }
+        #btn-increase { background-color: #3498db; color: white; }
+        #btn-reset { background-color: #bdc3c7; color: #2c3e50; grid-column: span 2; }
+        #btn-fast-increase { background-color: #9b59b6; color: white; grid-column: span 2; }
+    </style>
+</head>
+<body>
+
+    <div class="counter-box">
+        <h2>Bộ Đếm Tương Tác</h2>
+        
+        <span id="counter-value" class="color-zero">0</span>
+        
+        <div class="btn-group">
+            <button id="btn-decrease">Giảm (-1)</button>
+            <button id="btn-increase">Tăng (+1)</button>
+            <button id="btn-fast-increase">Tăng nhanh (+10)</button>
+            <button id="btn-reset">Đặt lại (Reset)</button>
+        </div>
+    </div>
+
+    <script>
+        // Chờ tài liệu HTML tải xong hoàn toàn rồi mới thực thi jQuery
+        $(document).ready(function() {
+            
+            // Bước 2: Khai báo biến trạng thái để lưu giá trị số đếm
+            let count = 0;
+
+            // Hàm cập nhật giao diện (Đảm bảo thay đổi số và màu sắc ngay lập tức)
+            function updateUI() {
+                // Cập nhật text hiển thị số đếm bằng phương thức .text()
+                $('#counter-value').text(count);
+
+                // Xử lý đổi màu chữ dựa trên giá trị (Yêu cầu mở rộng)
+                $('#counter-value').removeClass('color-zero color-positive color-negative');
+                
+                if (count > 0) {
+                    $('#counter-value').addClass('color-positive');
+                } else if (count < 0) {
+                    $('#counter-value').addClass('color-negative');
+                } else {
+                    $('#counter-value').addClass('color-zero');
+                }
+            }
+
+            // Bước 3: Gắn sự kiện click cho các nút điều khiển bằng .click()
+
+            // Sự kiện nút Tăng (+1)
+            $('#btn-increase').click(function() {
+                count++;
+                updateUI();
+            });
+
+            // Sự kiện nút Giảm (-1)
+            $('#btn-decrease').click(function() {
+                /* Lưu ý: Nếu giảng viên yêu cầu luật KHÔNG cho số âm, 
+                   bạn có thể bọc điều kiện: if(count > 0) { count--; }
+                   Còn hiện tại đoạn code này cho phép âm để thể hiện tính năng đổi màu chữ đỏ.
+                */
+                count--;
+                updateUI();
+            });
+
+            // Sự kiện nút Tăng nhanh (+10) - (Yêu cầu mở rộng)
+            $('#btn-fast-increase').click(function() {
+                count += 10;
+                updateUI();
+            });
+
+            // Sự kiện nút Đặt lại (Reset)
+            $('#btn-reset').click(function() {
+                count = 0;
+                updateUI();
+            });
+
+        });
+    </script>
+
+</body>
+</html>

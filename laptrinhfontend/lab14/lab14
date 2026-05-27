@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 14 - Hiệu ứng giao diện mượt mà với jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 40px; background-color: #f4f7f6; }
+        .buttons-group { margin-bottom: 20px; }
+        button { background-color: #2ecc71; color: white; border: none; padding: 10px 16px; margin: 5px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        button:hover { background-color: #27ae60; }
+        .alert-banner { max-width: 450px; margin: 0 auto; padding: 25px; background-color: #f1c40f; color: #2c3e50; font-weight: bold; border-radius: 4px; border: 2px dashed #f39c12; }
+    </style>
+</head>
+<body>
+    <h2>Xây Dựng Hiệu Ứng Chuyển Động Trực Quan</h2>
+    
+    <div class="buttons-group">
+        <button id="fadeO">Mờ dần đi (FadeOut)</button>
+        <button id="fadeI">Rõ nét lại (FadeIn)</button>
+        <button id="slideU">Trượt cuộn lên (SlideUp)</button>
+        <button id="slideD">Trượt thả xuống (SlideDown)</button>
+    </div>
+
+    <div class="alert-banner" id="effectBanner">
+        Thông báo hệ thống: Bài thực hành xây dựng giao diện ứng dụng Web tương tác động sử dụng thư viện hiệu ứng nâng cao của jQuery.
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Hiệu ứng mờ dần trong khoảng thời gian quy định tốc độ 500ms
+            $("#fadeO").click(function() {
+                $("#effectBanner").fadeOut(500);
+            });
+
+            $("#fadeI").click(function() {
+                $("#effectBanner").fadeIn(500);
+            });
+
+            // Hiệu ứng trượt cuộn giấu phần tử lên trên
+            $("#slideU").click(function() {
+                $("#effectBanner").slideUp(400);
+            });
+
+            // Hiệu ứng đẩy trượt thả dải nội dung xuống dưới hiển thị
+            $("#slideD").click(function() {
+                $("#effectBanner").slideDown(400);
+            });
+        });
+    </script>
+</body>
+</html>
