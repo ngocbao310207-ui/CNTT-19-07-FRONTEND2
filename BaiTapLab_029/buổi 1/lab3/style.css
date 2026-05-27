@@ -1,0 +1,167 @@
+:root {
+    --primary-color: #8b5cf6;
+    /* Màu tím gaming */
+    --primary-hover: #7c3aed;
+    --secondary-color: #f43f5e;
+    --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --text-main: #1f2937;
+    --success: #10b981;
+    --warning: #f59e0b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Dùng font bo tròn tạo cảm giác vui nhộn */
+    font-family: 'Fredoka', sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.game-card {
+    background: var(--card-bg);
+    padding: 3rem 2rem;
+    border-radius: 30px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: #4b5563;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.game-play {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s;
+}
+
+input[type="number"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+.btn-primary,
+.btn-secondary {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    margin-top: 1rem;
+}
+
+.btn-secondary:hover {
+    background-color: #e11d48;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Thông báo phản hồi */
+.feedback-box {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    border-radius: 12px;
+    animation: popIn 0.3s ease-out;
+}
+
+.feedback-text {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.msg-high {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.msg-low {
+    background-color: #e0f2fe;
+    color: #0284c7;
+}
+
+.msg-win {
+    background-color: #d1fae5;
+    color: #059669;
+    font-size: 1.5rem;
+}
+
+.stats {
+    color: #6b7280;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.badge-count {
+    background: #f3f4f6;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

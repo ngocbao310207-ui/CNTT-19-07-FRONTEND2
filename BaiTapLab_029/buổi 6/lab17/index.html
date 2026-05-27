@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab17 — Giỏ Hàng Đơn Giản</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">🛍 ShopUI</div>
+      <div class="cart-icon-wrap">
+        <span class="cart-ico">🛒</span>
+        <span id="cartBadge" class="cart-badge">0</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Danh sách sản phẩm -->
+    <section class="products-section">
+      <h2 class="section-title">Sản Phẩm Nổi Bật</h2>
+      <div class="products-grid" id="productsGrid">
+        <!-- render bởi JS -->
+      </div>
+    </section>
+
+    <!-- Giỏ hàng -->
+    <section class="cart-section">
+      <div class="cart-header">
+        <h2 class="section-title">🛒 Giỏ Hàng</h2>
+        <button id="clearCart" class="clear-cart-btn">Xoá tất cả</button>
+      </div>
+
+      <div id="cartEmpty" class="cart-empty">
+        <div class="empty-icon">🛍</div>
+        <p>Chưa có sản phẩm nào trong giỏ hàng</p>
+      </div>
+
+      <div id="cartItems" class="cart-items"></div>
+
+      <div id="cartSummary" class="cart-summary" style="display:none;">
+        <div class="summary-row">
+          <span>Tạm tính</span>
+          <span id="subtotal">0₫</span>
+        </div>
+        <div class="summary-row">
+          <span>Phí vận chuyển</span>
+          <span id="shipping">Miễn phí</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row total-row">
+          <span>Tổng cộng</span>
+          <span id="totalPrice">0₫</span>
+        </div>
+        <button class="btn-checkout">Thanh Toán →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

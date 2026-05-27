@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab15 — Kiểm Tra Form Đăng Ký</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="page-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <main class="center-wrap">
+    <div class="card">
+      <div class="card-header">
+        <div class="logo-mark">✦</div>
+        <h1>Tạo Tài Khoản</h1>
+        <p>Điền đầy đủ thông tin để bắt đầu</p>
+      </div>
+
+      <form id="registerForm" novalidate>
+
+        <div class="field" id="fg-name">
+          <label for="fullname">Họ và tên</label>
+          <div class="input-shell">
+            <i class="ico">👤</i>
+            <input type="text" id="fullname" placeholder="Nguyễn Văn A" autocomplete="off" />
+          </div>
+          <span class="err" id="err-name"></span>
+        </div>
+
+        <div class="field" id="fg-email">
+          <label for="email">Địa chỉ Email</label>
+          <div class="input-shell">
+            <i class="ico">✉</i>
+            <input type="email" id="email" placeholder="ten@email.com" autocomplete="off" />
+          </div>
+          <span class="err" id="err-email"></span>
+        </div>
+
+        <div class="field" id="fg-password">
+          <label for="password">Mật khẩu</label>
+          <div class="input-shell">
+            <i class="ico">🔒</i>
+            <input type="password" id="password" placeholder="Tối thiểu 8 ký tự" />
+            <button type="button" class="eye-btn" data-target="password" title="Hiện/ẩn mật khẩu">
+              <span class="eye-open">👁</span>
+            </button>
+          </div>
+          <!-- Thanh độ mạnh mật khẩu -->
+          <div class="strength-wrap">
+            <div class="strength-bar"><div id="strengthFill" class="fill"></div></div>
+            <span id="strengthLabel" class="strength-label"></span>
+          </div>
+          <span class="err" id="err-password"></span>
+        </div>
+
+        <div class="field" id="fg-confirm">
+          <label for="confirm">Xác nhận mật khẩu</label>
+          <div class="input-shell">
+            <i class="ico">🔐</i>
+            <input type="password" id="confirm" placeholder="Nhập lại mật khẩu" />
+            <button type="button" class="eye-btn" data-target="confirm" title="Hiện/ẩn">
+              <span class="eye-open">👁</span>
+            </button>
+          </div>
+          <span class="err" id="err-confirm"></span>
+        </div>
+
+        <div class="field" id="fg-phone">
+          <label for="phone">Số điện thoại <span class="optional">(tuỳ chọn)</span></label>
+          <div class="input-shell">
+            <i class="ico">📱</i>
+            <input type="tel" id="phone" placeholder="0901 234 567" autocomplete="off" />
+          </div>
+          <span class="err" id="err-phone"></span>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <span>Đăng Ký Ngay</span>
+          <span class="arrow">→</span>
+        </button>
+      </form>
+
+      <div id="successBanner" class="success-banner" style="display:none;">
+        <div class="success-icon">🎉</div>
+        <h2>Đăng ký thành công!</h2>
+        <p>Chào mừng bạn đến với hệ thống.</p>
+      </div>
+
+      <p class="footer-note">Đã có tài khoản? <a href="#">Đăng nhập ngay</a></p>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
