@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 06 - Callback Order</title>
+</head>
+<body>
+
+<h2>Quy trình tính đơn hàng (Callback)</h2>
+
+<pre id="output"></pre>
+
+<script>
+
+// =======================
+// DỮ LIỆU ĐƠN HÀNG
+// =======================
+const order = {
+    items: [
+        { name: "Laptop", price: 15000000, qty: 1 },
+        { name: "Chuột", price: 300000, qty: 2 }
+    ],
+    discount: 0.1, // 10%
+    shippingFee: 50000
+};
+
+// =======================
+// BƯỚC 1: TÍNH TIỀN HÀNG
+// =======================
+function calculateSubtotal(order, callback) {
+
+    let subtotal = 0;
+
+    order.items.forEach(item => {
+        subtotal += item.price * item.qty;
+    });
+
+    callback(subtotal, order);
+}
+
+// =======================
+// BƯỚC 2: GIẢM GIÁ
+// =======================
+function applyDiscount(subtotal, order, callback) {
+
+    let discountAmount = subtotal * order.discount;
+    let totalAfterDiscount = subtotal - discountAmount;
+
+    callback(totalAfterDiscount, order, discountAmount);
+}
+
+// =======================
+// BƯỚC 3: PHÍ VẬN CHUYỂN
+// =======================
+function addShipping(totalAfterDiscount, order, discountAmount, callback) {
+
+    let finalTotal = totalAfterDiscount + order.shippingFee;
+
+    callback(finalTotal, discountAmount, order.shippingFee);
+}
+
+// =======================
+// BƯỚC 4: HIỂN THỊ KẾT QUẢ
+// =======================
+function showResult(finalTotal, discountAmount, shippingFee) {
+
+    const output = `
+    --- KẾT QUẢ TÍNH ĐƠN HÀNG ---
+
+    Tổng giảm giá: ${discountAmount.toLocaleString()} VNĐ
+    Phí vận chuyển: ${shippingFee.toLocaleString()} VNĐ
+
+    => Tổng thanh toán: ${finalTotal.toLocaleString()} VNĐ
+    `;
+
+    document.getElementById("output").innerText = output;
+}
+
+// =======================
+// CHUỖI CALLBACK
+// =======================
+calculateSubtotal(order, function(subtotal, order){
+
+    applyDiscount(subtotal, order, function(totalAfterDiscount, order, discountAmount){
+
+        addShipping(totalAfterDiscount, order, discountAmount, function(finalTotal, discountAmount, shippingFee){
+
+            showResult(finalTotal, discountAmount, shippingFee);
+
+        });
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

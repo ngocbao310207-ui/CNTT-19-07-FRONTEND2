@@ -1,0 +1,87 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 20 - Ajax POST</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        input, button { padding: 8px; margin: 5px;}
+        table { border-collapse: collapse; width: 80%; margin: 20px auto;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center;}
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Thêm sinh viên</h2>
+
+<form id="studentForm" style="text-align:center;">
+    <input type="text" id="name" placeholder="Họ tên">
+    <input type="email" id="email" placeholder="Email">
+    <button type="submit">Thêm</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+</table>
+
+<script>
+    const API_URL = "https://63f0f4c6f9a53fa202e50d4f.mockapi.io/students";
+
+    function loadStudents(){
+        $.ajax({
+            url: API_URL,
+            method: "GET",
+            success: function(data){
+                let html = "";
+                data.forEach(s => {
+                    html += `<tr>
+                        <td>${s.id}</td>
+                        <td>${s.name}</td>
+                        <td>${s.email}</td>
+                    </tr>`;
+                });
+                $("#studentList").html(html);
+            }
+        });
+    }
+
+    $("#studentForm").submit(function(e){
+        e.preventDefault();
+        const name = $("#name").val().trim();
+        const email = $("#email").val().trim();
+        if(name === "" || email === ""){
+            alert("Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+
+        $.ajax({
+            url: API_URL,
+            method: "POST",
+            data: { name, email },
+            success: function(){
+                loadStudents();
+                $("#name").val("");
+                $("#email").val("");
+                alert("Thêm sinh viên thành công!");
+            },
+            error: function(){
+                alert("Thêm thất bại!");
+            }
+        });
+    });
+
+    $(document).ready(loadStudents);
+</script>
+
+</body>
+</html>
+```

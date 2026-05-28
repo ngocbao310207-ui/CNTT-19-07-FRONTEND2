@@ -1,0 +1,119 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 21 - CRUD Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        input, button { padding: 6px; margin: 3px;}
+        table { border-collapse: collapse; width: 90%; margin: 20px auto;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center;}
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Quản lý sinh viên (CRUD)</h2>
+
+<div style="text-align:center;">
+    <input type="text" id="name" placeholder="Họ tên">
+    <input type="email" id="email" placeholder="Email">
+    <button id="btnAdd">Thêm</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+</table>
+
+<script>
+    const API_URL = "https://63f0f4c6f9a53fa202e50d4f.mockapi.io/students";
+
+    function loadStudents(){
+        $.ajax({
+            url: API_URL,
+            method: "GET",
+            success: function(data){
+                let html = "";
+                data.forEach(s => {
+                    html += `<tr data-id="${s.id}">
+                        <td>${s.id}</td>
+                        <td>${s.name}</td>
+                        <td>${s.email}</td>
+                        <td>
+                            <button class="edit">Sửa</button>
+                            <button class="delete">Xóa</button>
+                        </td>
+                    </tr>`;
+                });
+                $("#studentList").html(html);
+            }
+        });
+    }
+
+    // Thêm
+    $("#btnAdd").click(function(){
+        const name = $("#name").val().trim();
+        const email = $("#email").val().trim();
+        if(!name || !email){
+            alert("Nhập đủ thông tin!");
+            return;
+        }
+        $.ajax({
+            url: API_URL,
+            method: "POST",
+            data: { name, email },
+            success: function(){
+                loadStudents();
+                $("#name").val("");
+                $("#email").val("");
+            }
+        });
+    });
+
+    // Xóa
+    $(document).on("click", ".delete", function(){
+        const id = $(this).closest("tr").data("id");
+        $.ajax({
+            url: API_URL + "/" + id,
+            method: "DELETE",
+            success: function(){
+                loadStudents();
+            }
+        });
+    });
+
+    // Sửa
+    $(document).on("click", ".edit", function(){
+        const tr = $(this).closest("tr");
+        const id = tr.data("id");
+        const currentName = tr.children("td").eq(1).text();
+        const currentEmail = tr.children("td").eq(2).text();
+        const newName = prompt("Tên mới:", currentName);
+        const newEmail = prompt("Email mới:", currentEmail);
+        if(newName && newEmail){
+            $.ajax({
+                url: API_URL + "/" + id,
+                method: "PUT",
+                data: { name: newName, email: newEmail },
+                success: function(){
+                    loadStudents();
+                }
+            });
+        }
+    });
+
+    $(document).ready(loadStudents);
+</script>
+
+</body>
+</html>
+```

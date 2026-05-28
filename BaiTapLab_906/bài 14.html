@@ -1,0 +1,145 @@
+```html id="jquerylab14"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 14 - Hiệu ứng jQuery</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container{
+            width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .box{
+            margin-top: 20px;
+            padding: 30px;
+            background: #007bff;
+            color: white;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        button{
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .fadeIn{
+            background: green;
+        }
+
+        .fadeOut{
+            background: red;
+        }
+
+        .slide{
+            background: orange;
+        }
+
+        .combo{
+            background: purple;
+        }
+
+        .highlight{
+            border: 5px solid yellow;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>HIỆU ỨNG GIAO DIỆN jQuery</h2>
+
+    <button class="fadeIn" id="btnFadeIn">
+        Fade In
+    </button>
+
+    <button class="fadeOut" id="btnFadeOut">
+        Fade Out
+    </button>
+
+    <button class="slide" id="btnSlide">
+        Slide Toggle
+    </button>
+
+    <button class="combo" id="btnCombo">
+        Combo Effect
+    </button>
+
+    <div class="box" id="box">
+
+        Nội dung hiệu ứng jQuery
+
+    </div>
+
+</div>
+
+<script>
+
+    // Fade In
+    $("#btnFadeIn").click(function(){
+
+        $("#box").fadeIn(1000);
+
+    });
+
+    // Fade Out
+    $("#btnFadeOut").click(function(){
+
+        $("#box").fadeOut(1000);
+
+    });
+
+    // Slide Toggle
+    $("#btnSlide").click(function(){
+
+        $("#box").slideToggle(800);
+
+    });
+
+    // Kết hợp nhiều hiệu ứng
+    $("#btnCombo").click(function(){
+
+        $("#box")
+
+            .fadeOut(500)
+
+            .fadeIn(500)
+
+            .slideUp(500)
+
+            .slideDown(500)
+
+            .addClass("highlight");
+
+    });
+
+</script>
+
+</body>
+</html>
+```

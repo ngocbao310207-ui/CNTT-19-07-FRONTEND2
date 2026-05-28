@@ -1,0 +1,256 @@
+```html id="jquerylab15"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 15 - Validation Form</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container{
+            width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h2{
+            text-align: center;
+        }
+
+        .form-group{
+            margin-bottom: 15px;
+        }
+
+        input{
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .error{
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success{
+            color: green;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .invalid{
+            border: 2px solid red;
+        }
+
+        .valid{
+            border: 2px solid green;
+        }
+
+        button{
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+
+    <form id="registerForm">
+
+        <div class="form-group">
+
+            <input type="text"
+                   id="fullname"
+                   placeholder="Họ và tên">
+
+            <div class="error" id="errorName"></div>
+
+        </div>
+
+        <div class="form-group">
+
+            <input type="text"
+                   id="email"
+                   placeholder="Email">
+
+            <div class="error" id="errorEmail"></div>
+
+        </div>
+
+        <div class="form-group">
+
+            <input type="password"
+                   id="password"
+                   placeholder="Mật khẩu">
+
+            <div class="error" id="errorPassword"></div>
+
+        </div>
+
+        <div class="form-group">
+
+            <input type="password"
+                   id="confirmPassword"
+                   placeholder="Xác nhận mật khẩu">
+
+            <div class="error" id="errorConfirm"></div>
+
+        </div>
+
+        <button type="submit">
+            Đăng ký
+        </button>
+
+        <div class="success" id="success"></div>
+
+    </form>
+
+</div>
+
+<script>
+
+    $("#registerForm").submit(function(e){
+
+        // Chặn submit mặc định
+        e.preventDefault();
+
+        // Xóa lỗi cũ
+        $(".error").text("");
+        $("input").removeClass("invalid valid");
+        $("#success").text("");
+
+        // Lấy dữ liệu
+        let name =
+            $("#fullname").val().trim();
+
+        let email =
+            $("#email").val().trim();
+
+        let password =
+            $("#password").val().trim();
+
+        let confirm =
+            $("#confirmPassword").val().trim();
+
+        let isValid = true;
+
+        // Regex email
+        let emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Kiểm tra họ tên
+        if(name === ""){
+
+            $("#errorName")
+                .text("Vui lòng nhập họ tên");
+
+            $("#fullname")
+                .addClass("invalid");
+
+            isValid = false;
+
+        }else{
+
+            $("#fullname")
+                .addClass("valid");
+        }
+
+        // Kiểm tra email
+        if(email === ""){
+
+            $("#errorEmail")
+                .text("Vui lòng nhập email");
+
+            $("#email")
+                .addClass("invalid");
+
+            isValid = false;
+
+        }else if(!emailRegex.test(email)){
+
+            $("#errorEmail")
+                .text("Email không hợp lệ");
+
+            $("#email")
+                .addClass("invalid");
+
+            isValid = false;
+
+        }else{
+
+            $("#email")
+                .addClass("valid");
+        }
+
+        // Kiểm tra mật khẩu
+        if(password.length < 6){
+
+            $("#errorPassword")
+                .text("Mật khẩu tối thiểu 6 ký tự");
+
+            $("#password")
+                .addClass("invalid");
+
+            isValid = false;
+
+        }else{
+
+            $("#password")
+                .addClass("valid");
+        }
+
+        // Kiểm tra xác nhận mật khẩu
+        if(confirm !== password){
+
+            $("#errorConfirm")
+                .text("Mật khẩu xác nhận không khớp");
+
+            $("#confirmPassword")
+                .addClass("invalid");
+
+            isValid = false;
+
+        }else{
+
+            $("#confirmPassword")
+                .addClass("valid");
+        }
+
+        // Thành công
+        if(isValid){
+
+            $("#success")
+                .text("Đăng ký thành công!");
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
+```

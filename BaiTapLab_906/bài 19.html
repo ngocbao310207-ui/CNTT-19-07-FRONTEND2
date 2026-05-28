@@ -1,0 +1,61 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 19 - Ajax GET</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px auto;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center;}
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Danh sách sinh viên</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+</table>
+
+<script>
+    // URL endpoint mockapi.io
+    const API_URL = "https://63f0f4c6f9a53fa202e50d4f.mockapi.io/students";
+
+    function loadStudents(){
+        $.ajax({
+            url: API_URL,
+            method: "GET",
+            success: function(data){
+                let html = "";
+                data.forEach(student => {
+                    html += `<tr>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.email}</td>
+                    </tr>`;
+                });
+                $("#studentList").html(html);
+            },
+            error: function(){
+                alert("Không thể tải dữ liệu!");
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        loadStudents();
+    });
+</script>
+
+</body>
+</html>
+```

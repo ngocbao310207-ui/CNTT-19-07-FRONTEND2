@@ -1,0 +1,225 @@
+```html id="x9lm2a"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xử lý điểm sinh viên</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container{
+            width: 500px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h2{
+            text-align: center;
+            color: #333;
+        }
+
+        input{
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button{
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover{
+            background: #0056b3;
+        }
+
+        #ketQua{
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            line-height: 1.8;
+        }
+
+        .gioi{
+            color: green;
+            font-weight: bold;
+        }
+
+        .kha{
+            color: blue;
+            font-weight: bold;
+        }
+
+        .trungbinh{
+            color: orange;
+            font-weight: bold;
+        }
+
+        .yeu{
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>XỬ LÝ ĐIỂM SINH VIÊN</h2>
+
+    <input type="number" id="diemMoi"
+           placeholder="Nhập điểm mới">
+
+    <button onclick="themDiem()">
+        Thêm điểm
+    </button>
+
+    <button onclick="tinhDiem()">
+        Tính điểm trung bình
+    </button>
+
+    <div id="ketQua"></div>
+
+</div>
+
+<script>
+
+    // Mảng điểm ban đầu
+    let dsDiem = [8, 7.5, 9, 6.5, 8.5];
+
+    // Thêm điểm mới
+    function themDiem() {
+
+        let diem = Number(
+            document.getElementById("diemMoi").value
+        );
+
+        if (diem < 0 || diem > 10 || isNaN(diem)) {
+            alert("Vui lòng nhập điểm từ 0 đến 10!");
+            return;
+        }
+
+        dsDiem.push(diem);
+
+        document.getElementById("diemMoi").value = "";
+
+        hienThiDanhSach();
+    }
+
+    // Hiển thị danh sách điểm
+    function hienThiDanhSach() {
+
+        let html = `
+            <h3>Danh sách điểm:</h3>
+            <p>${dsDiem.join(" - ")}</p>
+        `;
+
+        document.getElementById("ketQua").innerHTML = html;
+    }
+
+    // Tính điểm trung bình
+    function tinhDiem() {
+
+        if (dsDiem.length == 0) {
+            return;
+        }
+
+        // Sao chép mảng
+        let diemTinh = [...dsDiem];
+
+        // Loại bỏ điểm thấp nhất
+        let diemThapNhat = Math.min(...diemTinh);
+
+        let viTri = diemTinh.indexOf(diemThapNhat);
+
+        diemTinh.splice(viTri, 1);
+
+        // Tính tổng bằng reduce
+        let tong = diemTinh.reduce(
+            (sum, diem) => sum + diem,
+            0
+        );
+
+        // Tính trung bình
+        let trungBinh = tong / diemTinh.length;
+
+        trungBinh = trungBinh.toFixed(2);
+
+        // Xếp loại
+        let hocLuc = "";
+        let lopCss = "";
+
+        if (trungBinh >= 8) {
+            hocLuc = "Giỏi";
+            lopCss = "gioi";
+        }
+        else if (trungBinh >= 6.5) {
+            hocLuc = "Khá";
+            lopCss = "kha";
+        }
+        else if (trungBinh >= 5) {
+            hocLuc = "Trung bình";
+            lopCss = "trungbinh";
+        }
+        else {
+            hocLuc = "Yếu";
+            lopCss = "yeu";
+        }
+
+        // Hiển thị kết quả
+        let html = `
+            <h3>Danh sách điểm:</h3>
+            <p>${dsDiem.join(" - ")}</p>
+
+            <p>
+                <strong>Điểm thấp nhất đã loại:</strong>
+                ${diemThapNhat}
+            </p>
+
+            <p>
+                <strong>Tổng điểm:</strong>
+                ${tong.toFixed(2)}
+            </p>
+
+            <p>
+                <strong>Điểm trung bình:</strong>
+                ${trungBinh}
+            </p>
+
+            <p class="${lopCss}">
+                Xếp loại: ${hocLuc}
+            </p>
+        `;
+
+        document.getElementById("ketQua").innerHTML = html;
+    }
+
+    // Hiển thị ban đầu
+    hienThiDanhSach();
+
+</script>
+
+</body>
+</html>
+```

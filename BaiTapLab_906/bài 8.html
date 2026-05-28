@@ -1,0 +1,156 @@
+```html id="counterlab08"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 08 - Counter</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container{
+            width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            font-size: 60px;
+        }
+
+        button{
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .plus{
+            background: green;
+        }
+
+        .minus{
+            background: red;
+        }
+
+        .reset{
+            background: gray;
+        }
+
+        .plus5{
+            background: blue;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>BỘ ĐẾM TƯƠNG TÁC</h2>
+
+    <h1 id="soDem">0</h1>
+
+    <button class="plus" id="btnTang">
+        +1
+    </button>
+
+    <button class="minus" id="btnGiam">
+        -1
+    </button>
+
+    <button class="plus5" id="btnTang5">
+        +5
+    </button>
+
+    <button class="reset" id="btnReset">
+        Reset
+    </button>
+
+</div>
+
+<script>
+
+    let count = 0;
+
+    let soDem =
+        document.getElementById("soDem");
+
+    // Hàm cập nhật giao diện
+    function render() {
+
+        soDem.innerText = count;
+
+        if(count > 0){
+
+            soDem.style.color = "green";
+        }
+
+        else if(count < 0){
+
+            soDem.style.color = "red";
+        }
+
+        else{
+
+            soDem.style.color = "black";
+        }
+    }
+
+    // Tăng
+    document
+        .getElementById("btnTang")
+        .addEventListener("click", function(){
+
+            count++;
+            render();
+        });
+
+    // Giảm
+    document
+        .getElementById("btnGiam")
+        .addEventListener("click", function(){
+
+            count--;
+            render();
+        });
+
+    // Tăng nhanh +5
+    document
+        .getElementById("btnTang5")
+        .addEventListener("click", function(){
+
+            count += 5;
+            render();
+        });
+
+    // Reset
+    document
+        .getElementById("btnReset")
+        .addEventListener("click", function(){
+
+            count = 0;
+            render();
+        });
+
+    render();
+
+</script>
+
+</body>
+</html>
+```

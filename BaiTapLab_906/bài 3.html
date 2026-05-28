@@ -1,0 +1,208 @@
+```html id="q7v2hk"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò chơi dự đoán số</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container{
+            width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2{
+            color: #333;
+        }
+
+        input, select{
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button{
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-check{
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-reset{
+            background: #28a745;
+            color: white;
+        }
+
+        button:hover{
+            opacity: 0.9;
+        }
+
+        #thongBao{
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #lichSu{
+            margin-top: 15px;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>TRÒ CHƠI DỰ ĐOÁN SỐ</h2>
+
+    <p>Chọn mức độ:</p>
+
+    <select id="mucDo" onchange="taoTroChoi()">
+        <option value="10">Dễ (1 - 10)</option>
+        <option value="50">Trung bình (1 - 50)</option>
+        <option value="100">Khó (1 - 100)</option>
+    </select>
+
+    <input type="number" id="duDoan" placeholder="Nhập số dự đoán">
+
+    <button class="btn-check" onclick="kiemTra()">
+        Kiểm tra
+    </button>
+
+    <button class="btn-reset" onclick="taoTroChoi()">
+        Chơi lại
+    </button>
+
+    <div id="thongBao"></div>
+
+    <div id="lichSu">
+        <strong>Lịch sử dự đoán:</strong>
+        <ul id="dsLichSu"></ul>
+    </div>
+
+</div>
+
+<script>
+
+    let soBiMat;
+    let soLanDoan;
+    let gioiHan;
+    let maxLuot = 7;
+
+    // Tạo trò chơi mới
+    function taoTroChoi() {
+
+        gioiHan = Number(document.getElementById("mucDo").value);
+
+        // Sinh số ngẫu nhiên
+        soBiMat = Math.floor(Math.random() * gioiHan) + 1;
+
+        // Reset số lượt
+        soLanDoan = 0;
+
+        // Xóa dữ liệu cũ
+        document.getElementById("thongBao").innerHTML = "";
+        document.getElementById("duDoan").value = "";
+        document.getElementById("dsLichSu").innerHTML = "";
+
+        console.log("Số bí mật:", soBiMat);
+    }
+
+    // Kiểm tra dự đoán
+    function kiemTra() {
+
+        let duDoan = Number(document.getElementById("duDoan").value);
+
+        let thongBao = document.getElementById("thongBao");
+
+        // Kiểm tra dữ liệu
+        if (duDoan < 1 || duDoan > gioiHan || isNaN(duDoan)) {
+
+            thongBao.innerHTML =
+                "Vui lòng nhập số từ 1 đến " + gioiHan;
+
+            thongBao.style.color = "red";
+            return;
+        }
+
+        // Tăng lượt đoán
+        soLanDoan++;
+
+        // Lưu lịch sử
+        let li = document.createElement("li");
+        li.innerHTML = "Lần " + soLanDoan + ": " + duDoan;
+        document.getElementById("dsLichSu").appendChild(li);
+
+        // So sánh
+        if (duDoan < soBiMat) {
+
+            thongBao.innerHTML =
+                "Số bạn đoán NHỎ hơn số bí mật!";
+
+            thongBao.style.color = "orange";
+        }
+
+        else if (duDoan > soBiMat) {
+
+            thongBao.innerHTML =
+                "Số bạn đoán LỚN hơn số bí mật!";
+
+            thongBao.style.color = "blue";
+        }
+
+        else {
+
+            thongBao.innerHTML =
+                "🎉 Chính xác! Bạn đoán đúng sau "
+                + soLanDoan + " lượt.";
+
+            thongBao.style.color = "green";
+        }
+
+        // Giới hạn số lượt chơi
+        if (soLanDoan >= maxLuot && duDoan != soBiMat) {
+
+            thongBao.innerHTML =
+                "❌ Bạn đã hết lượt chơi!<br>" +
+                "Số bí mật là: " + soBiMat;
+
+            thongBao.style.color = "red";
+        }
+
+    }
+
+    // Khởi tạo game khi mở trang
+    taoTroChoi();
+
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,230 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 18 - Quản lý thành viên</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .container{
+            width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h2{
+            text-align: center;
+        }
+
+        .input-group{
+            display: flex;
+            gap: 10px;
+        }
+
+        input{
+            flex: 1;
+            padding: 10px;
+        }
+
+        button{
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .add{
+            background: blue;
+        }
+
+        .edit{
+            background: orange;
+        }
+
+        .delete{
+            background: red;
+        }
+
+        ul{
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+
+        .member-name{
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>QUẢN LÝ THÀNH VIÊN</h2>
+
+    <div class="input-group">
+
+        <input type="text"
+               id="memberName"
+               placeholder="Nhập tên thành viên">
+
+        <button class="add" id="btnAdd">
+            Thêm
+        </button>
+
+    </div>
+
+    <ul id="memberList"></ul>
+
+</div>
+
+<script>
+
+    // Thêm thành viên
+    $("#btnAdd").click(function(){
+
+        let name =
+            $("#memberName").val().trim();
+
+        if(name === ""){
+
+            alert("Vui lòng nhập tên!");
+            return;
+        }
+
+        let total =
+            $("#memberList li").length + 1;
+
+        let html = `
+
+            <li>
+
+                <span class="member-name">
+
+                    ${total}. ${name}
+
+                </span>
+
+                <div>
+
+                    <button class="edit">
+                        Sửa
+                    </button>
+
+                    <button class="delete">
+                        Xóa
+                    </button>
+
+                </div>
+
+            </li>
+        `;
+
+        $("#memberList").append(html);
+
+        $("#memberName").val("");
+
+    });
+
+    // Xóa thành viên
+    $(document).on("click", ".delete", function(){
+
+        $(this)
+            .closest("li")
+            .remove();
+
+        updateNumber();
+
+    });
+
+    // Sửa thành viên
+    $(document).on("click", ".edit", function(){
+
+        let currentName =
+            $(this)
+            .closest("li")
+            .find(".member-name")
+            .text();
+
+        let newName =
+            prompt(
+                "Nhập tên mới:",
+                currentName
+            );
+
+        if(newName && newName.trim() !== ""){
+
+            let index =
+                $(this)
+                .closest("li")
+                .index() + 1;
+
+            $(this)
+                .closest("li")
+                .find(".member-name")
+                .text(index + ". " + newName);
+
+        }
+
+    });
+
+    // Cập nhật STT
+    function updateNumber(){
+
+        $("#memberList li").each(function(index){
+
+            let text =
+                $(this)
+                .find(".member-name")
+                .text();
+
+            let name =
+                text.substring(
+                    text.indexOf(".") + 2
+                );
+
+            $(this)
+                .find(".member-name")
+                .text(
+                    (index + 1)
+                    + ". "
+                    + name
+                );
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>
+```

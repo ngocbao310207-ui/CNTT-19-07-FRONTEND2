@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 10 - Fetch JSON</title>
+<style>
+    body{font-family: Arial; background:#f2f2f2; padding:20px;}
+    h2{text-align:center;}
+    ul{list-style:none; padding:0;}
+    li{background:white; margin-bottom:10px; padding:10px; border-radius:5px;}
+</style>
+</head>
+<body>
+
+<h2>Danh sách người dùng</h2>
+<ul id="userList"></ul>
+
+<script>
+async function fetchUsers(){
+    try{
+        let res = await fetch("https://63f4b9ee5b0e4a127de0b301.mockapi.io/users"); // Thay URL mockapi của bạn
+        let data = await res.json();
+        let list = document.getElementById("userList");
+        list.innerHTML = "";
+        data.forEach(user=>{
+            let li = document.createElement("li");
+            li.innerText = `ID: ${user.id} - Tên: ${user.name} - Email: ${user.email}`;
+            list.appendChild(li);
+        });
+    }catch(err){
+        alert("Không thể tải dữ liệu!");
+        console.error(err);
+    }
+}
+
+fetchUsers();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+```html id="domlab07"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 07 - DOM</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card{
+            width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        img{
+            width: 200px;
+            border-radius: 10px;
+        }
+
+        button{
+            margin-top: 15px;
+            padding: 10px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dark{
+            background: #333;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="card" id="card">
+
+    <h2 id="tieuDe">Xin chào sinh viên!</h2>
+
+    <p id="moTa">
+        Đây là bài thực hành DOM cơ bản.
+    </p>
+
+    <img id="hinhAnh"
+         src="https://picsum.photos/200">
+
+    <br>
+
+    <button id="btnChange">
+        Thay đổi nội dung
+    </button>
+
+    <button id="btnReset">
+        Khôi phục
+    </button>
+
+</div>
+
+<script>
+
+    // Lấy phần tử
+    let tieuDe =
+        document.getElementById("tieuDe");
+
+    let moTa =
+        document.querySelector("#moTa");
+
+    let hinhAnh =
+        document.getElementById("hinhAnh");
+
+    let card =
+        document.getElementById("card");
+
+    // Đổi nội dung
+    document
+        .getElementById("btnChange")
+        .addEventListener("click", function(){
+
+            tieuDe.innerText =
+                "DOM đã được thay đổi!";
+
+            moTa.textContent =
+                "Bạn vừa cập nhật nội dung giao diện bằng JavaScript.";
+
+            hinhAnh.src =
+                "https://picsum.photos/300";
+
+            card.classList.add("dark");
+        });
+
+    // Khôi phục
+    document
+        .getElementById("btnReset")
+        .addEventListener("click", function(){
+
+            tieuDe.innerText =
+                "Xin chào sinh viên!";
+
+            moTa.textContent =
+                "Đây là bài thực hành DOM cơ bản.";
+
+            hinhAnh.src =
+                "https://picsum.photos/200";
+
+            card.classList.remove("dark");
+        });
+
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,126 @@
+```html id="jquerylab13"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 13 - jQuery Hide Show</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container{
+            width: 450px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .box{
+            margin-top: 20px;
+            padding: 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 10px;
+        }
+
+        button{
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .hide{
+            background: red;
+        }
+
+        .show{
+            background: green;
+        }
+
+        .toggle{
+            background: orange;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>ẨN / HIỆN NỘI DUNG BẰNG jQuery</h2>
+
+    <button class="hide" id="btnHide">
+        Ẩn
+    </button>
+
+    <button class="show" id="btnShow">
+        Hiện
+    </button>
+
+    <button class="toggle" id="btnToggle">
+        Toggle
+    </button>
+
+    <div class="box" id="noiDung">
+
+        Đây là nội dung đang hiển thị trên giao diện.
+
+    </div>
+
+</div>
+
+<script>
+
+    // Ẩn
+    $("#btnHide").click(function(){
+
+        $("#noiDung").hide();
+
+    });
+
+    // Hiện
+    $("#btnShow").click(function(){
+
+        $("#noiDung").show();
+
+    });
+
+    // Toggle
+    $("#btnToggle").click(function(){
+
+        $("#noiDung").toggle();
+
+        // Đổi nhãn nút
+        if($("#noiDung").is(":visible")){
+
+            $(this).text("Ẩn bằng Toggle");
+
+        }else{
+
+            $(this).text("Hiện bằng Toggle");
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
+```

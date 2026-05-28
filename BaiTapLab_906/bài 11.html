@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 11 - Tra cứu theo ID</title>
+<style>
+    body{font-family: Arial; background:#f2f2f2; padding:20px;}
+    h2{text-align:center;}
+    .result{background:white; padding:10px; border-radius:5px; margin-top:10px;}
+</style>
+</head>
+<body>
+
+<h2>Tra cứu sinh viên</h2>
+<input type="number" id="inputId" placeholder="Nhập mã sinh viên">
+<button id="btnSearch">Tra cứu</button>
+
+<div class="result" id="result"></div>
+
+<script>
+document.getElementById("btnSearch").addEventListener("click", async function(){
+    let id = document.getElementById("inputId").value.trim();
+    if(!id){
+        alert("Vui lòng nhập mã sinh viên!");
+        return;
+    }
+    try{
+        let res = await fetch(`https://63f4b9ee5b0e4a127de0b301.mockapi.io/students/${id}`);
+        if(res.status==404){
+            document.getElementById("result").innerText = "Không tìm thấy sinh viên!";
+            return;
+        }
+        let data = await res.json();
+        document.getElementById("result").innerHTML = `
+            <strong>ID:</strong> ${data.id} <br>
+            <strong>Tên:</strong> ${data.name} <br>
+            <strong>Email:</strong> ${data.email} <br>
+            <strong>Lớp:</strong> ${data.class}
+        `;
+    }catch(err){
+        document.getElementById("result").innerText = "Có lỗi xảy ra!";
+        console.error(err);
+    }
+});
+</script>
+
+</body>
+</html>

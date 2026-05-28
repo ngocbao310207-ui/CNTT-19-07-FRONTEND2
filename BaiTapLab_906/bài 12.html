@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 12 - Quản lý sinh viên</title>
+<style>
+    body{font-family: Arial; background:#f2f2f2; padding:20px;}
+    h2{text-align:center;}
+    table{width:100%; border-collapse: collapse; margin-top:10px;}
+    th,td{border:1px solid #ccc; padding:8px; text-align:center;}
+    input,button{padding:5px; margin:5px;}
+    .delete{background:red;color:white;}
+</style>
+</head>
+<body>
+
+<h2>Quản lý sinh viên</h2>
+
+<input type="text" id="name" placeholder="Tên sinh viên">
+<input type="email" id="email" placeholder="Email">
+<input type="text" id="class" placeholder="Lớp">
+<button id="btnAdd">Thêm sinh viên</button>
+
+<table>
+    <thead>
+        <tr><th>ID</th><th>Tên</th><th>Email</th><th>Lớp</th><th>Hành động</th></tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+</table>
+
+<script>
+const API_URL = "https://63f4b9ee5b0e4a127de0b301.mockapi.io/students"; // Thay bằng URL mockapi của bạn
+
+async function fetchStudents(){
+    let res = await fetch(API_URL);
+    let data = await res.json();
+    let tbody = document.getElementById("studentList");
+    tbody.innerHTML = "";
+    data.forEach(sv=>{
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${sv.id}</td>
+            <td>${sv.name}</td>
+            <td>${sv.email}</td>
+            <td>${sv.class}</td>
+            <td><button class="delete" data-id="${sv.id}">Xóa</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll(".delete").forEach(btn=>{
+        btn.addEventListener("click", async function(){
+            let id = this.dataset.id;
+            await fetch(`${API_URL}/${id}`, {method:"DELETE"});
+            fetchStudents();
+        });
+    });
+}
+
+document.getElementById("btnAdd").addEventListener("click", async function(){
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let cls = document.getElementById("class").value.trim();
+    if(!name || !email || !cls){
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+    }
+    await fetch(API_URL, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({name,email,class:cls})
+    });
+    document.getElementById("name").value="";
+    document.getElementById("email").value="";
+    document.getElementById("class").value="";
+    fetchStudents();
+});
+
+fetchStudents();
+</script>
+
+</body>
+</html>
