@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 13 — Ẩn & Hiện Nội Dung jQuery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="bg-deco">
+    <div class="deco-circle deco-1"></div>
+    <div class="deco-circle deco-2"></div>
+    <div class="deco-circle deco-3"></div>
+  </div>
+
+  <div class="page-wrap">
+    <header class="hero">
+      <span class="hero-tag">jQuery · Lab 13</span>
+      <h1>Hiển Thị & Ẩn Nội Dung</h1>
+      <p>Khám phá các phương thức <code>hide()</code>, <code>show()</code>, <code>toggle()</code> của jQuery với giao diện tương tác sinh động.</p>
+    </header>
+    <section class="demo-section">
+      <div class="section-label">Demo 1 — Ẩn / Hiện cơ bản</div>
+      <h2>Bộ Sưu Tập Ảnh</h2>
+      <p class="section-desc">Dùng nút bên dưới để ẩn hoặc hiện toàn bộ bộ sưu tập.</p>
+      <div id="gallery" class="gallery-block">
+        <div class="gallery-card" data-label="Thiên nhiên">
+          <div class="card-thumb">🌿</div>
+          <div class="card-info">
+            <span class="card-title">Rừng Xanh</span>
+            <span class="card-sub">Nhiếp ảnh thiên nhiên</span>
+          </div>
+        </div>
+        <div class="gallery-card" data-label="Đại dương">
+          <div class="card-thumb">🌊</div>
+          <div class="card-info">
+            <span class="card-title">Biển Cả</span>
+            <span class="card-sub">Nhiếp ảnh biển</span>
+          </div>
+        </div>
+        <div class="gallery-card" data-label="Bầu trời">
+          <div class="card-thumb">🌅</div>
+          <div class="card-info">
+            <span class="card-title">Bình Minh</span>
+            <span class="card-sub">Phong cảnh buổi sáng</span>
+          </div>
+        </div>
+        <div class="gallery-card" data-label="Núi non">
+          <div class="card-thumb">🏔️</div>
+          <div class="card-info">
+            <span class="card-title">Núi Cao</span>
+            <span class="card-sub">Phong cảnh núi</span>
+          </div>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn btn-hide" id="btn1Hide">
+          <span class="btn-ico">🙈</span> Ẩn Gallery
+        </button>
+        <button class="ctrl-btn btn-show" id="btn1Show">
+          <span class="btn-ico">👁</span> Hiện Gallery
+        </button>
+        <button class="ctrl-btn btn-toggle" id="btn1Toggle">
+          <span class="btn-ico">🔄</span> Toggle
+        </button>
+      </div>
+      <div class="status-badge" id="status1">
+        <span class="dot dot-green"></span>
+        <span id="status1Text">Đang hiển thị</span>
+      </div>
+    </section>
+    <section class="demo-section">
+      <div class="section-label">Demo 2 — Toggle từng mục</div>
+      <h2>Thông Tin Khóa Học</h2>
+      <p class="section-desc">Nhấn vào tiêu đề từng khóa học để xem hoặc ẩn chi tiết.</p>
+      <div class="accordion" id="accordion">
+        <div class="acc-item">
+          <button class="acc-head">
+            <span class="acc-icon">💻</span>
+            <span class="acc-title">HTML & CSS Nâng Cao</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-body">
+            <p>Học cách xây dựng giao diện hiện đại với Flexbox, Grid, Animation và CSS Variables. Phù hợp cho người đã biết HTML/CSS cơ bản muốn nâng cao kỹ năng.</p>
+            <div class="acc-meta">
+              <span>⏱ 24 giờ</span>
+              <span>📚 32 bài</span>
+              <span>⭐ 4.9</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-head">
+            <span class="acc-icon">⚡</span>
+            <span class="acc-title">JavaScript Từ Cơ Bản Đến Nâng Cao</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-body">
+            <p>Nắm vững JavaScript ES6+, DOM Manipulation, Fetch API, Promise, Async/Await và các design pattern thường dùng trong dự án thực tế.</p>
+            <div class="acc-meta">
+              <span>⏱ 40 giờ</span>
+              <span>📚 56 bài</span>
+              <span>⭐ 4.8</span>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head">
+            <span class="acc-icon">🎯</span>
+            <span class="acc-title">jQuery Thực Chiến</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-body">
+            <p>Sử dụng jQuery để xây dựng các tính năng tương tác, Ajax calls, animation và quản lý DOM hiệu quả trong các dự án web thực tế.</p>
+            <div class="acc-meta">
+              <span>⏱ 16 giờ</span>
+              <span>📚 20 bài</span>
+              <span>⭐ 4.7</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-head">
+            <span class="acc-icon">🚀</span>
+            <span class="acc-title">React & Modern Frontend</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-body">
+            <p>Xây dựng Single Page Application với React, quản lý state với useState/useReducer, tích hợp API và deploy lên Vercel/Netlify.</p>
+            <div class="acc-meta">
+              <span>⏱ 60 giờ</span>
+              <span>📚 80 bài</span>
+              <span>⭐ 5.0</span>
+            </div>
+          </div>
+        </div>
+    </div>
+      <div class="ctrl-group" style="margin-top: 16px;">
+        <button class="ctrl-btn btn-show" id="btnExpandAll">
+          <span class="btn-ico">⬇️</span> Mở tất cả
+        </button>
+        <button class="ctrl-btn btn-hide" id="btnCollapseAll">
+          <span class="btn-ico">⬆️</span> Thu gọn tất cả
+        </button>
+      </div>
+    </section>
+    <section class="demo-section">
+      <div class="section-label">Demo 3 — Nút thông báo (mở rộng)</div>
+      <h2>Hộp Thông Báo</h2>
+      <p class="section-desc">Nhấn nút để hiện/ẩn thông báo. Nhãn nút thay đổi theo trạng thái hiện tại.</p>
+      <div id="noticeBox" class="notice-box">
+        <div class="notice-ico">🔔</div>
+        <div class="notice-content">
+          <strong>Cập nhật hệ thống</strong>
+          <p>Hệ thống sẽ bảo trì vào <b>23:00 ngày 15/06</b>. Vui lòng lưu công việc trước khi đến giờ bảo trì. Xin lỗi vì sự bất tiện này.</p>
+        </div>
+        <button class="notice-close" id="noticeClose" title="Đóng">✕</button>
+      </div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn btn-toggle" id="btnNoticeToggle">
+          <span class="btn-ico" id="noticeToggleIco">🙈</span>
+          <span id="noticeToggleLabel">Ẩn Thông Báo</span>
+        </button>
+        <button class="ctrl-btn btn-restore" id="btnNoticeRestore" style="display:none;">
+          <span class="btn-ico">↩</span> Khôi phục
+        </button>
+      </div>
+      <div class="status-badge" id="status3">
+        <span class="dot dot-green"></span>
+        <span id="status3Text">Đang hiển thị</span>
+      </div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

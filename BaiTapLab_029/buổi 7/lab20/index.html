@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab20 - Thêm Mới Dữ Liệu Bằng Ajax POST</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="page-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <main class="container">
+    <header class="hero">
+      <span class="badge">📬 Ajax POST</span>
+      <h1>Thêm Mới <em>Thành Viên</em></h1>
+      <p>Gửi dữ liệu lên server bằng jQuery Ajax POST và cập nhật giao diện tức thì</p>
+    </header>
+
+    <div class="layout">
+      
+      <section class="panel form-panel">
+        <div class="panel-header">
+          <h2>➕ Thêm thành viên mới</h2>
+          <span class="api-badge">mockapi.io</span>
+        </div>
+
+        <div class="form-body">
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="inp-name">Họ và tên <span class="req">*</span></label>
+              <div class="input-wrap">
+                <span class="inp-icon">👤</span>
+                <input type="text" id="inp-name" placeholder="Nguyễn Văn A" />
+              </div>
+              <div class="field-error" id="err-name"></div>
+            </div>
+            <div class="form-group">
+              <label for="inp-username">Tên đăng nhập <span class="req">*</span></label>
+              <div class="input-wrap">
+                <span class="inp-icon">🔖</span>
+                <input type="text" id="inp-username" placeholder="nguyenvana" />
+              </div>
+              <div class="field-error" id="err-username"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inp-email">Email <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="inp-icon">✉️</span>
+              <input type="email" id="inp-email" placeholder="example@email.com" />
+            </div>
+            <div class="field-error" id="err-email"></div>
+          </div>
+
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label for="inp-phone">Số điện thoại</label>
+              <div class="input-wrap">
+                <span class="inp-icon">📞</span>
+                <input type="text" id="inp-phone" placeholder="0901234567" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inp-role">Vai trò <span class="req">*</span></label>
+              <div class="input-wrap select-wrap">
+                <span class="inp-icon">🎭</span>
+                <select id="inp-role">
+                  <option value="">-- Chọn vai trò --</option>
+                  <option value="admin">👑 Quản trị viên</option>
+                  <option value="editor">✏️ Biên tập viên</option>
+                  <option value="member">👥 Thành viên</option>
+                  <option value="viewer">👁️ Người xem</option>
+                </select>
+              </div>
+              <div class="field-error" id="err-role"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inp-avatar">Avatar URL (tùy chọn)</label>
+            <div class="input-wrap">
+              <span class="inp-icon">🖼️</span>
+              <input type="url" id="inp-avatar" placeholder="https://..." />
+            </div>
+          </div>
+
+          <div class="api-config">
+            <div class="api-config-header" onclick="toggleApiConfig()">
+              <span>⚙️ Cấu hình API</span>
+              <span class="toggle-icon" id="toggle-icon">▼</span>
+            </div>
+            <div class="api-config-body" id="api-config-body" style="display:none">
+              <div class="input-wrap">
+                <span class="inp-icon">🔗</span>
+                <input type="url" id="inp-api-url"
+                  placeholder="https://yourproject.mockapi.io/api/members"
+                  value="https://jsonplaceholder.typicode.com/users" />
+              </div>
+              
+          </div>
+
+          <div class="submit-feedback" id="submit-feedback" style="display:none"></div>
+
+          <div class="form-actions">
+            <button class="btn-reset" type="button" onclick="resetForm()">↺ Nhập lại</button>
+            <button class="btn-submit" type="button" id="btn-submit" onclick="submitForm()">
+              <span class="btn-text">Gửi dữ liệu</span>
+              <span class="btn-loader" style="display:none">
+                <span class="spinner"></span> Đang gửi...
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel list-panel">
+        <div class="panel-header">
+          <h2>📋 Đã thêm thành công</h2>
+          <span class="count-tag" id="added-count">0 thành viên</span>
+        </div>
+
+        <div class="empty-state" id="list-empty">
+          <div class="empty-icon">📭</div>
+          <p>Chưa có thành viên nào được thêm</p>
+          <small>Điền form bên trái và nhấn gửi</small>
+        </div>
+
+        <div class="added-list" id="added-list"></div>
+
+        
+        <div class="request-log">
+          <div class="log-header">
+            <span>🔍 Request Log</span>
+            <button class="btn-clear-log" onclick="clearLog()">Xóa log</button>
+          </div>
+          <div class="log-body" id="log-body">
+            <div class="log-empty">Chưa có request nào được gửi...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

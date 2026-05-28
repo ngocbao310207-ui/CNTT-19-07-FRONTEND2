@@ -1,0 +1,166 @@
+:root {
+    --bg-color: #f3f4f6;
+    --panel-bg: #ffffff;
+    --text-dark: #111827;
+    --text-gray: #6b7280;
+    --border-color: #e5e7eb;
+
+    --brand-blue: #3b82f6;
+    --brand-blue-light: #eff6ff;
+
+    --rank-gioi: #10b981;
+    --rank-kha: #3b82f6;
+    --rank-tb: #f59e0b;
+    --rank-yeu: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    padding: 2rem;
+}
+
+.dashboard-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.dashboard-header h1 {
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 2rem;
+}
+
+.panel {
+    background: var(--panel-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.panel h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-gray);
+}
+
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.grades-table th {
+    padding: 1rem;
+    background: #f9fafb;
+    font-weight: 600;
+    color: var(--text-gray);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.grades-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.grades-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.pass {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.fail {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.card-total {
+    background: #f3f4f6;
+}
+
+.card-avg {
+    background: var(--brand-blue-light);
+}
+
+.card-title {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    margin-bottom: 0.5rem;
+}
+
+.card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.card-avg .card-value {
+    color: var(--brand-blue);
+}
+
+.classification-box {
+    text-align: center;
+    padding: 2rem 1rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+}
+
+.classification-box h3 {
+    font-size: 1rem;
+    color: var(--text-gray);
+    margin-bottom: 1rem;
+}
+
+.rank-badge {
+    display: inline-block;
+    padding: 0.5rem 2rem;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}

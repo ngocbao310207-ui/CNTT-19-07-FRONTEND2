@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 02 - Tính Khuyến Mãi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app-container">
+        <section class="checkout-card">
+            <header>
+                <h1>Thanh Toán</h1>
+                <p>Nhập thông tin đơn hàng để tính chiết khấu</p>
+            </header>
+
+            <form id="discountForm" class="form-group">
+                <div class="input-wrapper">
+                    <label for="orderValue">Giá trị đơn hàng (VNĐ)</label>
+                    <input type="number" id="orderValue" placeholder="Nhập số tiền..." required min="1">
+                </div>
+                
+                <div class="input-wrapper">
+                    <label for="memberTier">Hạng thành viên</label>
+                    <select id="memberTier" required>
+                        <option value="none">Khách lẻ</option>
+                        <option value="silver">Bạc (Silver)</option>
+                        <option value="gold">Vàng (Gold)</option>
+                        <option value="platinum">Bạch kim (Platinum)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Tính Tổng Tiền</button>
+            </form>
+
+            <div id="receiptArea" class="receipt-box hidden">
+                <h3>Chi tiết hóa đơn</h3>
+                <div class="receipt-row">
+                    <span>Tiền gốc:</span>
+                    <span id="originalPrice" class="fw-500">0đ</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Tỷ lệ giảm:</span>
+                    <span id="discountRate" class="fw-500 highlight-rate">0%</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Số tiền giảm:</span>
+                    <span id="discountAmount" class="fw-500 highlight-discount">- 0đ</span>
+                </div>
+                <div class="divider"></div>
+                <div class="receipt-row total-row">
+                    <span>Tổng thanh toán:</span>
+                    <span id="finalPrice" class="total-price">0đ</span>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab16 — Bộ Đếm Tương Tác</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <main>
+    <div class="widget">
+
+      <header class="widget-header">
+        <span class="badge">jQuery Counter</span>
+        <h1>Bộ Đếm Tương Tác</h1>
+        <p>Nhấn các nút để thay đổi giá trị bộ đếm</p>
+      </header>
+
+      <div class="display-wrap">
+        <div class="display-ring">
+          <div class="display-inner">
+            <span class="count-label">GIÁ TRỊ</span>
+            <span id="countValue" class="count-number">0</span>
+            <span id="countStatus" class="count-status">Trung tính</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn btn-minus" id="btnMinus" title="Giảm 1">
+          <span class="btn-icon">−</span>
+          <span class="btn-label">Giảm</span>
+        </button>
+
+        <button class="ctrl-btn btn-reset" id="btnReset" title="Đặt lại">
+          <span class="btn-icon">↺</span>
+          <span class="btn-label">Reset</span>
+        </button>
+
+        <button class="ctrl-btn btn-plus" id="btnPlus" title="Tăng 1">
+          <span class="btn-icon">＋</span>
+          <span class="btn-label">Tăng</span>
+        </button>
+      </div>
+      <div class="quick-btns">
+        <span class="quick-label">Nhảy nhanh:</span>
+        <button class="quick-btn" data-amount="-10">−10</button>
+        <button class="quick-btn" data-amount="-5">−5</button>
+        <button class="quick-btn" data-amount="5">+5</button>
+        <button class="quick-btn" data-amount="10">+10</button>
+      </div>
+      <div class="history-wrap">
+        <div class="history-header">
+          <span>📋 Lịch sử</span>
+          <button id="clearHistory" class="clear-btn">Xoá</button>
+        </div>
+        <ul id="historyList" class="history-list">
+          <li class="history-empty">Chưa có thao tác nào.</li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
