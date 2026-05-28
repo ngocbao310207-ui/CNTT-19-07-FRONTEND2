@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 06 - Quy Trình Callback Đơn Hàng</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .container {
+            background: #fff; padding: 35px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 500px; border: 3px solid var(--primary-pink);
+        }
+        h2 { text-align: center; color: var(--dark-pink); margin-top: 0; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        button {
+            flex: 1; padding: 12px; border: none; border-radius: 12px;
+            color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-case1 { background-color: #6c5ce7; }
+        .btn-case1:hover { background-color: #5b4cd8; }
+        .btn-case2 { background-color: #e84393; }
+        .btn-case2:hover { background-color: #d63384; }
+        
+        .log-box {
+            background: #2d3436; color: #ffeaa7; padding: 15px; 
+            border-radius: 12px; font-family: 'Courier New', Courier, monospace;
+            font-size: 13px; line-height: 1.6; max-height: 250px; overflow-y: auto;
+        }
+        .invoice-card {
+            background: var(--light-pink); padding: 15px; border-radius: 12px;
+            margin-top: 20px; border: 1px dashed var(--primary-pink);
+        }
+        .invoice-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px;}
+        .invoice-line.total { font-weight: bold; color: var(--dark-pink); border-top: 1px solid #ccc; padding-top: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🌸 Order Callback Pipeline 🌸</h2>
+    <p style="text-align: center; font-size: 14px; color: #666;">Chọn tình huống dữ liệu để kiểm thử hệ thống:</p>
+    
+    <div class="btn-group">
+        <button class="btn-case1" onclick="runPipeline(orderData1)">Tình Huống 1<br><span style="font-size:11px;font-weight:normal;">(Đơn thường + Code GIAM10)</span></button>
+        <button class="btn-case2" onclick="runPipeline(orderData2)">Tình Huống 2<br><span style="font-size:11px;font-weight:normal;">(Đơn lớn + Code PINKPINK)</span></button>
+    </div>
+
+    <h4 style="margin-bottom: 8px; color: #333;">Console Log (Quá trình Callback):</h4>
+    <div id="consoleLog" class="log-box">Chờ lệnh chạy hệ thống...</div>
+
+    <div class="invoice-card">
+        <h4 style="margin-top: 0; color: var(--dark-pink); text-align: center;">HÓA ĐƠN CHI TIẾT</h4>
+        <div class="invoice-line"><span>Tiền hàng gốc:</span> <span id="uiRaw">0 đ</span></div>
+        <div class="invoice-line"><span>Giảm giá (Voucher):</span> <span id="uiDiscount">0 đ</span></div>
+        <div class="invoice-line"><span>Thuế GTGT (10%):</span> <span id="uiTax">0 đ</span></div>
+        <div class="invoice-line"><span>Phí giao hàng:</span> <span id="uiShip">0 đ</span></div>
+        <div class="invoice-line total"><span>Tổng tất cả:</span> <span id="uiFinal">0 đ</span></div>
+    </div>
+</div>
+
+<script>
+    // 1. Định nghĩa 2 bộ dữ liệu tình huống (Test Cases) dưới dạng Object
+    const orderData1 = {
+        customer: "Nguyễn Văn A",
+        items: [{ name: "Son môi", price: 200000, qty: 2 }],
+        voucherCode: "GIAM10"
+    };
+
+    const orderData2 = {
+        customer: "Trần Thị B (VIP)",
+        items: [
+            { name: "Nước hoa", price: 1500000, qty: 1 },
+            { name: "Phấn má", price: 400000, qty: 2 }
+        ],
+        voucherCode: "PINKPINK"
+    };
+
+    function formatVND(num) { return num.toLocaleString('vi-VN') + ' đ'; }
+    function printLog(msg) { document.getElementById('consoleLog').innerHTML += msg + "<br>"; }
+
+    // 2. Viết từng bước xử lý thành các hàm độc lập sử dụng tham số callback
+    
+    // Bước 1: Tính tiền gốc hàng hóa dựa trên mảng items
+    function stepCalculateRawPrice(order, callback) {
+        let rawPrice = order.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        printLog(`⚙️ [Bước 1] Tính tiền gốc của khách ${order.customer}: ${formatVND(rawPrice)}`);
+        
+        // Đóng gói dữ liệu kết quả trung gian sang object mới
+        let bill = { rawPrice: rawPrice, voucherCode: order.voucherCode };
+        callback(bill);
+    }
+
+    // Bước 2: Áp dụng mã Voucher giảm giá
+    function stepApplyDiscount(bill, callback) {
+        let discount = 0;
+        if (bill.voucherCode === "GIAM10") discount = bill.rawPrice * 0.10; // Giảm 10%
+        else if (bill.voucherCode === "PINKPINK") discount = bill.rawPrice * 0.20; // Giảm 20%
+        
+        bill.discount = discount;
+        printLog(`⚙️ [Bước 2] Áp mã [${bill.voucherCode}] -> Giảm: ${formatVND(discount)}`);
+        callback(bill);
+    }
+
+    // Bước 3 (Yêu cầu mở rộng): Tính toán thuế giá trị gia tăng (10% sau khi trừ giảm giá)
+    function stepCalculateTax(bill, callback) {
+        let tax = (bill.rawPrice - bill.discount) * 0.10;
+        bill.tax = tax;
+        printLog(`⚙️ [Bước 3 - Mở rộng] Thuế GTGT 10%: ${formatVND(tax)}`);
+        callback(bill);
+    }
+
+    // Bước 4: Tính toán phí giao hàng (Nếu tổng đơn sau giảm > 1 triệu thì freeship, ngược lại 30.000đ)
+    function stepCalculateShipping(bill, callback) {
+        let tempTotal = bill.rawPrice - bill.discount;
+        let shippingFee = (tempTotal >= 1000000) ? 0 : 30000;
+        bill.shippingFee = shippingFee;
+        printLog(`⚙️ [Bước 4] Phí vận chuyển xác định: ${formatVND(shippingFee)}`);
+        callback(bill);
+    }
+
+    // Bước cuối: Tổng hợp và kết xuất dữ liệu lên màn hình
+    function stepFinalizeInvoice(bill) {
+        let finalTotal = bill.rawPrice - bill.discount + bill.tax + bill.shippingFee;
+        printLog(`🏁 [Bước Cuối] Hoàn tất tính toán! Tổng tiền: ${formatVND(finalTotal)}`);
+        printLog(`-----------------------------------------`);
+
+        // Đổ toàn bộ dữ liệu ra bảng hóa đơn giao diện trực quan
+        document.getElementById('uiRaw').innerText = formatVND(bill.rawPrice);
+        document.getElementById('uiDiscount').innerText = "-" + formatVND(bill.discount);
+        document.getElementById('uiTax').innerText = formatVND(bill.tax);
+        document.getElementById('uiShip').innerText = formatVND(bill.shippingFee);
+        document.getElementById('uiFinal').innerText = formatVND(finalTotal);
+    }
+
+    // Hàm điều khiển kích hoạt toàn bộ chuỗi nối đuôi callback liên tiếp (Pipeline)
+    function runPipeline(selectedOrder) {
+        document.getElementById('consoleLog').innerHTML = ""; // Xóa nhật ký cũ
+        printLog(`🚀 BẮT ĐẦU XỬ LÝ ĐƠN HÀNG...`);
+
+        // Kỹ thuật lồng chuỗi Callback liên hoàn (Callback Hell cấu trúc phân tầng rõ ràng)
+        stepCalculateRawPrice(selectedOrder, function(billAfterStep1) {
+            stepApplyDiscount(billAfterStep1, function(billAfterStep2) {
+                stepCalculateTax(billAfterStep2, function(billAfterStep3) {
+                    stepCalculateShipping(billAfterStep3, function(billAfterStep4) {
+                        stepFinalizeInvoice(billAfterStep4);
+                    });
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>

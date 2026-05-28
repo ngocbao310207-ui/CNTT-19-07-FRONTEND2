@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 11 - Tra Cứu Đối Tượng</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .search-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 450px; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); text-align: center; margin-top: 0; }
+        
+        /* Form nhập liệu */
+        .search-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        input[type="text"] {
+            flex: 1; padding: 12px; border: 2px solid #ddd;
+            border-radius: 12px; outline: none; font-size: 15px; text-align: center;
+        }
+        input[type="text"]:focus { border-color: var(--primary-pink); }
+        
+        .btn { padding: 12px 20px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-search { background: var(--primary-pink); color: white; }
+        .btn-search:hover { background: var(--dark-pink); }
+        .btn-clear { background: #dfe6e9; color: #2d3436; } /* Nút xóa nội dung */
+
+        /* Khu vực hiển thị kết quả */
+        .result-panel {
+            margin-top: 20px; padding: 15px; border-radius: 12px;
+            min-height: 50px; display: none;
+        }
+        .status-msg { text-align: center; font-weight: bold; padding: 10px; border-radius: 8px; }
+        .status-error { background: #fff0f1; color: #ff4d4f; border: 1px solid #ffccc7; }
+        .status-loading { color: #888; font-style: italic; }
+        
+        .profile-box {
+            background: var(--light-pink); border-left: 5px solid var(--primary-pink);
+            padding: 15px; border-radius: 8px; color: #333;
+        }
+        .profile-line { margin: 6px 0; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="search-card">
+    <h2>🌸 Object ID Finder 🌸</h2>
+    
+    <div class="search-group">
+        <input type="text" id="searchId" placeholder="Nhập ID cần tìm (Ví dụ: 1, 2, 3...)">
+        <button class="btn btn-search" onclick="searchObject()">Tìm</button>
+        <button class="btn btn-clear" onclick="clearSearch()">Xóa</button>
+    </div>
+
+    <div id="resultPanel" class="result-panel"></div>
+</div>
+
+<script>
+    // Định nghĩa endpoint API giả lập
+    const BASE_URL = "https://jsonplaceholder.typicode.com/users";
+
+    async function searchObject() {
+        const idInput = document.getElementById('searchId').value.trim();
+        const resultPanel = document.getElementById('resultPanel');
+        
+        if (idInput === "") {
+            alert("Vui lòng nhập mã định danh (ID)!");
+            return;
+        }
+
+        // Hiển thị trạng thái Loading
+        resultPanel.style.display = "block";
+        resultPanel.innerHTML = `<div class="status-msg status-loading">🔄 Đang truy vấn dữ liệu từ Server...</div>`;
+
+        // 2. Tạo URL động dựa trên mã người dùng nhập sử dụng Template String
+        const targetUrl = `${BASE_URL}/${idInput}`;
+
+        // 3. Gọi fetch và xử lý các tình huống dữ liệu trả về
+        try {
+            const response = await fetch(targetUrl);
+            
+            // Xử lý dữ liệu null hoặc không tìm thấy (Mã lỗi 404)
+            if (response.status === 404) {
+                resultPanel.innerHTML = `<div class="status-msg status-error">❌ Thất bại: Không tồn tại đối tượng có ID = ${idInput} trên hệ thống!</div>`;
+                return;
+            }
+            if (!response.ok) {
+                throw new Error("Lỗi hệ thống không xác định.");
+            }
+
+            const data = await response.json();
+            
+            // 4. Gọi hàm hiển thị DOM render chi tiết nếu tìm thấy
+            renderDetail(data);
+
+        } catch (error) {
+            resultPanel.innerHTML = `<div class="status-msg status-error">⚠️ Lỗi: Không thể kết nối mạng hoặc server trục trặc!</div>`;
+        }
+    }
+
+    // Hàm render chi tiết thông tin đối tượng
+    function renderDetail(obj) {
+        const resultPanel = document.getElementById('resultPanel');
+        
+        resultPanel.innerHTML = `
+            <div class="profile-box">
+                <h3 style="margin-top:0; color:var(--dark-pink);">🆔 Thông tin chi tiết (ID: ${obj.id})</h3>
+                <div class="profile-line">👤 <b>Họ và tên:</b> ${obj.name}</div>
+                <div class="profile-line">✉️ <b>Email:</b> ${obj.email}</div>
+                <div class="profile-line">📞 <b>Điện thoại:</b> ${obj.phone}</div>
+                <div class="profile-line">🏢 <b>Công ty:</b> ${obj.company.name}</div>
+                <div class="profile-line">🌐 <b>Website:</b> ${obj.website}</div>
+            </div>
+        `;
+    }
+
+    // Yêu cầu mở rộng: Hàm xóa trống nội dung tìm kiếm và ẩn kết quả cũ
+    function clearSearch() {
+        document.getElementById('searchId').value = "";
+        const resultPanel = document.getElementById('resultPanel');
+        resultPanel.innerHTML = "";
+        resultPanel.style.display = "none";
+        document.getElementById('searchId').focus();
+    }
+</script>
+</body>
+</html>

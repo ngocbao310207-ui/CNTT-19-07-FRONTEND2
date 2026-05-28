@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 19 - Tải Dữ Liệu Với jQuery Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .ajax-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 650px; border: 3px solid var(--primary-pink);
+        }
+        h2 { text-align: center; color: var(--dark-pink); margin-top: 0; margin-bottom: 20px; }
+        
+        /* Thiết kế bảng dữ liệu */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: var(--primary-pink); color: white; font-weight: bold; }
+        tr:hover { background: var(--light-pink); }
+        
+        /* Vùng trạng thái (Yêu cầu mở rộng) */
+        .status-box { text-align: center; padding: 20px; font-style: italic; color: #888; }
+        .error-alert { background: #fff0f1; border: 1px solid #ffccc7; color: #ff4d4f; padding: 12px; border-radius: 10px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="ajax-card">
+    <h2>🌸 Member List via Ajax GET 🌸</h2>
+    
+    <div class="error-alert" id="errorAlert">⚠️ Lỗi: Không thể tải dữ liệu từ API Mock! Vui lòng thử lại sau.</div>
+
+    <table id="dataTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Mã ID</th>
+                <th>Họ và Tên</th>
+                <th>Email</th>
+                <th>Lớp học</th>
+            </tr>
+        </thead>
+        <tbody id="dataBody">
+            </tbody>
+    </table>
+
+    <div class="status-box" id="loadingBox">
+        <span style="font-size: 24px;">🔄</span> <br> Đang kết nối mạng và tải dữ liệu từ Server, vui lòng đợi...
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // 1. Endpoint dữ liệu mẫu trên mockapi.io (Cấu trúc Member/Student)
+        const API_URL = "https://664bfaeca300e8795d429a14.mockapi.io/api/v1/students";
+
+        // Tự động gọi tải dữ liệu ngay khi trang được mở
+        loadDataWithAjax();
+
+        function loadDataWithAjax() {
+            // 2. Viết lệnh Ajax GET để lấy dữ liệu từ API
+            $.ajax({
+                url: API_URL,
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    // Hiển thị dòng thông báo đang tải trước khi gửi request
+                    $('#loadingBox').show();
+                    $('#errorAlert').hide();
+                    $('#dataTable').hide();
+                },
+                success: function(data) {
+                    // Tắt thông báo tải thành công
+                    $('#loadingBox').hide();
+                    $('#dataTable').fadeIn(400);
+                    
+                    // 3. Gọi hàm render để hiển thị dữ liệu ra HTML
+                    renderTable(data);
+                },
+                error: function(xhr, status, error) {
+                    // Yêu cầu mở rộng: Xử lý trường hợp API lỗi mạng hoặc sập server
+                    $('#loadingBox').hide();
+                    $('#errorAlert').text(`⚠️ Lỗi hệ thống (${xhr.status}): Không thể kéo dữ liệu từ máy chủ API!`).fadeIn(200);
+                }
+            });
+        }
+
+        // Hàm render dữ liệu ra bảng gồm 4 cột thông tin chi tiết
+        function renderTable(members) {
+            const $tbody = $('#dataBody');
+            $tbody.empty(); // Làm trống bảng cũ
+
+            if (members.length === 0) {
+                $tbody.html('<tr><td colspan="4" style="text-align:center; color:#999;">Hệ thống hiện tại chưa có thành viên nào!</td></tr>');
+                return;
+            }
+
+            // Duyệt mảng dữ liệu lấy từ server trả về
+            $.each(members, function(index, item) {
+                // Tạo hàng mới bằng các thẻ HTML rõ ràng, dễ đọc
+                const rowHtml = `
+                    <tr>
+                        <td><b>#${item.id}</b></td>
+                        <td style="font-weight: 600; color: var(--dark-pink);">${item.name}</td>
+                        <td>${item.email || (item.name.toLowerCase().replace(/\s/g, '') + '@fpt.edu.vn')}</td>
+                        <td><span style="background: #e9ecef; padding: 4px 10px; border-radius: 6px; font-size: 13px;">${item.class || 'N/A'}</span></td>
+                    </tr>
+                `;
+                $tbody.append(rowHtml);
+            });
+        }
+    });
+</script>
+</body>
+</html>

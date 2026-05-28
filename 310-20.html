@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 20 - Thêm Dữ Liệu Bằng Ajax POST</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+            --success-green: #2ecc71;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .container {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 500px; border: 3px solid var(--primary-pink);
+        }
+        h2 { text-align: center; color: var(--dark-pink); margin-top: 0; }
+        
+        /* Cấu trúc thiết kế Form hường */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; color: var(--dark-pink); margin-bottom: 5px; }
+        input[type="text"], input[type="email"] {
+            width: 100%; padding: 10px 12px; border: 2px solid #ddd;
+            border-radius: 10px; outline: none; font-size: 14px; box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: var(--primary-pink); }
+        
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--primary-pink); color: white;
+            border: none; border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; transition: 0.2s; margin-bottom: 20px;
+        }
+        .btn-submit:hover { background: var(--dark-pink); }
+        
+        .alert-box { text-align: center; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; display: none; }
+        .alert-success { background: #e8f5e9; color: var(--success-green); border: 1px solid #c8e6c9; }
+        .alert-error { background: #fff0f1; color: #ff4d4f; border: 1px solid #ffccc7; }
+
+        /* Khung hiển thị danh sách mới thêm nhanh */
+        .log-list { border-top: 2px dashed var(--primary-pink); padding-top: 15px; }
+        .log-item { background: var(--light-pink); border-left: 5px solid var(--primary-pink); padding: 10px 15px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🌸 Ajax POST New Member 🌸</h2>
+    
+    <div class="alert-box alert-success" id="msgSuccess">🎉 Thêm mới thành công dữ liệu lên Server!</div>
+    <div class="alert-box alert-error" id="msgError">⚠️ Có lỗi xảy ra khi truyền tin dữ liệu rỗng!</div>
+
+    <form id="memberForm" novalidate>
+        <div class="form-group">
+            <label for="inputName">Họ và Tên:</label>
+            <input type="text" id="inputName" placeholder="Nhập tên thành viên...">
+        </div>
+        <div class="form-group">
+            <label for="inputEmail">Địa chỉ Email:</label>
+            <input type="email" id="inputEmail" placeholder="username@gmail.com">
+        </div>
+        <div class="form-group">
+            <label for="inputClass">Tên Lớp Học:</label>
+            <input type="text" id="inputClass" placeholder="Ví dụ: WD19302, PM18301...">
+        </div>
+        <button type="submit" class="btn-submit">Gửi Lên Server (POST)</button>
+    </form>
+
+    <div class="log-list">
+        <h4 style="margin-top: 0; color: #555;">Thành viên mới tạo thời gian thực:</h4>
+        <div id="liveContainer">
+            <p style="color:#999; font-style:italic; font-size:13px;" id="emptyHint">Chưa có bản ghi nào được thêm mới trong phiên này 🌸</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const API_URL = "https://664bfaeca300e8795d429a14.mockapi.io/api/v1/students";
+
+        // 2. Bắt sự kiện submit biểu mẫu và ngăn form tải lại trang
+        $('#memberForm').submit(function(event) {
+            event.preventDefault();
+
+            // Lấy dữ liệu thô và làm sạch khoảng trắng
+            const name = $('#inputName').val().trim();
+            const email = $('#inputEmail').val().trim();
+            const className = $('#inputClass').val().trim();
+
+            // Yêu cầu mở rộng: Kiểm tra dữ liệu rỗng trước khi gửi đi
+            if (name === "" || email === "" || className === "") {
+                $('#msgError').text("⚠️ Lỗi: Không được để trống bất kỳ trường thông tin nào!").slideDown(200).delay(2500).slideUp(200);
+                return;
+            }
+
+            // Đóng gói cấu trúc dữ liệu JSON để gửi đi
+            const payloadData = {
+                name: name,
+                email: email,
+                class: className
+            };
+
+            // 3. Dùng Ajax POST để truyền tải dữ liệu lên mockapi.io
+            $.ajax({
+                url: API_URL,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payloadData),
+                beforeSend: function() {
+                    $('.btn-submit').prop('disabled', true).text('⏳ Đang đồng bộ truyền dữ liệu...');
+                },
+                success: function(response) {
+                    $('.btn-submit').prop('disabled', false).text('Gửi Lên Server (POST)');
+                    
+                    // Hiện hộp thông báo thành công
+                    $('#msgSuccess').slideDown(200).delay(2500).slideUp(200);
+
+                    // Yêu cầu mở rộng 1: Xóa sạch dữ liệu trong form sau khi gửi thành công
+                    $('#memberForm')[0].reset();
+
+                    // Yêu cầu mở rộng 2: Thêm trực tiếp dòng mới (bản ghi phản hồi từ server) vào giao diện
+                    $('#emptyHint').hide();
+                    renderNewRowLive(response);
+                },
+                error: function() {
+                    $('.btn-submit').prop('disabled', false).text('Gửi Lên Server (POST)');
+                    $('#msgError').text("❌ Lỗi hệ thống: Không thể kết nối hoặc lưu dữ liệu lên server!").slideDown(200).delay(2500).slideUp(200);
+                }
+            });
+        });
+
+        // Hàm render nạp trực tiếp dòng mới thêm vào cuối danh sách thời gian thực
+        function renderNewRowLive(newObj) {
+            const itemHtml = `
+                <div class="log-item">
+                    <span>👤 <b>${newObj.name}</b> (${newObj.class})</span>
+                    <span style="color: var(--dark-pink); font-weight: bold;">Mã ID: #${newObj.id}</span>
+                </div>
+            `;
+            // Chèn hiệu ứng đổ khối mới trượt từ dưới lên cực nghệ thuật
+            $(itemHtml).hide().appendTo('#liveContainer').slideDown(300);
+        }
+    });
+</script>
+</body>
+</html>

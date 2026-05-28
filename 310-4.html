@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 04 - Quản Lý Điểm Sinh Viên</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .container {
+            background: #fff; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 480px; border: 3px solid var(--primary-pink);
+        }
+        h2 { text-align: center; color: var(--dark-pink); margin-top: 0; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="number"] {
+            flex: 1; padding: 10px; border: 2px solid #ddd;
+            border-radius: 10px; outline: none; font-size: 16px; text-align: center;
+        }
+        input[type="number"]:focus { border-color: var(--primary-pink); }
+        button {
+            padding: 10px 20px; border: none; border-radius: 10px;
+            background: var(--primary-pink); color: white; font-weight: bold;
+            cursor: pointer; transition: 0.2s;
+        }
+        button:hover { background: var(--dark-pink); }
+        .score-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tag {
+            background: var(--light-pink); color: var(--dark-pink);
+            padding: 6px 12px; border-radius: 20px; font-weight: bold;
+            border: 1px solid var(--primary-pink); display: flex; align-items: center; gap: 5px;
+        }
+        .tag-removed { background: #e9ecef; color: #6c757d; border-color: #ced4da; text-decoration: line-through; }
+        .result-box {
+            background: #fafafa; padding: 15px; border-radius: 12px;
+            border-left: 5px solid var(--primary-pink); margin-top: 15px;
+        }
+        .result-line { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .rank { font-weight: bold; color: var(--dark-pink); }
+        .note { font-size: 12px; color: #6c757d; font-style: italic; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🌸 Student Score Processor 🌸</h2>
+    
+    <div class="input-group">
+        <input type="number" id="scoreInput" placeholder="Nhập điểm mới (0 - 10)..." min="0" max="10" step="0.1">
+        <button onclick="addScore()">Thêm Điểm</button>
+    </div>
+
+    <h4 style="color: #555; margin-bottom: 8px;">Danh sách điểm hiện tại:</h4>
+    <div id="scoreTags" class="score-tags"></div>
+
+    <div class="result-box">
+        <div class="result-line"><span>Tổng điểm:</span> <span id="resSum" style="font-weight: bold;">0</span></div>
+        <div class="result-line"><span>Điểm trung bình:</span> <span id="resAvg" style="font-weight: bold; color: #007bff;">0</span></div>
+        <div class="result-line"><span>Xếp loại học lực:</span> <span id="resRank" class="rank">-</span></div>
+        <div id="bonusNote" class="note"></div>
+    </div>
+</div>
+
+<script>
+    // 1. Khai báo mảng dữ liệu mẫu gồm 5 giá trị số ban đầu
+    let scoreArray = [8.5, 6.0, 9.2, 4.5, 7.8];
+
+    window.onload = function() {
+        processScores();
+    };
+
+    // Hàm render và tính toán chính
+    function processScores() {
+        const tagsContainer = document.getElementById('scoreTags');
+        tagsContainer.innerHTML = '';
+
+        if (scoreArray.length === 0) {
+            document.getElementById('resSum').innerText = 0;
+            document.getElementById('resAvg').innerText = 0;
+            document.getElementById('resRank').innerText = '-';
+            return;
+        }
+
+        // --- YÊU CẦU MỞ RỘNG: Tìm điểm thấp nhất để loại bỏ ---
+        let minScore = Math.min(...scoreArray);
+        let hasRemoved = scoreArray.length > 1; // Chỉ loại bỏ nếu mảng có nhiều hơn 1 phần tử
+
+        // Hiển thị danh sách điểm dạng Tag trực quan
+        scoreArray.forEach((score, index) => {
+            const span = document.createElement('span');
+            // Nếu là điểm thấp nhất thì đổi style gạch ngang
+            if (hasRemoved && score === minScore && scoreArray.indexOf(minScore) === index) {
+                span.className = 'tag tag-removed';
+                span.innerHTML = `${score} (Bỏ)`;
+            } else {
+                span.className = 'tag';
+                span.innerHTML = `${score} <span style="cursor:pointer;color:red" onclick="deleteScore(${index})">×</span>`;
+            }
+            tagsContainer.appendChild(span);
+        });
+
+        // 2. Duyệt mảng để tính tổng và trung bình (áp dụng mảng đã lọc bỏ điểm thấp nhất)
+        let processArray = [...scoreArray];
+        if (hasRemoved) {
+            // Xóa phần tử thấp nhất đầu tiên tìm thấy
+            const minIndex = processArray.indexOf(minScore);
+            processArray.splice(minIndex, 1);
+            document.getElementById('bonusNote').innerText = `* Đã tự động loại bỏ điểm thấp nhất là ${minScore} trước khi tính toán.`;
+        } else {
+            document.getElementById('bonusNote').innerText = "";
+        }
+
+        // Tính tổng bằng hàm reduce hiện đại
+        let sum = processArray.reduce((total, num) => total + num, 0);
+        let avg = sum / processArray.length;
+
+        // 3. Viết điều kiện phân loại học lực theo ngưỡng điểm (if...else if...)
+        let rank = '';
+        if (avg >= 9.0) rank = 'Xuất Sắc 🏆';
+        else if (avg >= 8.0) rank = 'Giỏi 🥇';
+        else if (avg >= 6.5) rank = 'Khá 🥈';
+        else if (avg >= 5.0) rank = 'Trung Bình 🥉';
+        else rank = 'Yếu 😰';
+
+        // 4. Trình bày kết quả ra giao diện công khai
+        document.getElementById('resSum').innerText = sum.toFixed(1);
+        document.getElementById('resAvg').innerText = avg.toFixed(2);
+        document.getElementById('resRank').innerText = rank;
+    }
+
+    // Hàm thêm điểm mới (Yêu cầu mở rộng)
+    function addScore() {
+        const input = document.getElementById('scoreInput');
+        let val = parseFloat(input.value);
+        if (isNaN(val) || val < 0 || val > 10) {
+            alert("Vui lòng nhập điểm số hợp lệ từ 0 đến 10!");
+            return;
+        }
+        scoreArray.push(val);
+        input.value = '';
+        processScores();
+    }
+
+    // Hàm xóa điểm bất kỳ khi bấm dấu ×
+    function deleteScore(index) {
+        scoreArray.splice(index, 1);
+        processScores();
+    }
+</script>
+</body>
+</html>

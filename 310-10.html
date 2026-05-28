@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 10 - API Data Fetcher</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .api-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 550px; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); text-align: center; margin-top: 0; }
+        .btn-fetch {
+            display: block; width: 100%; padding: 12px; background: var(--primary-pink);
+            color: white; border: none; border-radius: 12px; font-weight: bold;
+            font-size: 15px; cursor: pointer; margin-bottom: 20px; transition: 0.2s;
+        }
+        .btn-fetch:hover { background: var(--dark-pink); }
+        
+        /* Hiệu ứng trạng thái chờ tải và báo lỗi (Yêu cầu mở rộng) */
+        .loading-text { text-align: center; color: #888; font-style: italic; margin: 20px 0; display: none; }
+        .error-box { background: #fff0f1; border: 1px solid #ffccc7; color: #ff4d4f; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: none; text-align: center; font-weight: bold;}
+        
+        /* Danh sách Card người dùng đổ ra từ API */
+        .users-grid { display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px; }
+        .user-item {
+            background: var(--light-pink); border-radius: 12px; padding: 15px;
+            display: flex; align-items: center; gap: 15px;
+            border-left: 5px solid var(--primary-pink);
+        }
+        .user-avatar { width: 50px; height: 50px; border-radius: 50%; background: #ddd; border: 2px solid white; object-fit: cover;}
+        .user-info { flex: 1; }
+        .user-name { font-weight: bold; color: #333; margin: 0 0 4px 0; font-size: 16px;}
+        .user-details { font-size: 13px; color: #666; margin: 0; }
+    </style>
+</head>
+<body>
+
+<div class="api-card">
+    <h2>🌸 API Member Explorer 🌸</h2>
+    <button class="btn-fetch" onclick="loadUserData()">Tải Dữ Liệu Thành Viên (Fetch API)</button>
+
+    <div id="errorMsg" class="error-box"></div>
+
+    <div id="loading" class="loading-text">🔄 Đang tải dữ liệu từ máy chủ API, xin vui lòng chờ...</div>
+
+    <div id="usersContainer" class="users-grid"></div>
+</div>
+
+<script>
+    // 1 & 2. Cài đặt API mẫu (Sử dụng endpoint JSON placeholder/MockAPI uy tín phục vụ học tập)
+    const API_URL = "https://jsonplaceholder.typicode.com/users"; 
+
+    async function loadUserData() {
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('errorMsg');
+        const container = document.getElementById('usersContainer');
+
+        // Bật trạng thái Loading, ẩn lỗi và danh sách cũ
+        loadingDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        container.innerHTML = '';
+
+        // 3. Xử lý logic kết nối và bắt lỗi mạng ngoại lệ bằng Try...Catch (Yêu cầu mở rộng)
+        try {
+            const response = await fetch(API_URL);
+            
+            // Nếu phản hồi lỗi HTTP (Ví dụ: 404, 500) thì chủ động ném lỗi sang khối Catch
+            if (!response.ok) {
+                throw new Error(`Lỗi kết nối từ Máy chủ! Mã trạng thái: ${response.status}`);
+            }
+
+            const users = await response.json();
+            
+            // Tắt hiệu ứng tải
+            loadingDiv.style.display = 'none';
+
+            // 4. Tạo hàm duyệt mảng dữ liệu và sinh cấu trúc thẻ HTML hiển thị rõ ràng
+            renderUsers(users);
+
+        } catch (error) {
+            // Xử lý lỗi và in thông báo thân thiện ra giao diện (Yêu cầu mở rộng)
+            loadingDiv.style.display = 'none';
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = `⚠️ 𝖦𝗈𝗍 𝖤𝗋𝗋𝗈𝗋: ${error.message}. Hãy kiểm tra lại kết nối mạng của bạn!`;
+        }
+    }
+
+    // Hàm duyệt mảng vẽ giao diện (Hiển thị tối thiểu 3 trường thông tin: Tên, Email, Công ty/Website)
+    function renderUsers(usersList) {
+        const container = document.getElementById('usersContainer');
+        container.innerHTML = '';
+
+        usersList.forEach(user => {
+            const div = document.createElement('div');
+            div.className = 'user-item';
+
+            // Sinh ảnh ngẫu nhiên theo tên từ API để giao diện nhìn sinh động, có màu sắc
+            const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${user.username}`;
+
+            div.innerHTML = `
+                <img class="user-avatar" src="${avatarUrl}" alt="Avatar">
+                <div class="user-info">
+                    <h4 class="user-name">${user.name} (@${user.username})</h4>
+                    <p class="user-details">✉️ <b>Email:</b> ${user.email}</p>
+                    <p class="user-details">🌐 <b>Website:</b> <span style="color: #007bff;">${user.website}</span></p>
+                    <p class="user-details">🏢 <b>Công ty:</b> ${user.company.name}</p>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+</script>
+</body>
+</html>

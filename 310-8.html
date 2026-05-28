@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 08 - Pinky Interactive Counter</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .counter-card {
+            background: #ffffff; padding: 35px; border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 400px; text-align: center; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); margin-top: 0; margin-bottom: 25px; }
+        
+        /* Vùng hiển thị số đếm lớn */
+        #counterValue {
+            font-size: 84px; font-weight: 800; margin: 20px 0;
+            transition: all 0.3s ease; display: inline-block;
+        }
+        /* Style đổi màu theo trạng thái (Yêu cầu mở rộng) */
+        .count-zero { color: #6c757d; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .count-positive { color: #28a745; text-shadow: 0 4px 15px rgba(40,167,69,0.3); }
+        .count-negative { color: #dc3545; text-shadow: 0 4px 15px rgba(220,53,69,0.3); }
+
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        button {
+            padding: 12px; border: none; border-radius: 12px; font-weight: bold;
+            font-size: 16px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-down { background: #ff7675; color: white; }
+        .btn-up { background: #55efc4; color: #2d3436; }
+        .btn-reset { background: #dfe6e9; color: #2d3436; grid-column: span 2; }
+        .btn-step5 { background: var(--primary-pink); color: white; font-size: 14px; }
+        
+        button:hover { transform: translateY(-2px); filter: brightness(0.95); }
+        button:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div class="counter-card">
+    <h2>🌸 Pinky Counter 🌸</h2>
+    
+    <div id="counterValue" class="count-zero">0</div>
+
+    <div class="btn-grid">
+        <button class="btn-down" id="btnDecrease">- 1</button>
+        <button class="btn-up" id="btnIncrease">+ 1</button>
+        
+        <button class="btn-step5 btn-down" id="btnDecrease5">- 5</button>
+        <button class="btn-step5 btn-up" id="btnIncrease5">+ 5</button>
+        
+        <button class="btn-reset" id="btnReset">Đặt Lại Về 0 (Reset)</button>
+    </div>
+</div>
+
+<script>
+    // 1. Tạo biến lưu trạng thái số đếm (State)
+    let count = 0;
+
+    // Lấy tham chiếu các phần tử DOM cần thao tác
+    const counterDisplay = document.getElementById('counterValue');
+    const btnIncrease = document.getElementById('btnIncrease');
+    const btnDecrease = document.getElementById('btnDecrease');
+    const btnIncrease5 = document.getElementById('btnIncrease5');
+    const btnDecrease5 = document.getElementById('btnDecrease5');
+    const btnReset = document.getElementById('btnReset');
+
+    // 4. Viết hàm render riêng biệt để cập nhật giao diện sau mỗi lần thay đổi trạng thái
+    function render() {
+        counterDisplay.innerText = count;
+
+        // Xử lý logic đổi màu chữ số đếm dựa trên giá trị âm/dương/0 (Yêu cầu mở rộng)
+        counterDisplay.className = ""; // Xóa các class cũ
+        if (count > 0) {
+            counterDisplay.classList.add("count-positive");
+        } else if (count < 0) {
+            counterDisplay.classList.add("count-negative");
+        } else {
+            counterDisplay.classList.add("count-zero");
+        }
+    }
+
+    // 3. Sử dụng addEventListener để bắt các sự kiện click và cập nhật biến trạng thái
+    btnIncrease.addEventListener('click', () => { count += 1; render(); });
+    btnDecrease.addEventListener('click', () => { count -= 1; render(); });
+    btnIncrease5.addEventListener('click', () => { count += 5; render(); }); // Bộ cộng bội số 5
+    btnDecrease5.addEventListener('click', () => { count -= 5; render(); }); // Bộ trừ bội số 5
+    btnReset.addEventListener('click', () => { count = 0; render(); });
+
+    // Gọi hàm render chạy lần đầu tiên khi tải trang
+    render();
+</script>
+</body>
+</html>

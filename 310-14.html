@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 14 - Hiệu Ứng Giao Diện jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+            --neon-glow: rgba(255, 101, 163, 0.4);
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .fx-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 450px; text-align: center; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); margin-top: 0; }
+        
+        /* Khối nội dung thông báo */
+        .notification-box {
+            background: var(--light-pink); padding: 20px; border-radius: 12px;
+            margin: 20px 0; border: 2px solid var(--primary-pink);
+            font-size: 15px; color: #444; line-height: 1.6;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Class CSS Highlight dùng cho yêu cầu mở rộng */
+        .pink-highlight {
+            border-color: #ff007f !important;
+            background-color: #ffe6f2 !important;
+            box-shadow: 0 0 15px #ff65a3;
+            font-weight: bold;
+            transform: scale(1.02);
+        }
+
+        /* Thiết kế hệ thống nút điều khiển */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button {
+            padding: 12px; border: none; border-radius: 10px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px;
+            color: white;
+        }
+        .btn-fade { background: #fd79a8; }
+        .btn-slide { background: #a29bfe; }
+        .btn-chain { background: #6c5ce7; grid-column: span 2; }
+        .btn-highlight { background: #e84393; grid-column: span 2; }
+        
+        button:hover { filter: brightness(0.9); transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+<div class="fx-card">
+    <h2>🌸 Pinky Effect Studio 🌸</h2>
+    
+    <div class="notification-box" id="notifyBox">
+        💌 <b>Thông báo từ hệ thống:</b><br>
+        Chào mừng bạn đang trải nghiệm các hiệu ứng chuyển động mượt mà của jQuery. Khối này có thể ẩn hiện, trượt, biến đổi màu sắc và chạy chuỗi hiệu ứng liên tiếp!
+    </div>
+
+    <div class="btn-grid">
+        <button class="btn-fade" id="btnFadeToggle">Mờ Dần (Fade Toggle)</button>
+        <button class="btn-slide" id="btnSlideToggle">Trượt Lên/Xuống</button>
+        
+        <button class="btn-chain" id="btnChainFx">Chạy Chuỗi Hiệu Ứng (Chaining Fx) ⚡</button>
+        
+        <button class="btn-highlight" id="btnHighlight">Bật/Tắt Highlight Khung ✨</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Tốc độ chuẩn cho hiệu ứng dễ quan sát (400ms)
+        const SPEED = 400;
+
+        // 1. Hiệu ứng mờ dần (Fade)
+        $('#btnFadeToggle').click(function() {
+            $('#notifyBox').fadeToggle(SPEED);
+        });
+
+        // 2. Hiệu ứng trượt lên xuống (Slide)
+        $('#btnSlideToggle').click(function() {
+            $('#notifyBox').slideToggle(SPEED);
+        });
+
+        // 3. Yêu cầu mở rộng: Kỹ thuật Chaining (Nối chuỗi nhiều hiệu ứng liên tục)
+        $('#btnChainFx').click(function() {
+            // Khối nội dung sẽ ẩn đi bằng slideUp -> hiện lại mờ ảo bằng fadeIn -> đổi màu viền highlight
+            $('#notifyBox')
+                .slideUp(SPEED)
+                .fadeIn(SPEED)
+                .addClass('pink-highlight')
+                .delay(1000) // Giữ lại hiệu ứng 1 giây
+                .queue(function(next) {
+                    $(this).removeClass('pink-highlight'); // Trả lại class cũ
+                    next();
+                });
+        });
+
+        // 4. Yêu cầu mở rộng: Thêm/Xóa class CSS Highlight bằng toggleClass
+        $('#btnHighlight').click(function() {
+            $('#notifyBox').toggleClass('pink-highlight');
+        });
+    });
+</script>
+</body>
+</html>

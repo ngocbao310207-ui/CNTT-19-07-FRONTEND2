@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinky Student CRUD - jQuery Ajax</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --pink-primary: #ff6699;
+            --pink-hover: #ff3377;
+            --pink-light: #fff0f5;
+            --pink-pastel: #ffe4e1;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe4e1 0%, #fff0f5 100%);
+            font-family: 'Comfortaa', cursive, sans-serif;
+            color: #4a4a4a;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .title-app {
+            color: var(--pink-hover);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: 700;
+        }
+
+        /* Thẻ Card tông hồng */
+        .card-pink {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(255, 102, 153, 0.15);
+            overflow: hidden;
+        }
+
+        .card-pink .card-header {
+            background: linear-gradient(45deg, var(--pink-primary), #ff99bb);
+            color: white;
+            border: none;
+            font-weight: bold;
+            padding: 15px 20px;
+        }
+
+        /* Nút bấm */
+        .btn-pink {
+            background-color: var(--pink-primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-pink:hover {
+            background-color: var(--pink-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 51, 119, 0.3);
+        }
+
+        .btn-clear {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 20px;
+        }
+
+        /* Form Controls */
+        .form-control {
+            border: 2px solid var(--pink-pastel);
+            border-radius: 12px;
+        }
+
+        .form-control:focus {
+            border-color: var(--pink-primary);
+            box-shadow: 0 0 0 0.25rem rgba(255, 102, 153, 0.25);
+        }
+
+        /* Bảng dữ liệu */
+        .table-pink {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table-pink thead {
+            background-color: var(--pink-light);
+            color: var(--pink-hover);
+        }
+
+        .table-pink th, .table-pink td {
+            vertical-align: middle;
+            padding: 12px 15px;
+        }
+
+        tr:hover {
+            background-color: #fff9fa;
+        }
+
+        /* Loading Spinner */
+        #loadingSpinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="title-app"><i class="fa-solid fa-heart-pulse"></i> PINKY STUDENT MANAGER <i class="fa-solid fa-heart-pulse"></i></h1>
+        <p class="text-muted">Hệ thống quản lý sinh viên siêu cấp đáng yêu bằng jQuery Ajax</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card card-pink">
+                <div class="card-header" id="formTitle">
+                    <i class="fa-solid fa-user-plus"></i> Thêm Sinh Viên Mới
+                </div>
+                <div class="card-body p-4">
+                    <form id="studentForm">
+                        <input type="hidden" id="studentId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Họ và Tên</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="Nhập tên sinh viên..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mã Sinh Viên</label>
+                            <input type="text" class="form-control" id="studentCode" placeholder="Ví dụ: DNU2026..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số Điện Thoại</label>
+                            <input type="text" class="form-control" id="phone" placeholder="Nhập số điện thoại..." required>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-end mt-4">
+                            <button type="button" class="btn btn-clear btn-sm" id="btnReset" style="display: none;">Hủy</button>
+                            <button type="submit" class="btn btn-pink" id="btnSubmit">Lưu Dữ Liệu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card card-pink p-4">
+                <div class="row mb-3 align-items-center">
+                    <div class="col-md-6">
+                        <h4 class="m-0 text-pink fw-bold" style="color: var(--pink-hover);">Danh Sách Lớp Học</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border: 2px solid var(--pink-pastel); border-radius: 12px 0 0 12px;">
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" id="searchName" placeholder="Tìm kiếm theo tên..." style="border-radius: 0 12px 12px 0;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-pink table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>MSSV</th>
+                                <th>Họ Tên</th>
+                                <th>Liên Hệ</th>
+                                <th class="text-center">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loadingSpinner">
+    <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <span class="ms-2 fw-bold text-danger">Đang tải...</span>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // --- CẤU HÌNH API ---
+    // BẠN THAY ĐỔI ĐƯỜNG LINK MOCKAPI CỦA BẠN VÀO ĐÂY NHÉ!
+    const API_URL = "https://664a78a9a300e2d1193fe86e.mockapi.io/api/v1/students"; 
+
+    // --- DANH SÁCH SINH VIÊN MẪU KHỞI TẠO SẴN ---
+    let originalData = [
+        { id: "1", name: "Nguyễn Hoàng Mai Anh", code: "DNU20260102", email: "maianh.nh26@gmail.com", phone: "0987123456" },
+        { id: "2", name: "Trần Minh Quang", code: "DNU20260188", email: "quangtm.dnu@gmail.com", phone: "0912345678" },
+        { id: "3", name: "Lê Bảo Ngọc", code: "DNU20260245", email: "ngoclb.cute@gmail.com", phone: "0965888999" },
+        { id: "4", name: "Phạm Duy Mạnh", code: "DNU20260312", email: "manhpd.tech@gmail.com", phone: "0934555666" },
+        { id: "5", name: "Đặng Thu Thảo", code: "DNU20260499", email: "thaodt.pinky@gmail.com", phone: "0971222333" }
+    ];
+
+    $(document).ready(function () {
+        // Render trước danh sách mẫu lên màn hình cho đẹp mắt
+        renderTable(originalData);
+
+        // Gọi Ajax để cập nhật đồng bộ dữ liệu mới nhất từ MockAPI thực tế (nếu có)
+        fetchStudents();
+
+        // 2. Sự kiện Submit Form (Xử lý cả CREATE và UPDATE)
+        $("#studentForm").on("submit", function (e) {
+            e.preventDefault();
+            
+            const id = $("#studentId").val();
+            const studentData = {
+                name: $("#fullName").val(),
+                code: $("#studentCode").val(),
+                email: $("#email").val(),
+                phone: $("#phone").val()
+            };
+
+            if (id) {
+                updateStudent(id, studentData);
+            } else {
+                createStudent(studentData);
+            }
+        });
+
+        // 3. Sự kiện bấm nút Hủy khi đang sửa dữ liệu
+        $("#btnReset").on("click", function() {
+            resetForm();
+        });
+
+        // 4. Sự kiện tìm kiếm realtime
+        $("#searchName").on("input", function() {
+            const keyword = $(this).val().toLowerCase().trim();
+            const filteredData = originalData.filter(student => 
+                student.name.toLowerCase().includes(keyword) || 
+                student.code.toLowerCase().includes(keyword)
+            );
+            renderTable(filteredData);
+        });
+    });
+
+    // --- HÀM 1: LẤY DANH SÁCH (GET) ---
+    function fetchStudents() {
+        showLoading(true);
+        $.ajax({
+            url: API_URL,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                // Nếu MockAPI có dữ liệu thực tế, ta sẽ nạp đè dữ liệu mẫu bằng dữ liệu thật
+                if(data && data.length > 0) {
+                    originalData = data; 
+                }
+                renderTable(originalData);
+            },
+            error: function (xhr, status, error) {
+                console.log("MockAPI chưa cấu hình đúng hoặc trống, hiển thị danh sách mặc định.");
+                renderTable(originalData);
+            },
+            complete: function () {
+                showLoading(false);
+            }
+        });
+    }
+
+    // --- HÀM ĐỔ DỮ LIỆU RA BẢNG HTML ---
+    function renderTable(data) {
+        let html = "";
+        if(data.length === 0) {
+            html = `<tr><td colspan="5" class="text-center text-muted py-4">Hông tìm thấy bạn sinh viên nào cả 🌸</td></tr>`;
+        } else {
+            data.forEach((student, index) => {
+                html += `
+                    <tr>
+                        <td><span class="badge rounded-pill bg-light text-dark">${index + 1}</span></td>
+                        <td class="fw-bold text-secondary">${student.code}</td>
+                        <td class="fw-bold text-dark">${student.name}</td>
+                        <td>
+                            <small class="d-block"><i class="fa-solid fa-envelope text-muted"></i> ${student.email}</small>
+                            <small class="d-block"><i class="fa-solid fa-phone text-muted"></i> ${student.phone}</small>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-warning btn-sm rounded-pill text-white me-1" onclick="editStudent('${student.id}')">
+                                <i class="fa-solid fa-pen-to-square"></i> Sửa
+                            </button>
+                            <button class="btn btn-danger btn-sm rounded-pill" onclick="deleteStudent('${student.id}')">
+                                <i class="fa-solid fa-trash"></i> Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        $("#studentTableBody").html(html);
+    }
+
+    // --- HÀM 2: THÊM MỚI (POST) ---
+    function createStudent(data) {
+        showLoading(true);
+        $.ajax({
+            url: API_URL,
+            type: "POST",
+            data: data,
+            success: function () {
+                resetForm();
+                fetchStudents(); 
+            },
+            error: function () {
+                // Trường hợp chạy Local (không có API) vẫn cho test thêm ảo vào mảng
+                data.id = new Date().getTime().toString();
+                originalData.push(data);
+                renderTable(originalData);
+                resetForm();
+            },
+            complete: function () {
+                showLoading(false);
+            }
+        });
+    }
+
+    // --- HÀM ĐƯA DỮ LIỆU LÊN FORM ĐỂ CHUẨN BỊ SỬA ---
+    function editStudent(id) {
+        const student = originalData.find(item => item.id == id);
+        if(student) {
+            $("#studentId").val(student.id);
+            $("#fullName").val(student.name);
+            $("#studentCode").val(student.code);
+            $("#email").val(student.email);
+            $("#phone").val(student.phone);
+
+            $("#formTitle").html(`<i class="fa-solid fa-pen-to-square"></i> Cập Nhật Sinh Viên`);
+            $("#btnSubmit").html("Cập Nhật Ngay").removeClass("btn-pink").addClass("btn-success");
+            $("#btnReset").show();
+        }
+    }
+
+    // --- HÀM 3: CẬP NHẬT DỮ LIỆU (PUT/PATCH) ---
+    function updateStudent(id, data) {
+        showLoading(true);
+        $.ajax({
+            url: `${API_URL}/${id}`,
+            type: "PUT",
+            data: data,
+            success: function () {
+                resetForm();
+                fetchStudents(); 
+            },
+            error: function () {
+                // Hỗ trợ cập nhật offline khi test nhanh không có mạng
+                const index = originalData.findIndex(item => item.id == id);
+                if(index !== -1) {
+                    originalData[index] = { id, ...data };
+                    renderTable(originalData);
+                }
+                resetForm();
+            },
+            complete: function () {
+                showLoading(false);
+            }
+        });
+    }
+
+    // --- HÀM 4: XÓA BẢN GHI (DELETE) ---
+    function deleteStudent(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa bạn sinh viên dễ thương này không? 🥺")) {
+            showLoading(true);
+            $.ajax({
+                url: `${API_URL}/${id}`,
+                type: "DELETE",
+                success: function () {
+                    fetchStudents(); 
+                },
+                error: function () {
+                    // Hỗ trợ xóa offline khi test nhanh không có mạng
+                    originalData = originalData.filter(item => item.id != id);
+                    renderTable(originalData);
+                },
+                complete: function () {
+                    showLoading(false);
+                }
+            });
+        }
+    }
+
+    // --- HÀM BỔ TRỢ: ĐƯA FORM VỀ TRẠNG THÁI TRỐNG ---
+    function resetForm() {
+        $("#studentId").val("");
+        $("#studentForm")[0].reset();
+        $("#formTitle").html(`<i class="fa-solid fa-user-plus"></i> Thêm Sinh Viên Mới`);
+        $("#btnSubmit").html("Lưu Dữ Liệu").removeClass("btn-success").addClass("btn-pink");
+        $("#btnReset").hide();
+    }
+
+    // --- HÀM BỔ TRỢ: BẬT/TẮT HIỆU ỨNG LOAD ---
+    function showLoading(status) {
+        if(status) {
+            $("#loadingSpinner").fadeIn(200);
+        } else {
+            $("#loadingSpinner").fadeOut(200);
+        }
+    }
+</script>
+</body>
+</html>

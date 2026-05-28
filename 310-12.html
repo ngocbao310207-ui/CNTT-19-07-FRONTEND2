@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 12 - Quản Lý Sinh Viên API</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+        }
+        .crud-container {
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 800px; margin: 0 auto; border: 3px solid var(--primary-pink);
+        }
+        h2 { text-align: center; color: var(--dark-pink); margin-top: 0; }
+        
+        /* Cấu trúc Form */
+        .student-form {
+            background: var(--light-pink); padding: 15px; border-radius: 12px;
+            margin-bottom: 25px; display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px;
+            align-items: end;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; font-weight: bold; color: var(--dark-pink); margin-bottom: 4px; }
+        input { padding: 10px; border: 2px solid #ddd; border-radius: 8px; outline: none; }
+        input:focus { border-color: var(--primary-pink); }
+        
+        .btn { padding: 10px 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-add { background: #28a745; }
+        .btn-update { background: #007bff; display: none; } /* Mặc định ẩn nút sửa */
+        .btn-delete { background: #dc3545; padding: 5px 10px; font-size: 13px; }
+        .btn-edit { background: #ffc107; color: #212529; padding: 5px 10px; font-size: 13px; margin-right: 5px;}
+
+        /* Bảng dữ liệu */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: var(--primary-pink); color: white; }
+        tr:hover { background: var(--light-pink); }
+        .loading { text-align: center; color: #888; font-style: italic; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="crud-container">
+    <h2>🌸 Student CRUD Management (MockAPI) 🌸</h2>
+    
+    <div class="student-form">
+        <input type="hidden" id="studentId">
+        
+        <div class="form-group">
+            <label>Họ và tên sinh viên:</label>
+            <input type="text" id="studentName" placeholder="Nhập tên...">
+        </div>
+        <div class="form-group">
+            <label>Tên lớp học:</label>
+            <input type="text" id="studentClass" placeholder="Nhập lớp (Ví dụ: WD18301)...">
+        </div>
+        <div>
+            <button class="btn btn-add" id="btnAdd" onclick="addStudent()">Thêm Mới</button>
+            <button class="btn btn-update" id="btnUpdate" onclick="updateStudent()">Cập Nhật</button>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mã ID</th>
+                <th>Họ và Tên</th>
+                <th>Lớp Học</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody id="studentTableBody">
+            <tr><td colspan="4" class="loading">🔄 Đang tải danh sách sinh viên từ server...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // URL MockAPI đã được thiết lập thực tế cấu trúc bảng sinhVien
+    const API_URL = "https://664bfaeca300e8795d429a14.mockapi.io/api/v1/students";
+
+    window.onload = function() {
+        fetchStudents();
+    };
+
+    // 1. Thao tác GET: Lấy danh sách và hiển thị ra bảng
+    async function fetchStudents() {
+        try {
+            const response = await fetch(API_URL);
+            const students = await response.json();
+            renderTable(students);
+        } catch (error) {
+            alert("Không thể kết nối đến máy chủ API!");
+        }
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('studentTableBody');
+        tbody.innerHTML = '';
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999;">Danh sách rỗng 🌸</td></tr>`;
+            return;
+        }
+
+        data.forEach(st => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>#${st.id}</b></td>
+                <td>${st.name}</td>
+                <td><span style="background:#e9ecef; padding:4px 8px; border-radius:6px; font-size:13px;">${st.class}</span></td>
+                <td>
+                    <button class="btn btn-edit" onclick="prepareEdit('${st.id}', '${st.name}', '${st.class}')">Sửa</button>
+                    <button class="btn btn-delete" onclick="deleteStudent('${st.id}')">Xóa</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 2. Thao tác POST: Gửi thêm mới sinh viên lên server
+    async function addStudent() {
+        const name = document.getElementById('studentName').value.trim();
+        const className = document.getElementById('studentClass').value.trim();
+
+        if (name === "" || className === "") {
+            alert("Vui lòng điền đầy đủ Tên và Lớp!");
+            return;
+        }
+
+        const newStudent = { name: name, class: className };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newStudent)
+            });
+            if (response.ok) {
+                clearForm();
+                fetchStudents(); // Cập nhật lại giao diện ngay tức thì
+            }
+        } catch (error) {
+            alert("Lỗi khi thêm sinh viên!");
+        }
+    }
+
+    // 3. Thao tác DELETE: Gửi request xóa theo ID lên server
+    async function deleteStudent(id) {
+        if (!confirm(`Bạn có chắc chắn muốn xóa sinh viên mang mã ID #${id} không?`)) return;
+
+        try {
+            const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                fetchStudents(); // Cập nhật đồng bộ lại danh sách
+            }
+        } catch (error) {
+            alert("Lỗi khi xóa dữ liệu!");
+        }
+    }
+
+    // --- YÊU CẦU MỞ RỘNG: Chức năng sửa đổi thông tin sinh viên (PUT) ---
+    function prepareEdit(id, name, className) {
+        document.getElementById('studentId').value = id;
+        document.getElementById('studentName').value = name;
+        document.getElementById('studentClass').value = className;
+
+        // Chuyển đổi trạng thái nút bấm biểu mẫu
+        document.getElementById('btnAdd').style.display = 'none';
+        document.getElementById('btnUpdate').style.display = 'inline-block';
+    }
+
+    async function updateStudent() {
+        const id = document.getElementById('studentId').value;
+        const name = document.getElementById('studentName').value.trim();
+        const className = document.getElementById('studentClass').value.trim();
+
+        const updatedData = { name: name, class: className };
+
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+            if (response.ok) {
+                clearForm();
+                fetchStudents();
+            }
+        } catch (error) {
+            alert("Lỗi khi cập nhật dữ liệu!");
+        }
+    }
+
+    function clearForm() {
+        document.getElementById('studentId').value = '';
+        document.getElementById('studentName').value = '';
+        document.getElementById('studentClass').value = '';
+        document.getElementById('btnAdd').style.display = 'inline-block';
+        document.getElementById('btnUpdate').style.display = 'none';
+    }
+</script>
+</body>
+</html>

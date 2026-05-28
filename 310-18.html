@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Thành Viên Siêu Đáng Yêu 🌸</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+ 
+        body {
+            font-family: 'M PLUS 1p', 'Segoe UI', sans-serif;
+            background-color: #fff0f5; 
+            background-image: 
+                radial-gradient(#ffd1dc 15%, transparent 16%),
+                radial-gradient(#ffd1dc 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .club-container {
+            background-color: rgba(255, 255, 255, 0.96);
+            border: 4px solid #ffb7b2;
+            border-radius: 30px;
+            box-shadow: 0 15px 30px rgba(255, 183, 178, 0.4);
+            padding: 30px;
+            max-width: 550px;
+            width: 100%;
+            position: relative;
+        }
+
+        .club-container::before {
+            content: '✨🦄✨';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            background: #fff;
+            padding: 0 10px;
+        }
+
+        h1 {
+            color: #ff7b90;
+            text-align: center;
+            font-size: 24px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #b5c49c;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        .input-box, .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            font-family: 'M PLUS 1p', sans-serif;
+            padding: 12px 18px;
+            border: 3px solid #ffdac1;
+            border-radius: 18px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+            color: #4a4a4a;
+        }
+
+        #search-input {
+            flex: 1;
+        }
+
+        #member-name-input {
+            flex: 1;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ffb7b2;
+            background-color: #fff9f9;
+        }
+
+        button {
+            font-family: 'M PLUS 1p', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            position: relative;
+            top: 0;
+        }
+
+        .btn-add {
+            background-color: #e2f0cb;
+            color: #5b7036;
+            box-shadow: 0 4px 0 #b5c49c;
+        }
+        .btn-add:active { top: 4px; box-shadow: 0 0 0; }
+
+        .member-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .member-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            border: 2px solid #ffebd9;
+            border-radius: 18px;
+            padding: 12px 15px;
+            animation: popIn 0.3s ease;
+        }
+        .member-index {
+            background-color: #ffdac1;
+            color: #d46a43;
+            font-weight: bold;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .member-name {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 700;
+            color: #4a4a4a;
+        }
+        .edit-input {
+            flex: 1;
+            padding: 6px 12px !important;
+            margin-right: 10px;
+            border: 2px solid #b5e2fa !important;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 0 var(--shadow);
+        }
+        .btn-action:active { top: 3px; box-shadow: 0 0 0; }
+
+        .btn-edit { background-color: #b5e2fa; color: #2a6f97; --shadow: #90e0ef; }
+        .btn-delete { background-color: #ffcaa7; color: #c94a29; --shadow: #ffb3c1; }
+        .btn-save { background-color: #c8e6c9; color: #2e7d32; --shadow: #a5d6a7; }
+
+        .empty-message {
+            display: none;
+            text-align: center;
+            color: #b5bec5;
+            font-size: 13px;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="club-container">
+        <h1>DANH SÁCH THÀNH VIÊN 📜</h1>
+        <div class="subtitle">✨ Lab 18 - Danh Sách Nhập Sẵn Đáng Yêu ✨</div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="🔍 Nhập tên để tìm kiếm nhanh...">
+        </div>
+
+        <div class="input-box">
+            <input type="text" id="member-name-input" placeholder="Nhập tên thành viên mới...">
+            <button id="btn-add-member" class="btn-add">Thêm vào 🌸</button>
+        </div>
+
+        <div id="member-list-box" class="member-list">
+            
+            <div class="member-item">
+                <div class="member-index">1</div>
+                <span class="member-name">Hồ Sỹ Duy Mạnh</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">2</div>
+                <span class="member-name">Hoàng Văn Toàn</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">3</div>
+                <span class="member-name">Pham Ngoc Bao</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">4</div>
+                <span class="member-name">Nguyen Chí Đạt</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">5</div>
+                <span class="member-name">Nguyen Hoang Anh</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">6</div>
+                <span class="member-name">Nguyen Bá Khơi</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">7</div>
+                <span class="member-name">Đinh Ngọc Dương</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">8</div>
+                <span class="member-name">Nguyen Thi Ngoc Anh</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">9</div>
+                <span class="member-name">Nguyen Thi Khanh Linh</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="member-item">
+                <div class="member-index">10</div>
+                <span class="member-name">Nguyen Thị Kim Ngân</span>
+                <div class="action-btns">
+                    <button class="btn-action btn-edit">Sửa 🌱</button>
+                    <button class="btn-action btn-delete">Xóa 💢</button>
+                </div>
+            </div>
+
+            <div class="empty-message">Chưa có thành viên nào trong câu lạc bộ (｡•́︿•̀｡)</div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function refreshSTT() {
+                let items = $('#member-list-box .member-item');
+                
+                if (items.length === 0) {
+                    $('.empty-message').show();
+                } else {
+                    $('.empty-message').hide();
+                    items.each(function(index) {
+                        $(this).find('.member-index').text(index + 1);
+                    });
+                }
+            }
+            $('#btn-add-member').click(function() {
+                let name = $('#member-name-input').val().trim();
+                
+                if (name === "") {
+                    alert("Bạn lỡ quên chưa nhập tên rồi nè! 🐾");
+                    return;
+                }
+
+                let memberTemplate = `
+                    <div class="member-item">
+                        <div class="member-index">0</div>
+                        <span class="member-name">${name}</span>
+                        <div class="action-btns">
+                            <button class="btn-action btn-edit">Sửa 🌱</button>
+                            <button class="btn-action btn-delete">Xóa 💢</button>
+                        </div>
+                    </div>
+                `;
+
+                $('#member-list-box').append(memberTemplate);
+                $('#member-name-input').val("");
+                refreshSTT();
+            });
+            $('#member-name-input').keypress(function(e) {
+                if(e.which == 13) {
+                    $('#btn-add-member').click();
+                }
+            });
+            $('#member-list-box').on('click', '.btn-delete', function() {
+                $(this).closest('.member-item').remove();
+                refreshSTT();
+            });
+            $('#member-list-box').on('click', '.btn-edit', function() {
+                let memberItem = $(this).closest('.member-item');
+                let nameSpan = memberItem.find('.member-name');
+                let currentName = nameSpan.text();
+
+                nameSpan.replaceWith(`<input type="text" class="edit-input" value="${currentName}">`);
+                $(this).text("Lưu 💕").removeClass('btn-edit').addClass('btn-save');
+            });
+      
+            $('#member-list-box').on('click', '.btn-save', function() {
+                let memberItem = $(this).closest('.member-item');
+                let editInput = memberItem.find('.edit-input');
+                let updatedName = editInput.val().trim();
+
+                if (updatedName === "") {
+                    alert("Tên thành viên không được để trống đâu nhé! ✨");
+                    return;
+                }
+
+                editInput.replaceWith(`<span class="member-name">${updatedName}</span>`);
+                $(this).text("Sửa 🌱").removeClass('btn-save').addClass('btn-edit');
+            });
+            $('#search-input').on('keyup', function() {
+                let value = $(this).val().toLowerCase();
+                
+                $('#member-list-box .member-item').filter(function() {
+                    let nameText = $(this).find('.member-name').text().toLowerCase();
+                    $(this).toggle(nameText.indexOf(value) > -1);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

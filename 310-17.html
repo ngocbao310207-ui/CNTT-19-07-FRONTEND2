@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng Kẹo Ngọt Siêu Đáng Yêu 🎀</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+    
+        body {
+            font-family: 'M PLUS 1p', 'Segoe UI', sans-serif;
+            background-color: #f0f4f8; 
+            background-image: 
+                radial-gradient(#d2e7f9 15%, transparent 16%),
+                radial-gradient(#d2e7f9 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .cart-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 4px solid #b3e5fc;
+            border-radius: 30px;
+            box-shadow: 0 15px 30px rgba(179, 229, 252, 0.4);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+        .cart-container::before {
+            content: '🎀';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+        }
+
+        h1 {
+            color: #0288d1;
+            text-align: center;
+            font-size: 26px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #78909c;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .cart-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            border: 2px solid #e1f5fe;
+            border-radius: 20px;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            border-color: #81d4fa;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.03);
+        }
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #37474f;
+            margin-bottom: 4px;
+        }
+
+        .item-price {
+            font-size: 14px;
+            color: #0288d1;
+            font-weight: bold;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 20px;
+        }
+        .btn-qty {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+            position: relative;
+            top: 0;
+        }
+
+        .btn-minus {
+            background-color: #ffcdd2;
+            color: #c62828;
+            box-shadow: 0 3px 0 #ef9a9a;
+        }
+        .btn-minus:active { top: 3px; box-shadow: 0 0 0; }
+
+        .btn-plus {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+            box-shadow: 0 3px 0 #a5d6a7;
+        }
+        .btn-plus:active { top: 3px; box-shadow: 0 0 0; }
+
+        .qty-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #37474f;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .item-subtotal {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ff7043;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .cart-total-box {
+            margin-top: 30px;
+            background-color: #e1f5fe;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px dashed #0288d1;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0288d1;
+        }
+
+        .total-amount {
+            font-size: 26px;
+            font-weight: 700;
+            color: #d84315;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .rule-badge {
+            text-align: center;
+            font-size: 11px;
+            color: #b0bec5;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart-container">
+        <h1>TIỆM KẸO SWEETIE SHOP 🛒</h1>
+        <div class="subtitle">✨ Lab 17 - Giỏ Hàng jQuery Cute Version ✨</div>
+
+        <div class="cart-list">
+            
+            <div class="cart-item" data-price="15000">
+                <div class="item-info">
+                    <div class="item-name">🍬 Kẹo mút dâu tây</div>
+                    <div class="item-price">15.000 đ</div>
+                </div>
+                <div class="quantity-control">
+                    <button class="btn-qty btn-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="btn-qty btn-plus">+</button>
+                </div>
+                <div class="item-subtotal">0 đ</div>
+            </div>
+
+            <div class="cart-item" data-price="25000">
+                <div class="item-info">
+                    <div class="item-name">🍩 Bánh Donut hoàng gia</div>
+                    <div class="item-price">25.000 đ</div>
+                </div>
+                <div class="quantity-control">
+                    <button class="btn-qty btn-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="btn-qty btn-plus">+</button>
+                </div>
+                <div class="item-subtotal">0 đ</div>
+            </div>
+
+            <div class="cart-item" data-price="45000">
+                <div class="item-info">
+                    <div class="item-name">🧋 Trà sữa trân châu lớn</div>
+                    <div class="item-price">45.000 đ</div>
+                </div>
+                <div class="quantity-control">
+                    <button class="btn-qty btn-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="btn-qty btn-plus">+</button>
+                </div>
+                <div class="item-subtotal">0 đ</div>
+            </div>
+
+        </div>
+
+        <div class="cart-total-box">
+            <span class="total-label">Tổng cộng hóa đơn:</span>
+            <span id="cart-total-amount" class="total-amount">0 đ</span>
+        </div>
+
+        <div class="rule-badge">⚠️ Quy ước bài học: Số lượng tối thiểu bằng 0 (〃▽〃)</div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+        
+            function calculateCart() {
+                let totalCartMoney = 0;
+
+        
+                $('.cart-item').each(function() {
+                    
+                    let price = parseInt($(this).attr('data-price'));
+                    
+                    let qty = parseInt($(this).find('.qty-value').text());
+
+                    let subtotal = price * qty;
+                    totalCartMoney += subtotal; 
+
+                    $(this).find('.item-subtotal').text(subtotal.toLocaleString('vi-VN') + " đ");
+                });
+
+                $('#cart-total-amount').text(totalCartMoney.toLocaleString('vi-VN') + " đ");
+            }
+
+            $('.btn-plus').click(function() {
+           
+                let qtyElement = $(this).siblings('.qty-value');
+                let currentQty = parseInt(qtyElement.text());
+                
+                qtyElement.text(currentQty + 1);
+            
+                calculateCart();
+            });
+
+         
+            $('.btn-minus').click(function() {
+                let qtyElement = $(this).siblings('.qty-value');
+                let currentQty = parseInt(qtyElement.text());
+            
+                if (currentQty > 0) {
+                    qtyElement.text(currentQty - 1);
+                    calculateCart(); 
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

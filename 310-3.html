@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinky Guessing Game - Trò Chơi Đoán Số</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+            --neon-glow: rgba(255, 101, 163, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 3px solid var(--primary-pink);
+        }
+
+        h2 {
+            color: var(--dark-pink);
+            margin-top: 0;
+            font-size: 26px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .difficulty-section {
+            background: var(--light-pink);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .difficulty-section select {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-pink);
+            color: var(--dark-pink);
+            font-weight: bold;
+            outline: none;
+        }
+
+        .status-box {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .status-item {
+            background: #fafafa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px dashed var(--primary-pink);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-guess {
+            background-color: var(--primary-pink);
+            color: white;
+            box-shadow: 0 4px 12px var(--neon-glow);
+        }
+
+        .btn-guess:hover {
+            background-color: var(--dark-pink);
+            transform: translateY(-2px);
+        }
+
+        .btn-guess:disabled {
+            background-color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-reset {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+            display: none; /* Chỉ hiện khi thắng/thua */
+        }
+
+        .btn-reset:hover {
+            background-color: #000;
+        }
+
+        .message {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 27px;
+            color: #444;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        /* Hiệu ứng màu thông báo */
+        .msg-correct { color: #28a745; background-color: #d4edda; }
+        .msg-wrong { color: var(--dark-pink); background-color: var(--light-pink); }
+        .msg-over { color: #721c24; background-color: #f8d7da; }
+
+        .history-box {
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .history-title {
+            font-size: 13px;
+            color: #888;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .history-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background-color: #f1f3f5;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #666;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <h2>🌸 Pinky Number Guesser 🌸</h2>
+
+    <div class="difficulty-section">
+        <label for="difficulty" style="font-weight: bold; color: var(--dark-pink);">Độ khó:</label>
+        <select id="difficulty" onchange="initGame()">
+            <option value="10">Dễ (1 - 10) | 3 lượt</option>
+            <option value="100" selected>Thường (1 - 100) | 7 lượt</option>
+        </select>
+    </div>
+
+    <div class="status-box">
+        <div class="status-item">Lượt đã đoán: <span id="attempts">0</span></div>
+        <div class="status-item" style="color: #dc3545;">Mạng sống: <span id="lives">7</span>/7</div>
+    </div>
+
+    <div class="input-group">
+        <input type="number" id="guessInput" placeholder="Nhập số bạn đoán...">
+        <button class="btn-guess" id="guessBtn" onclick="checkGuess()">Đoán!</button>
+    </div>
+
+    <div id="message" class="message">Hãy chọn một số và thử tài nhé!</div>
+
+    <div class="history-box">
+        <div class="history-title">LỊCH SỬ ĐOÁN CỦA BẠN:</div>
+        <div id="historyTags" class="history-tags">
+            </div>
+    </div>
+
+    <button class="btn-reset" id="resetBtn" onclick="initGame()">🌸 Chơi Trận Mới 🌸</button>
+</div>
+
+<script>
+    // 1. Khai báo các biến lưu trữ toàn cục
+    let secretNumber;
+    let attemptsCount;
+    let maxRange;
+    let maxLives;
+    let currentLives;
+    let guessedNumbers = [];
+
+    // Khởi tạo trò chơi lần đầu khi tải trang
+    window.onload = function() {
+        initGame();
+    };
+
+    // Hàm khởi tạo/Reset ván game mới
+    function initGame() {
+        // Đọc cấu hình độ khó được chọn
+        maxRange = parseInt(document.getElementById('difficulty').value);
+        
+        // Thiết lập số lượt chơi tối đa tương ứng với độ khó
+        maxLives = (maxRange === 10) ? 3 : 7; 
+        currentLives = maxLives;
+        attemptsCount = 0;
+        guessedNumbers = [];
+
+        // Tạo số bí mật ngẫu nhiên chuẩn thuật toán Math.random
+        secretNumber = Math.floor(Math.random() * maxRange) + 1;
+        
+        // Log thử ra console để kiểm tra (Giảng viên test dễ dàng)
+        console.log("Số bí mật của ván này là: " + secretNumber);
+
+        // Cập nhật lại toàn bộ giao diện về trạng thái ban đầu
+        document.getElementById('attempts').innerText = attemptsCount;
+        document.getElementById('lives').innerText = currentLives;
+        document.querySelector('.status-item style')?.remove(); // Reset màu sắc mạng sống nếu cần
+        
+        const msgDiv = document.getElementById('message');
+        msgDiv.innerText = `Máy đã chọn 1 số từ 1 đến ${maxRange}. Đoán đi nào!`;
+        msgDiv.className = "message"; // Xóa class thông báo cũ
+
+        document.getElementById('guessInput').value = "";
+        document.getElementById('guessInput').disabled = false;
+        document.getElementById('guessBtn').disabled = false;
+        document.getElementById('resetBtn').style.display = 'none';
+        document.getElementById('historyTags').innerHTML = '<span class="tag">Chưa có</span>';
+        document.getElementById('difficulty').disabled = false;
+    }
+
+    // 3. Hàm so sánh xử lý logic khi click nút "Đoán!"
+    function checkGuess() {
+        const inputElement = document.getElementById('guessInput');
+        const guess = parseInt(inputElement.value);
+        const msgDiv = document.getElementById('message');
+
+        // Kiểm tra dữ liệu đầu vào hợp lệ
+        if (isNaN(guess) || guess < 1 || guess > maxRange) {
+            alert(`Vui lòng nhập một số hợp lệ từ 1 đến ${maxRange}!`);
+            return;
+        }
+
+        // Kiểm tra xem số này đã từng đoán chưa
+        if (guessedNumbers.includes(guess)) {
+            alert("Số này bạn đã đoán rồi, thử số khác đi!");
+            return;
+        }
+
+        // Tăng số lần thử, giảm mạng sống
+        attemptsCount++;
+        currentLives--;
+        guessedNumbers.push(guess);
+
+        // Cập nhật lên UI
+        document.getElementById('attempts').innerText = attemptsCount;
+        document.getElementById('lives').innerText = currentLives;
+        document.getElementById('difficulty').disabled = true; // Khóa thay đổi độ khó khi đang chơi
+
+        // Cập nhật vùng lịch sử đoán số
+        updateHistoryUI();
+
+        // Xử lý các điều kiện rẽ nhánh chính
+        if (guess === secretNumber) {
+            // Trường hợp 1: Đoán chính xác
+            msgDiv.innerText = `🎉 QUÁ ĐỈNH! Số bí mật chính là ${secretNumber}. Bạn thắng sau ${attemptsCount} lần thử!`;
+            msgDiv.className = "message msg-correct";
+            endGame();
+        } 
+        else if (currentLives === 0) {
+            // Trường hợp 2: Hết lượt chơi (Thua cuộc)
+            msgDiv.innerText = `😢 HẾT LƯỢT RỒI! Số đúng là ${secretNumber}. Chúc bạn may mắn lần sau!`;
+            msgDiv.className = "message msg-over";
+            endGame();
+        } 
+        else {
+            // Trường hợp 3: Đoán sai nhưng còn lượt -> Đưa ra gợi ý lớn hơn / nhỏ hơn
+            if (guess < secretNumber) {
+                msgDiv.innerText = `🔮 Số ${guess} của bạn NHỎ HƠN số bí mật rồi!`;
+            } else {
+                msgDiv.innerText = `🔮 Số ${guess} của bạn LỚN HƠN số bí mật rồi!`;
+            }
+            msgDiv.className = "message msg-wrong";
+        }
+
+        // Tự động focus lại ô nhập để người dùng gõ tiếp nhanh hơn
+        inputElement.value = "";
+        inputElement.focus();
+    }
+
+    // Hàm cập nhật danh sách thẻ lịch sử đoán số
+    function updateHistoryUI() {
+        const historyContainer = document.getElementById('historyTags');
+        historyContainer.innerHTML = ""; // Xóa danh sách cũ
+        
+        guessedNumbers.forEach(num => {
+            const span = document.createElement('span');
+            span.className = 'tag';
+            span.innerText = num;
+            historyContainer.appendChild(span);
+        });
+    }
+
+    // 4. Kết thúc game (khóa tương tác và hiện nút chơi lại)
+    function endGame() {
+        document.getElementById('guessInput').disabled = true;
+        document.getElementById('guessBtn').disabled = true;
+        document.getElementById('resetBtn').style.display = 'block'; // Hiện nút Chơi lại ván mới
+    }
+
+    // Hỗ trợ người dùng nhấn phím Enter để thực hiện click nút Đoán luôn
+    document.getElementById("guessInput").addEventListener("keyup", function(event) {
+        if (event.key === "Enter" && !document.getElementById('guessBtn').disabled) {
+            checkGuess();
+        }
+    });
+</script>
+
+</body>
+</html>

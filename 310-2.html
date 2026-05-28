@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 02 - Tính Toán Khuyến Mãi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-left: 5px solid #007bff;
+            border-radius: 4px;
+            display: none; /* Ẩn khi chưa tính toán */
+        }
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .result-line:last-child {
+            margin-bottom: 0;
+            font-weight: bold;
+            color: #dc3545;
+            border-top: 1px solid #ccc;
+            padding-top: 8px;
+        }
+        .note {
+            font-size: 13px;
+            color: #28a745;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tính Toán Hóa Đơn</h2>
+    
+    <div class="form-group">
+        <label for="orderValue">Giá trị đơn hàng (VNĐ):</label>
+        <input type="number" id="orderValue" placeholder="Nhập số tiền..." min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="memberRank">Hạng thành viên:</label>
+        <select id="memberRank">
+            <select id="memberRank">
+                <option value="Bronze">Đồng (Bronze)</option>
+                <option value="Silver">Bạc (Silver)</option>
+                <option value="Gold">Vàng (Gold)</option>
+            </select>
+        </select>
+    </div>
+
+    <button onclick="processOrder()">Tính Toán Kết Quả</button>
+
+    <div id="result" class="result-box">
+        <div class="result-line"><span>Tiền gốc:</span> <span id="resOriginal">0đ</span></div>
+        <div class="result-line"><span>Tỷ lệ giảm:</span> <span id="resRate">0%</span></div>
+        <div class="result-line"><span>Số tiền giảm:</span> <span id="resDiscount">0đ</span></div>
+        <div class="result-line" id="shippingLine"><span>Phí vận chuyển:</span> <span id="resShipping">0đ</span></div>
+        <div class="result-line"><span>Tổng thanh toán:</span> <span id="resTotal">0đ</span></div>
+        <div id="resNote" class="note" style="margin-top: 10px; text-align: right;"></div>
+    </div>
+</div>
+
+<script>
+    // Hàm định dạng số tiền thành dạng VND (Ví dụ: 100000 -> 100.000 đ)
+    function formatCurrency(amount) {
+        return amount.toLocaleString('vi-VN') + ' đ';
+    }
+
+    // 2 & 3. Quy tắc giảm giá và Hàm tính toán chính
+    function calculateDiscount(totalAmount, rank) {
+        let discountRate = 0;
+
+        // Áp dụng tối thiểu 3 mức khuyến mãi theo khoảng tiền kết hợp hạng thành viên
+        if (totalAmount >= 2000000) { 
+            // Mức 3: Đơn từ 2 triệu trở lên
+            if (rank === "Gold") discountRate = 0.20;       // Giảm 20%
+            else if (rank === "Silver") discountRate = 0.15; // Giảm 15%
+            else discountRate = 0.10;                       // Giảm 10%
+        } 
+        else if (totalAmount >= 1000000) { 
+            // Mức 2: Đơn từ 1 triệu đến dưới 2 triệu
+            if (rank === "Gold") discountRate = 0.15;
+            else if (rank === "Silver") discountRate = 0.10;
+            else discountRate = 0.05;
+        } 
+        else if (totalAmount >= 500000) { 
+            // Mức 1: Đơn từ 500k đến dưới 1 triệu
+            if (rank === "Gold") discountRate = 0.10;
+            else discountRate = 0.05;
+        } 
+        else {
+            // Mức 0: Đơn dưới 500k
+            if (rank === "Gold") discountRate = 0.05;
+            else discountRate = 0;
+        }
+
+        return discountRate;
+    }
+
+    // Hàm xử lý khi bấm nút Tính Toán
+    function processOrder() {
+        // Lấy dữ liệu đầu vào
+        let orderValue = parseFloat(document.getElementById('orderValue').value);
+        let rank = document.getElementById('memberRank').value;
+
+        // Kiểm tra dữ liệu hợp lệ
+        if (isNaN(orderValue) || orderValue < 0) {
+            alert("Vui lòng nhập giá trị đơn hàng hợp lệ lớn hơn hoặc bằng 0!");
+            return;
+        }
+
+        // Tính toán chiết khấu
+        let discountRate = calculateDiscount(orderValue, rank);
+        let discountAmount = orderValue * discountRate;
+
+        // --- YÊU CẦU MỞ RỘNG: Miễn phí vận chuyển ---
+        // Giả sử phí ship mặc định là 30.000đ. Nếu đơn hàng > 1.500.000đ thì freeship.
+        let shippingFee = 30000;
+        let isFreeShip = false;
+        
+        if (orderValue >= 1500000) {
+            shippingFee = 0;
+            isFreeShip = true;
+        }
+
+        // Tính tổng tiền thanh toán cuối cùng
+        let finalTotal = orderValue - discountAmount + shippingFee;
+
+        // Hiển thị kết quả lên giao diện
+        document.getElementById('resOriginal').innerText = formatCurrency(orderValue);
+        document.getElementById('resRate').innerText = (discountRate * 100) + '%';
+        document.getElementById('resDiscount').innerText = formatCurrency(discountAmount);
+        
+        if (isFreeShip) {
+            document.getElementById('resShipping').innerText = "Miễn phí (0đ)";
+            document.getElementById('resNote').innerText = "* Bạn được Freeship vì đơn hàng đạt trên 1.500.000đ!";
+        } else {
+            document.getElementById('resShipping').innerText = formatCurrency(shippingFee);
+            document.getElementById('resNote').innerText = "";
+        }
+
+        document.getElementById('resTotal').innerText = formatCurrency(finalTotal);
+
+        // Hiện hộp kết quả
+        document.getElementById('result').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 15 - Kiểm Tra Biểu Mẫu Đăng Ký</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .form-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 400px; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); text-align: center; margin-top: 0; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; position: relative; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        
+        /* Input mặc định */
+        input {
+            width: 100%; padding: 10px 12px; border: 2px solid #ddd;
+            border-radius: 10px; outline: none; font-size: 14px; box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        
+        /* Trạng thái đổi màu viền khi hợp lệ / không hợp lệ (Yêu cầu mở rộng) */
+        input.input-error { border-color: var(--error-color) !important; background-color: #fff5f5; }
+        input.input-success { border-color: var(--success-color) !important; background-color: #f5fff7; }
+
+        /* Vùng hiển thị lỗi ngay dưới trường dữ liệu */
+        .error-message { font-size: 12px; color: var(--error-color); margin-top: 4px; display: none; font-weight: 500; }
+        
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--primary-pink); color: white;
+            border: none; border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; margin-top: 10px; transition: 0.2s;
+        }
+        .btn-submit:hover { background: var(--dark-pink); }
+        
+        .success-alert {
+            background: #e8f5e9; color: var(--success-color); padding: 12px;
+            border-radius: 10px; text-align: center; font-weight: bold;
+            margin-bottom: 15px; display: none; border: 1px solid #c8e6c9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <h2>🌸 Pinky Registration 🌸</h2>
+    
+    <div class="success-alert" id="successAlert">🎉 Đăng ký tài khoản thành công!</div>
+
+    <form id="registerForm" novalidate>
+        <div class="form-group">
+            <label for="fullName">Họ và tên:</label>
+            <input type="text" id="fullName" placeholder="Nhập đầy đủ họ tên...">
+            <div class="error-message" id="nameError">Họ tên không được để trống!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Địa chỉ Email:</label>
+            <input type="email" id="email" placeholder="example@gmail.com">
+            <div class="error-message" id="emailError">Định dạng email không hợp lệ!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Số điện thoại:</label>
+            <input type="text" id="phone" placeholder="Nhập số điện thoại (10 số)...">
+            <div class="error-message" id="phoneError">Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" placeholder="Tối thiểu 6 ký tự...">
+            <div class="error-message" id="passwordError">Mật khẩu phải có độ dài ít nhất là 6 ký tự!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Xác nhận mật khẩu:</label>
+            <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu phía trên...">
+            <div class="error-message" id="confirmPasswordError">Mật khẩu nhập lại không trùng khớp!</div>
+        </div>
+
+        <button type="submit" class="btn-submit">Tạo Tài Khoản 🌸</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // 2. Bắt sự kiện submit của Form
+        $('#registerForm').submit(function(event) {
+            // Chặn hành động tải lại trang mặc định của biểu mẫu
+            event.preventDefault();
+
+            // Mặc định ban đầu xem như form hợp lệ
+            let isFormValid = true;
+
+            // 3. Lấy dữ liệu và thực hiện làm sạch khoảng trắng thừa bằng .val() và .trim()
+            const name = $('#fullName').val().trim();
+            const email = $('#email').val().trim();
+            const phone = $('#phone').val().trim();
+            const password = $('#password').val().trim();
+            const confirmPassword = $('#confirmPassword').val().trim();
+
+            // --- BẮT ĐẦU KIỂM TRA TỪNG TRƯỜNG DỮ LIỆU ---
+
+            // Kiểm tra Họ Tên (Không rỗng)
+            if (name === "") {
+                showError('#fullName', '#nameError', "Họ tên không được bỏ trống!");
+                isFormValid = false;
+            } else {
+                showSuccess('#fullName', '#nameError');
+            }
+
+            // Kiểm tra Email bằng biểu thức chính quy (Regex)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === "") {
+                showError('#email', '#emailError', "Email không được bỏ trống!");
+                isFormValid = false;
+            } else if (!emailRegex.test(email)) {
+                showError('#email', '#emailError', "Định dạng Email không chính xác (Ví dụ: abc@gmail.com)!");
+                isFormValid = false;
+            } else {
+                showSuccess('#email', '#emailError');
+            }
+
+            // Kiểm tra Số điện thoại (Yêu cầu mở rộng - Đầu số 0, đủ 10 số)
+            const phoneRegex = /^0[0-9]{9}$/;
+            if (phone === "") {
+                showError('#phone', '#phoneError', "Số điện thoại không được bỏ trống!");
+                isFormValid = false;
+            } else if (!phoneRegex.test(phone)) {
+                showError('#phone', '#phoneError', "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số!");
+                isFormValid = false;
+            } else {
+                showSuccess('#phone', '#phoneError');
+            }
+
+            // Kiểm tra Độ dài mật khẩu (Ít nhất 6 ký tự)
+            if (password === "") {
+                showError('#password', '#passwordError', "Mật khẩu không được bỏ trống!");
+                isFormValid = false;
+            } else if (password.length < 6) {
+                showError('#password', '#passwordError', "Mật khẩu bảo mật quá ngắn, yêu cầu ít nhất 6 ký tự!");
+                isFormValid = false;
+            } else {
+                showSuccess('#password', '#passwordError');
+            }
+
+            // Kiểm tra xác nhận mật khẩu trùng khớp với mật khẩu gốc
+            if (confirmPassword === "") {
+                showError('#confirmPassword', '#confirmPasswordError', "Vui lòng xác nhận lại mật khẩu!");
+                isFormValid = false;
+            } else if (confirmPassword !== password) {
+                showError('#confirmPassword', '#confirmPasswordError', "Mật khẩu xác nhận không khớp với mật khẩu đã nhập!");
+                isFormValid = false;
+            } else {
+                showSuccess('#confirmPassword', '#confirmPasswordError');
+            }
+
+            // 4. Nếu toàn bộ form hợp lệ -> Thông báo thành công lên giao diện
+            if (isFormValid) {
+                $('#successAlert').slideDown(300).delay(3000).slideUp(300);
+                // Xóa trắng dữ liệu sau khi đăng ký thành công
+                $('#registerForm')[0].reset();
+                $('input').removeClass('input-success');
+            }
+        });
+
+        // Hàm phụ trợ xử lý DOM hiển thị trạng thái LỖI (Đổi màu viền và hiện văn bản lỗi)
+        function showError(inputSelector, errorSelector, message) {
+            $(inputSelector).addClass('input-error').removeClass('input-success');
+            $(errorSelector).text(message).fadeIn(200);
+        }
+
+        // Hàm phụ trợ xử lý DOM hiển thị trạng thái HỢP LỆ (Đổi sang viền xanh lá, ẩn lỗi)
+        function showSuccess(inputSelector, errorSelector) {
+            $(inputSelector).addClass('input-success').removeClass('input-error');
+            $(errorSelector).fadeOut(100);
+        }
+    });
+</script>
+</body>
+</html>

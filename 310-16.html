@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Đếm Tương Tác Siêu Đáng Yêu 🌸</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'M PLUS 1p', 'Segoe UI', sans-serif;
+            background-color: #ffeef2; /* Màu nền hồng nhạt sữa */
+            background-image: 
+                radial-gradient(#ffcad4 15%, transparent 16%),
+                radial-gradient(#ffcad4 15%, transparent 16%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .counter-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 4px solid #ffb3c1;
+            border-radius: 30px;
+            box-shadow: 0 12px 24px rgba(255, 179, 193, 0.4);
+            padding: 35px 40px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+        }
+        .counter-container::before, .counter-container::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            width: 40px;
+            height: 40px;
+            background-color: #ffb3c1;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .counter-container::before { left: 40px; }
+        .counter-container::after { right: 40px; }
+
+        h1 {
+            color: #ff758f;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #a3b18a;
+            font-size: 13px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        .counter-display {
+            font-size: 72px;
+            font-weight: 700;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            display: inline-block;
+            min-width: 120px;
+            height: 95px;
+            line-height: 95px;
+            border-radius: 20px;
+            background-color: #fff5f6;
+            border: 3px dashed #ffe5ec;
+            padding: 0 20px;
+        }
+        .count-zero {
+            color: #ff85a1; 
+        }
+        .count-positive {
+            color: #4ea8de; 
+            animation: bounce 0.3s ease;
+        }
+        .count-negative {
+            color: #ff4d6d;
+            animation: shake 0.3s ease;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        button {
+            font-family: 'M PLUS 1p', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 5px 0 var(--shadow-color);
+            position: relative;
+            top: 0;
+        }
+
+        button:active {
+            top: 5px;
+            box-shadow: 0 0px 0 var(--shadow-color);
+        }
+        .btn-increase {
+            background-color: #b5e2fa;
+            color: #2a6f97;
+            --shadow-color: #90e0ef;
+        }
+        .btn-increase:hover { background-color: #90e0ef; }
+        .btn-decrease {
+            background-color: #ffcad4;
+            color: #c9184a;
+            --shadow-color: #ffb3c1;
+        }
+        .btn-decrease:hover { background-color: #ffb3c1; }
+
+        .btn-fast {
+            grid-column: span 2;
+            background-color: #e2afff;
+            color: #6a0dad;
+            --shadow-color: #d694ff;
+        }
+        .btn-fast:hover { background-color: #d694ff; }
+
+    
+        .btn-reset {
+            grid-column: span 2;
+            background-color: #ffe5ec;
+            color: #ff758f;
+            --shadow-color: #ffccd5;
+            font-size: 14px;
+            padding: 8px 12px;
+            margin-top: 5px;
+        }
+        .btn-reset:hover { background-color: #ffccd5; }
+
+        
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+            100% { transform: translateX(0); }
+        }
+
+        .status-badge {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #b7b7a4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="counter-container">
+        <h1>BỘ ĐẾM TƯƠNG TÁC 💖</h1>
+        <div class="subtitle">✨ Lab 16 - jQuery Cute Edition ✨</div>
+        
+        <div id="counter" class="counter-display count-zero">0</div>
+        
+        <div class="button-group">
+            <button id="btn-dec" class="btn-decrease">➖ Giảm 1</button>
+            <button id="btn-inc" class="btn-increase">➕ Tăng 1</button>
+            <button id="btn-fast-inc" class="btn-fast">🚀 Tăng nhanh (+10)</button>
+            <button id="btn-res" class="btn-reset">🔄 Đặt lại từ đầu</button>
+        </div>
+
+        <div class="status-badge">Đang bật quy tắc: Cho phép giá trị âm (🌸′▽`🌸)</div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+        
+            let count = 0;
+
+          
+            function updateUI() {
+                $('#counter').text(count);
+
+                $('#counter').removeClass('count-zero count-positive count-negative');
+
+                if (count === 0) {
+                    $('#counter').addClass('count-zero');
+                } else if (count > 0) {
+                    $('#counter').addClass('count-positive');
+                    
+                    let el = $('#counter');
+                    let newone = el.clone(true);
+                    el.before(newone);
+                    $("." + el.attr("class") + ":last").remove();
+                } else {
+                    $('#counter').addClass('count-negative');
+                }
+            }
+            $('#btn-inc').click(function() {
+                count += 1;
+                updateUI(); 
+            });
+            $('#btn-dec').click(function() {
+                count -= 1; 
+                updateUI();
+            });
+            $('#btn-fast-inc').click(function() {
+                count += 10;
+                updateUI();
+            });
+
+            $('#btn-res').click(function() {
+                count = 0;
+                updateUI();
+            });
+        });
+    </script>
+</body>
+</html>

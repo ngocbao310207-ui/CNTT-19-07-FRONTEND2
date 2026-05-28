@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 05 - Quản Lý Sản Phẩm</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .container {
+            background: #fff; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 650px; border: 3px solid var(--primary-pink);
+        }
+        h2 { text-align: center; color: var(--dark-pink); margin-top: 0; }
+        
+        /* Khu vực bộ lọc filter */
+        .filter-section {
+            background: var(--light-pink); padding: 15px; border-radius: 12px;
+            margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        .filter-group { display: flex; flex-direction: column; }
+        .filter-group label { font-size: 13px; font-weight: bold; color: var(--dark-pink); margin-bottom: 4px; }
+        input, select {
+            padding: 8px; border: 2px solid #ddd; border-radius: 8px; outline: none;
+        }
+        input:focus, select:focus { border-color: var(--primary-pink); }
+        
+        /* Bảng hiển thị danh sách */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: var(--primary-pink); color: white; }
+        tr:hover { background-color: var(--light-pink); }
+        
+        .total-box {
+            margin-top: 15px; padding: 12px; background: #333; color: white;
+            border-radius: 8px; font-weight: bold; text-align: right; font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🌸 Pinky Store Manager 🌸</h2>
+
+    <div class="filter-section">
+        <div class="filter-group">
+            <label>Tìm kiếm theo tên sản phẩm:</label>
+            <input type="text" id="searchName" placeholder="Nhập tên sản phẩm..." oninput="renderProducts()">
+        </div>
+        <div class="filter-group">
+            <label>Lọc theo giá tối đa:</label>
+            <input type="number" id="filterPrice" placeholder="Mức giá tối đa..." oninput="renderProducts()">
+        </div>
+        <div class="filter-group" style="grid-column: span 2;">
+            <label>Sắp xếp giá (Yêu cầu mở rộng):</label>
+            <select id="sortOrder" onchange="renderProducts()">
+                <option value="none">--- Không sắp xếp ---</option>
+                <option value="asc">Giá tăng dần ↑</option>
+                <option value="desc">Giá giảm dần ↓</option>
+            </select>
+        </div>
+    </div>
+
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+
+    <div class="total-box">
+        Tổng giá trị tồn kho của hệ thống: <span id="grandTotal" style="color: #ff65a3;">0 đ</span>
+    </div>
+</div>
+
+<script>
+    // 1. Khai báo dữ liệu mảng đối tượng (Array of Objects) chứa ít nhất 5 sản phẩm mẫu
+    const products = [
+        { id: 1, name: "Son kem Velvet Pink", price: 250000, quantity: 45 },
+        { id: 2, name: "Nước hoa Rose Magic", price: 1200000, quantity: 12 },
+        { id: 3, name: "Phấn má hồng Sakura", price: 350000, quantity: 28 },
+        { id: 4, name: "Kẹp tóc đính đá lấp lánh", price: 45000, quantity: 150 },
+        { id: 5, name: "Gương cầm tay Công chúa", price: 95000, quantity: 60 }
+    ];
+
+    window.onload = function() {
+        renderProducts();
+    };
+
+    // Helper format tiền tệ VND gọn gàng
+    function formatVND(amount) {
+        return amount.toLocaleString('vi-VN') + ' đ';
+    }
+
+    // 2. Viết hàm render danh sách để tái sử dụng liên tục khi lọc/tìm kiếm
+    function renderProducts() {
+        const tbody = document.querySelector("#productTable tbody");
+        tbody.innerHTML = "";
+
+        // Đọc giá trị từ các ô lọc dữ liệu
+        const keyword = document.getElementById("searchName").value.toLowerCase().trim();
+        const maxPrice = parseFloat(document.getElementById("filterPrice").value);
+        const sortOrder = document.getElementById("sortOrder").value;
+
+        // 3. Sử dụng `.filter` để tìm kiếm theo tên và lọc theo điều kiện mức giá cùng lúc
+        let filteredProducts = products.filter(p => {
+            const matchName = p.name.toLowerCase().includes(keyword);
+            const matchPrice = isNaN(maxPrice) ? true : p.price <= maxPrice;
+            return matchName && matchPrice;
+        });
+
+        // --- YÊU CẦU MỞ RỘNG: Sắp xếp sản phẩm theo giá ---
+        if (sortOrder === "asc") {
+            filteredProducts.sort((a, b) => a.price - b.price);
+        } else if (sortOrder === "desc") {
+            filteredProducts.sort((a, b) => b.price - a.price);
+        }
+
+        // Duyệt mảng sản phẩm đã được lọc/sắp xếp để render lên bảng HTML
+        filteredProducts.forEach((p, index) => {
+            const rowTotal = p.price * p.quantity;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td style="font-weight: 600; color:#333;">${p.name}</td>
+                <td>${formatVND(p.price)}</td>
+                <td>${p.quantity}</td>
+                <td style="font-weight: bold; color: var(--dark-pink);">${formatVND(rowTotal)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        if (filteredProducts.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; font-style:italic;">Không tìm thấy sản phẩm phù hợp 🌸</td></tr>`;
+        }
+
+        // --- YÊU CẦU MỞ RỘNG: Tính tổng giá trị tồn kho toàn bộ danh sách gốc ---
+        // Sử dụng phương thức mảng nâng cao .reduce()
+        const totalStockValue = products.reduce((sum, p) => sum + (p.price * p.quantity), 0);
+        document.getElementById("grandTotal").innerText = formatVND(totalStockValue);
+    }
+</script>
+</body>
+</html>

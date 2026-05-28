@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 07 - Thao tác DOM Giao Diện</title>
+    <style>
+        :root {
+            --pink-bg: #ffe4e1;
+            --pink-box: #ffffff;
+            --pink-text: #d81b60;
+            --pink-border: #ff65a3;
+        }
+
+        /* Class đại diện cho Trạng thái 2: Dark Cyberpunk (Đổi trạng thái) */
+        .dark-cyberpunk {
+            --pink-bg: #1e1e24;
+            --pink-box: #2a2a35;
+            --pink-text: #00f0ff;
+            --pink-border: #ff007f;
+            color: #ffffff !important;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--pink-bg);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            transition: all 0.5s ease; /* Hiệu ứng chuyển màu mượt */
+        }
+
+        .card {
+            background: var(--pink-box); padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%; max-width: 400px; text-align: center;
+            border: 3px solid var(--pink-border);
+            transition: all 0.5s ease;
+        }
+
+        h2 { color: var(--pink-text); transition: 0.3s; margin-top: 0; }
+        p { color: #555; font-size: 14px; line-height: 1.5; }
+        .dark-cyberpunk p { color: #ccc; }
+
+        .image-container {
+            width: 120px; height: 120px; margin: 20px auto;
+            border-radius: 50%; overflow: hidden;
+            border: 4px solid var(--pink-border);
+        }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .btn-panel { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        
+        button {
+            padding: 12px; border: none; border-radius: 10px;
+            font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-change { background: var(--pink-border); color: white; }
+        .btn-change:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-restore { background: #6c757d; color: white; display: none; } /* Mặc định ẩn nút khôi phục */
+    </style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+    <h2 id="mainTitle">🌸 Pastel Pink Princess 🌸</h2>
+    
+    <div class="image-container">
+        <img id="avatarImg" src="https://api.dicebear.com/7.x/bottts/svg?seed=pink" alt="Chibi character">
+    </div>
+
+    <p id="descriptionText">Chào mừng bạn đến với vương quốc màu hồng dịu dàng, thơ mộng đầy sự lãng mạn thanh lịch của những đóa hoa anh đào chớm nở.</p>
+
+    <div class="btn-panel">
+        <button class="btn-change" id="btnAction" onclick="changeInterfaceState()">Biến Hình: Dark Cyberpunk ⚡</button>
+        <button class="btn-restore" id="btnReset" onclick="restoreOriginalState()">Trở Về Nguyên Bản 🌸</button>
+    </div>
+</div>
+
+<script>
+    // 2. Dùng DOM lấy tham chiếu đến các phần tử cần chỉnh sửa
+    const card = document.getElementById("mainCard");
+    const title = document.getElementById("mainTitle");
+    const img = document.getElementById("avatarImg");
+    const desc = document.getElementById("descriptionText");
+    const btnAction = document.getElementById("btnAction");
+    const btnReset = document.getElementById("btnReset");
+
+    // 3 & 4. Xử lý hàm thay đổi nội dung sử dụng classList, innerText, src
+    function changeInterfaceState() {
+        // Thay đổi class của khung bọc ngoài thông qua classList
+        card.classList.add("dark-cyberpunk");
+        document.body.classList.add("dark-cyberpunk");
+
+        // Thay đổi phần văn bản động với innerText
+        title.innerText = "⚡ Neon Cyberpunk 2026 ⚡";
+        desc.innerText = "Hệ thống đã chuyển sang chế độ ban đêm viễn tưởng tương lai độc lạ, rực rỡ sắc đèn neon xanh tím ngập tràn năng lượng số hóa!";
+
+        // Thay đổi thuộc tính ảnh bằng cách can thiệp vào thuộc tính .src trực tiếp
+        img.src = "https://api.dicebear.com/7.x/bottts/svg?seed=neon";
+
+        // Quản lý việc hiển thị/ẩn các nút điều khiển mở rộng
+        btnAction.style.display = "none";
+        btnReset.style.display = "block"; // Hiện nút khôi phục lên công khai
+    }
+
+    // Hàm phục hồi trạng thái ban đầu (Yêu cầu mở rộng)
+    function restoreOriginalState() {
+        // Gỡ class phong cách tối
+        card.classList.remove("dark-cyberpunk");
+        document.body.classList.remove("dark-cyberpunk");
+
+        // Hoàn trả văn bản nguyên thủy
+        title.innerText = "🌸 Pastel Pink Princess 🌸";
+        desc.innerText = "Chào mừng bạn đến với vương quốc màu hồng dịu dàng, thơ mộng đầy sự lãng mạn thanh lịch của những đóa hoa anh đào chớm nở.";
+
+        // Trả lại ảnh gốc ban đầu
+        img.src = "https://api.dicebear.com/7.x/bottts/svg?seed=pink";
+
+        // Đổi trạng thái các nút bấm
+        btnAction.style.display = "block";
+        btnReset.style.display = "none";
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 09 - Pinky Planner (To-do List)</title>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .todo-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15);
+            width: 100%; max-width: 450px; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); text-align: center; margin-top: 0; }
+        .input-group { display: flex; gap: 8px; margin-bottom: 20px; }
+        input[type="text"] {
+            flex: 1; padding: 12px; border: 2px solid #ddd;
+            border-radius: 12px; outline: none; font-size: 15px;
+        }
+        input[type="text"]:focus { border-color: var(--primary-pink); }
+        .btn-add { background: var(--primary-pink); color: white; border: none; border-radius: 12px; font-weight: bold; padding: 0 20px; cursor: pointer; }
+        
+        /* Bộ lọc Tab điều khiển (Yêu cầu mở rộng) */
+        .filter-tabs { display: flex; justify-content: space-around; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .tab { font-size: 13px; font-weight: bold; color: #888; cursor: pointer; padding: 4px 12px; border-radius: 15px; }
+        .tab.active { background: var(--light-pink); color: var(--dark-pink); }
+
+        /* Danh sách công việc */
+        .todo-list { list-style: none; padding: 0; margin: 0; max-height: 280px; overflow-y: auto; }
+        .todo-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fdfdfd; border: 1px solid #eee; padding: 12px;
+            border-radius: 12px; margin-bottom: 8px; transition: 0.2s;
+        }
+        .todo-item:hover { background: var(--light-pink); }
+        .todo-text { font-size: 15px; color: #333; cursor: pointer; flex: 1; margin-left: 8px; }
+        .completed .todo-text { text-decoration: line-through; color: #aaa; }
+        .btn-delete { background: none; border: none; color: #ff7675; font-weight: bold; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="todo-card">
+    <h2>🌸 Pinky Planner 🌸</h2>
+    
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="Thêm công việc cần làm hôm nay...">
+        <button class="btn-add" onclick="addTask()">Thêm</button>
+    </div>
+
+    <div class="filter-tabs">
+        <span class="tab active" id="tabAll" onclick="changeFilter('all')">Tất cả</span>
+        <span class="tab" id="tabActive" onclick="changeFilter('active')">Chưa xong</span>
+        <span class="tab" id="tabDone" onclick="changeFilter('done')">Đã xong</span>
+    </div>
+
+    <ul id="todoList" class="todo-list"></ul>
+</div>
+
+<script>
+    // 1. Xây dựng cấu trúc dữ liệu lưu danh sách công việc (Ưu tiên lấy từ LocalStorage nếu có)
+    let todos = JSON.parse(localStorage.getItem('pinky_todos')) || [
+        { id: 1, text: "Học bài Lab môn Lập trình Web 🌸", completed: false },
+        { id: 2, text: "Uống 2 lít nước mỗi ngày", completed: true }
+    ];
+    let currentFilter = 'all';
+
+    // 2. Hàm render danh sách công việc ra HTML bằng createElement
+    function renderTodos() {
+        const listContainer = document.getElementById('todoList');
+        listContainer.innerHTML = ''; // Làm trống danh sách cũ
+
+        // Lọc danh sách theo Tab đang chọn
+        let filteredTodos = todos.filter(todo => {
+            if (currentFilter === 'active') return !todo.completed;
+            if (currentFilter === 'done') return todo.completed;
+            return true; // tất cả
+        });
+
+        filteredTodos.forEach(todo => {
+            const li = document.createElement('li');
+            li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+
+            // Tạo checkbox để đánh dấu hoàn thành
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = todo.completed;
+            checkbox.addEventListener('change', () => toggleTodo(todo.id));
+
+            // Tạo đoạn văn bản
+            const span = document.createElement('span');
+            span.className = 'todo-text';
+            span.innerText = todo.text;
+            span.addEventListener('click', () => toggleTodo(todo.id)); // click text cũng hoàn thành
+
+            // Tạo nút xóa công việc
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn-delete';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+
+            // Lắp ráp các phần tử con vào thẻ li
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+
+            listContainer.appendChild(li);
+        });
+
+        // Đồng bộ lưu mảng vào LocalStorage (Yêu cầu mở rộng)
+        localStorage.setItem('pinky_todos', JSON.stringify(todos));
+    }
+
+    // 3. Xử lý các hành động tác động dữ liệu (Thêm, Đổi trạng thái, Xóa)
+    function addTask() {
+        const input = document.getElementById('taskInput');
+        const text = input.value.trim();
+        if (text === '') {
+            alert("Vui lòng điền nội dung công việc!");
+            return;
+        }
+        
+        const newTodo = { id: Date.now(), text: text, completed: false };
+        todos.push(newTodo);
+        input.value = '';
+        renderTodos();
+    }
+
+    function toggleTodo(id) {
+        todos = todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo);
+        renderTodos();
+    }
+
+    function deleteTodo(id) {
+        todos = todos.filter(todo => todo.id !== id);
+        renderTodos();
+    }
+
+    // Thay đổi bộ lọc hiển thị giữa các Tab
+    function changeFilter(filterType) {
+        currentFilter = filterType;
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        if (filterType === 'all') document.getElementById('tabAll').classList.add('active');
+        if (filterType === 'active') document.getElementById('tabActive').classList.add('active');
+        if (filterType === 'done') document.getElementById('tabDone').classList.add('active');
+        renderTodos();
+    }
+
+    // Cho phép ấn Enter để thêm nhanh công việc
+    document.getElementById('taskInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
+    });
+
+    // Chạy render ngay khi tải ứng dụng lên
+    renderTodos();
+</script>
+</body>
+</html>

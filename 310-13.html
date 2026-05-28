@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 13 - Hiệu Ứng jQuery Ẩn Hiện</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff65a3;
+            --light-pink: #fff0f5;
+            --dark-pink: #d81b60;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffe4e1 0%, #ffb6c1 100%);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .jq-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%; max-width: 400px; text-align: center; border: 3px solid var(--primary-pink);
+        }
+        h2 { color: var(--dark-pink); margin-top: 0; }
+        
+        /* Khối hộp nội dung cần ẩn/hiện điều khiển */
+        .content-box {
+            background: var(--light-pink); padding: 25px; border-radius: 12px;
+            margin: 20px 0; border: 2px dashed var(--primary-pink);
+            font-size: 15px; color: #444; line-height: 1.6;
+        }
+
+        .btn-panel { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        button {
+            padding: 10px 16px; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px;
+        }
+        .btn-hide { background: #ff7675; color: white; }
+        .btn-show { background: #55efc4; color: #2d3436; }
+        .btn-toggle { background: var(--primary-pink); color: white; width: 100%; margin-top: 5px;}
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+<div class="jq-card">
+    <h2>🌸 jQuery Magic Box 🌸</h2>
+    
+    <div class="content-box" id="secretBox">
+        🎁 <b>Hộp quà bí ẩn!</b><br>
+        Bạn vừa kích hoạt hộp nội dung màu hồng siêu đáng yêu chạy bằng công nghệ jQuery Core. Các hiệu ứng chuyển động diễn ra vô cùng mượt mà.
+    </div>
+
+    <div class="btn-panel">
+        <button class="btn-hide" id="btnHide">Ẩn Nội Dung (Hide)</button>
+        <button class="btn-show" id="btnShow">Hiện Nội Dung (Show)</button>
+        
+        <button class="btn-toggle" id="btnToggle">Bấm để Ẩn ⇡</button>
+    </div>
+</div>
+
+<script>
+    // 3. Sử dụng jQuery Selector khi cấu trúc DOM đã sẵn sàng
+    $(document).ready(function() {
+        
+        // Sự kiện nút Ẩn (Sử dụng hiệu ứng fadeOut cho đẹp mắt thay vì ẩn lập tức)
+        $('#btnHide').click(function() {
+            $('#secretBox').fadeOut(400, function() {
+                updateToggleLabel(); // Cập nhật nhãn nút mở rộng sau khi ẩn xong
+            });
+        });
+
+        // Sự kiện nút Hiện (Sử dụng fadeIn tạo cảm giác sang trọng)
+        $('#btnShow').click(function() {
+            $('#secretBox').fadeIn(400, function() {
+                updateToggleLabel(); // Cập nhật nhãn nút mở rộng sau khi hiện xong
+            });
+        });
+
+        // 4. Áp dụng hàm toggle thông minh để đảo ngược trạng thái lập tức
+        $('#btnToggle').click(function() {
+            // Hàm slideToggle tạo hiệu ứng cuộn rèm lên/xuống cực chuyên nghiệp
+            $('#secretBox').slideToggle(300, function() {
+                updateToggleLabel(); 
+            });
+        });
+
+        // Yêu cầu mở rộng: Hàm kiểm tra trạng thái hiển thị `:visible` và thay đổi nhãn chữ
+        function updateToggleLabel() {
+            if ($('#secretBox').is(':visible')) {
+                $('#btnToggle').text('Bấm để Ẩn ⇡').css('background-color', '#ff65a3');
+            } else {
+                $('#btnToggle').text('Bấm để Hiện ⇣').css('background-color', '#6c5ce7');
+            }
+        }
+    });
+</script>
+</body>
+</html>

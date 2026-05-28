@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 23 - Pinky Product Grid</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #fff0f5; font-family: 'Segoe UI', sans-serif; }
+        .product-card {
+            border: 2px solid #ffe4e1;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff65a3;
+            box-shadow: 0 10px 20px rgba(216, 27, 96, 0.1) !important;
+        }
+        .btn-view {
+            background-color: #ff65a3; color: white; border: none;
+            font-weight: 500; border-radius: 8px;
+        }
+        .btn-view:hover { background-color: #d81b60; color: white; }
+        .discount-badge {
+            position: absolute; top: 10px; right: 10px;
+            background-color: #d81b60; color: white;
+            padding: 5px 10px; font-weight: bold; border-radius: 20px; font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold" style="color: #d81b60;">🌸 Pastel Pink Boutique 🌸</h2>
+        <p class="text-muted">Danh sách mỹ phẩm thịnh hành xuân hè 2026</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        
+        <script>
+            const products = [
+                { id: 1, name: "Son Môi Velvet Pink", price: "350.000đ", sale: "-15%", img: "pink" },
+                { id: 2, name: "Phấn Má Hồng Đào", price: "420.000đ", sale: "-20%", img: "peach" },
+                { id: 3, name: "Nước Hoa Sakura", price: "1.250.000đ", sale: "Hot", img: "flower" },
+                { id: 4, name: "Kem Nền Sáng Da", price: "510.000đ", sale: "-10%", img: "skin" },
+                { id: 5, name: "Serum Cấp Ẩm Mượt", price: "680.000đ", sale: "New", img: "water" },
+                { id: 6, name: "Cọ Trang Điểm Thỏ", price: "190.000đ", sale: "-5%", img: "rabbit" }
+            ];
+
+            products.forEach(p => {
+                document.write(`
+                    <div class="col">
+                        <div class="card h-100 product-card shadow-sm rounded-4 overflow-hidden">
+                            <span class="discount-badge">${p.sale}</span>
+                            
+                            <img src="https://api.dicebear.com/7.x/icons/svg?seed=${p.img}&icon=heart" class="card-img-top bg-light p-4" style="height: 180px; object-fit: contain;" alt="${p.name}">
+                            
+                            <div class="card-body d-flex flex-column justify-content-between text-center">
+                                <div>
+                                    <h5 class="card-title fw-bold text-dark mb-1 small text-uppercase" style="letter-spacing:0.5px;">${p.name}</h5>
+                                    <p class="card-text text-danger fw-semibold mb-3">${p.price}</p>
+                                </div>
+                                <button class="btn btn-view w-100 py-2" data-bs-toggle="modal" data-bs-target="#quickViewModal" onclick="setModalData('${p.name}', '${p.price}')">Xem Chi Tiết</button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
+        </script>
+
+    </div>
+</div>
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header" style="background-color: #fff0f5; border-bottom: 2px solid #ffe4e1;">
+                <h5 class="modal-title fw-bold text-dark" id="modalProdName">Tên sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-theme="dark" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <img src="https://api.dicebear.com/7.x/icons/svg?seed=pink&icon=heart" class="mb-3 img-fluid rounded bg-light p-3" style="width: 120px;" alt="Thương hiệu">
+                <p class="text-muted">Sản phẩm chiết xuất hoàn toàn từ thiên nhiên, an toàn, lành tính và bảo vệ làn da tươi trẻ rạng ngời suốt 24 giờ.</p>
+                <h4 class="text-danger fw-bold" id="modalProdPrice">0đ</h4>
+            </div>
+            <div class="modal-footer justify-content-center border-0">
+                <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-view rounded-3 px-4" onclick="alert('Đã thêm sản phẩm thành công vào giỏ hàng!')">Thêm Vào Giỏ Hàng 🛒</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hàm truyền dữ liệu động vào Modal khi nhấn nút xem nhanh
+    function setModalData(name, price) {
+        document.getElementById('modalProdName').innerText = name;
+        document.getElementById('modalProdPrice').innerText = price;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

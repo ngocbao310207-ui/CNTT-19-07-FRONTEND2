@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinky BMI Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pink-primary: #ff6699;
+            --pink-hover: #ff3377;
+            --pink-light: #fff0f5;
+            --pink-pastel: #ffe4e1;
+            
+            /* Màu sắc cho từng trạng thái BMI (yêu cầu mở rộng) */
+            --status-thin: #17a2b8;      /* Gầy - Xanh dương */
+            --status-normal: #28a745;    /* Bình thường - Xanh lá */
+            --status-over: #ffc107;      /* Thừa cân - Vàng */
+            --status-obese: #dc3545;     /* Béo phì - Đỏ */
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe4e1 0%, #fff0f5 100%);
+            font-family: 'Comfortaa', cursive, sans-serif;
+            color: #4a4a4a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .bmi-card {
+            background: white;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(255, 102, 153, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .bmi-header {
+            background: linear-gradient(45deg, var(--pink-primary), #ff99bb);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .bmi-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .form-control {
+            border: 2px solid var(--pink-pastel);
+            border-radius: 15px;
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--pink-primary);
+            box-shadow: 0 0 0 0.25rem rgba(255, 102, 153, 0.25);
+        }
+
+        .btn-pink {
+            background-color: var(--pink-primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-pink:hover {
+            background-color: var(--pink-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 51, 119, 0.3);
+        }
+
+        /* Vùng hiển thị kết quả */
+        #resultBox {
+            display: none; /* Ẩn đi lúc ban đầu, tính xong mới hiện */
+            background-color: var(--pink-light);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .bmi-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--pink-hover);
+            margin-bottom: 5px;
+        }
+
+        .bmi-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bmi-card">
+    <div class="bmi-header">
+        <h2><i class="fa-solid fa-heartbeat"></i> PINKY BMI CALCULATOR <i class="fa-solid fa-heartbeat"></i></h2>
+        <small>Kiểm tra thể trạng siêu cấp chuẩn xác</small>
+    </div>
+
+    <div class="card-body p-4">
+        <form id="bmiForm">
+            <div class="mb-4">
+                <label class="form-label fw-bold"><i class="fa-solid fa-weight-scale text-danger"></i> Cân nặng (kg)</label>
+                <input type="number" step="0.1" class="form-control" id="weight" placeholder="Ví dụ: 50.5" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold"><i class="fa-solid fa-ruler-vertical text-primary"></i> Chiều cao (m)</label>
+                <input type="number" step="0.01" class="form-control" id="height" placeholder="Ví dụ: 1.65" required>
+            </div>
+
+            <button type="button" class="btn btn-pink" onclick="calculateBMI()">
+                <i class="fa-solid fa-calculator"></i> Tính Chỉ Số BMI
+            </button>
+        </form>
+
+        <div id="resultBox">
+            <p class="m-0 text-muted fw-bold">Chỉ số BMI của bạn là:</p>
+            <div class="bmi-score" id="bmiValue">20.5</div>
+            <div class="bmi-status" id="bmiStatus">Bình thường</div>
+            <p class="mt-3 mb-0 text-secondary small" id="bmiAdvice">Hãy tiếp tục duy trì chế độ ăn uống này nhé! 🌸</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateBMI() {
+        // 1. Lấy dữ liệu thô từ các ô input
+        const weightInput = document.getElementById("weight").value;
+        const heightInput = document.getElementById("height").value;
+
+        // 2. Ép kiểu dữ liệu sang dạng số (Sử dụng hàm Number theo yêu cầu bài lab)
+        const weight = Number(weightInput);
+        const height = Number(heightInput);
+
+        // Lấy các thẻ HTML hiển thị kết quả để lát nữa thay đổi nội dung/màu sắc
+        const resultBox = document.getElementById("resultBox");
+        const bmiValue = document.getElementById("bmiValue");
+        const bmiStatus = document.getElementById("bmiStatus");
+        const bmiAdvice = document.getElementById("bmiAdvice");
+
+        // === YÊU CẦU MỞ RỘNG: KIỂM TRA DỮ LIỆU ĐẦU VÀO ===
+        if (weightInput === "" || heightInput === "") {
+            alert("Vui lòng nhập đầy đủ cả chiều cao và cân nặng nha! 🥺");
+            resultBox.style.display = "none";
+            return;
+        }
+
+        if (weight <= 0 || height <= 0) {
+            alert("Chiều cao và cân nặng phải lớn hơn 0 mới đúng chứ nè! ❌");
+            resultBox.style.display = "none";
+            return;
+        }
+
+        // 3. TÍNH CHỈ SỐ BMI (Công thức chuẩn: Cân nặng / Chiều cao bình phương)
+        // Làm tròn đến 2 chữ số thập phân bằng phương thức .toFixed(2)
+        const bmi = (weight / (height * height)).toFixed(2);
+
+        // Biến lưu trữ phân loại và lời khuyên
+        let statusText = "";
+        let adviceText = "";
+        let statusColor = "";
+
+        // 4. SỬ DỤNG CÂU LỆNH ĐIỀU KIỆN IF...ELSE ĐỂ PHÂN LOẠI (Ít nhất 4 mức)
+        if (bmi < 18.5) {
+            statusText = "Gầy 🦴";
+            adviceText = "Bạn hơi gầy một chút rồi, nhớ bổ sung thêm chất dinh dưỡng nhé! 💕";
+            statusColor = "var(--status-thin)";
+        } else if (bmi >= 18.5 && bmi < 24.9) {
+            statusText = "Bình thường ✨";
+            adviceText = "Thân hình siêu chuẩn! Hãy tiếp tục duy trì phong độ này nha! 🌸";
+            statusColor = "var(--status-normal)";
+        } else if (bmi >= 24.9 && bmi < 29.9) {
+            statusText = "Thừa cân 🧸";
+            adviceText = "Hơi mũm mĩm một chút rồi nè, chăm tập thể dục hơn xíu nha! 💪";
+            statusColor = "var(--status-over)";
+        } else {
+            statusText = "Béo phì 🚨";
+            adviceText = "Cảnh báo nha! Bạn nên điều chỉnh lại chế độ ăn uống để bảo vệ sức khỏe! ❤️";
+            statusColor = "var(--status-obese)";
+        }
+
+        // 5. HIỂN THỊ KẾT QUẢ VÀ ĐỔI MÀU SẮC TRỰC TIẾP TRÊN GIAO DIỆN
+        bmiValue.innerText = bmi;
+        bmiStatus.innerText = statusText;
+        bmiAdvice.innerText = adviceText;
+        
+        // Thay đổi màu nền của khung phân loại thể trạng theo từng mức (Yêu cầu mở rộng)
+        bmiStatus.style.backgroundColor = statusColor;
+
+        // Hiện hộp kết quả lên màn hình với hiệu ứng mượt mà
+        resultBox.style.display = "block";
+    }
+</script>
+
+</body>
+</html>
