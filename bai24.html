@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Cache Eviction - Lab 24</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0f0202; font-family: 'Share Tech Mono', monospace; color: #ff2222; }
+        .cyber-panel { background: #1c0505; border: 2px solid #ff2222; box-shadow: 0 0 20px rgba(255, 34, 34, 0.2); border-radius: 4px; max-width: 500px; margin: auto; }
+        .btn-sync-cyber { background: #ff2222; color: #ffffff; font-family: 'Orbitron', sans-serif; font-weight: 800; border: none; border-radius: 2px; padding: 14px; width: 100%; transition: all 0.3s; }
+        .btn-sync-cyber:hover:not(:disabled) { background: #ffffff; color: #0f0202; box-shadow: 0 0 20px #ffffff; }
+        .btn-sync-cyber:disabled { opacity: 0.4; cursor: not-allowed; }
+        .status-box { background: #0a0101; border: 1px dashed #ff2222; padding: 10px; font-size: 0.9rem; text-align: center; }
+    </style>
+</head>
+<body class="d-flex align-items-center min-vh-100">
+    <div class="container">
+        <div class="cyber-panel p-4 text-center">
+            <h5 class="font-family 'Orbitron' fw-bold text-white mb-3">// CACHE_EVICTION_PROTOCOL //</h5>
+            <p class="text-white opacity-75 small mb-4">Gửi chỉ thị ép buộc Kernel bỏ qua hoàn toàn cơ chế lưu đệm cũ (no-store) và đồng bộ cấu trúc mới từ Server đám mây.</p>
+            <button class="btn-sync-cyber text-uppercase mb-3" id="triggerSync">FORCE_RE_SYNC_HARDWARE</button>
+            <div class="status-box text-white" id="timeLogs">AWAITING INTERACTION COMMANDS...</div>
+        </div>
+    </div>
+    <script>
+        const API = "https://664dbfb9ede9608387fa541e.mockapi.io/students";
+        document.getElementById("triggerSync").addEventListener("click", () => {
+            const btn = document.getElementById("triggerSync");
+            btn.disabled = true;
+            btn.textContent = "SYNCHRONIZING PACKETS...";
+            fetch(API, { cache: "no-store" })
+                .then(res => res.json())
+                .then(() => {
+                    const now = new Date();
+                    const stamp = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                    document.getElementById("timeLogs").innerHTML = `<span style="color: #00ff66;">SYNC SUCCESSFUL // TIMESTAMP: [${stamp}]</span>`;
+                })
+                .catch(() => {
+                    document.getElementById("timeLogs").innerHTML = `<span>NETWORK EXCEPTION DETECTED</span>`;
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = "FORCE_RE_SYNC_HARDWARE";
+                });
+        });
+    </script>
+</body>
+</html>

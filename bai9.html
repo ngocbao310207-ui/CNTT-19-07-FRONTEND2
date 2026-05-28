@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 09 - CYBER MISSION DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-cyber: #02060c;
+            --panel-bg: rgba(6, 15, 28, 0.85);
+            --neon-blue: #0088ff;
+            --neon-cyan: #00f3ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff1453;
+            --text-main: #cbd7e5;
+            --border-glow: rgba(0, 136, 255, 0.18);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-cyber); color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            z-index: 999; background-size: 100% 4px; pointer-events: none;
+        }
+        .hud-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 136, 255, 0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 136, 255, 0.01) 1px, transparent 1px);
+            background-size: 30px 30px; z-index: -1;
+        }
+        nav {
+            background: rgba(2, 6, 12, 0.95); border-bottom: 2px solid var(--border-glow);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .dnu-logo { height: 60px; filter: drop-shadow(0 0 8px var(--neon-blue)); }
+        .brand-text .title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .brand-text .subtitle { font-size: 0.8rem; color: var(--neon-blue); }
+        .container { max-width: 650px; width: 100%; margin: 2rem auto; padding: 0 1.5rem; }
+        .todo-panel {
+            background: var(--panel-bg); border: 1px solid var(--border-glow); padding: 2rem;
+            clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 100%, 25px 100%, 0 calc(100% - 25px));
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        }
+        .panel-header { font-family: 'Orbitron', sans-serif; font-size: 1.15rem; color: #fff; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem; }
+        .panel-header i { color: var(--neon-cyan); }
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .input-group input {
+            flex: 1; background: #010306; border: 1px solid rgba(0, 136, 255, 0.2);
+            padding: 0.75rem 1rem; color: #fff; font-family: inherit; font-size: 1rem; outline: none;
+        }
+        .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 8px rgba(0, 243, 255, 0.2); }
+        .btn-add {
+            background: var(--neon-blue); color: #fff; border: none; padding: 0 1.5rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; cursor: pointer;
+            clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+        }
+        .btn-add:hover { background: var(--neon-cyan); color: #000; }
+        .filter-tabs { display: flex; gap: 0.35rem; margin-bottom: 1.5rem; background: #010306; padding: 0.25rem; border: 1px solid rgba(255,255,255,0.02); }
+        .tab-btn {
+            flex: 1; background: transparent; border: none; color: #75869c; padding: 0.5rem;
+            font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+        }
+        .tab-btn.active { background: rgba(0, 136, 255, 0.12); color: var(--neon-cyan); border-bottom: 2px solid var(--neon-cyan); }
+        .mission-list { display: flex; flex-direction: column; gap: 0.6rem; min-height: 150px; }
+        .mission-item {
+            background: #02050a; border: 1px solid rgba(255,255,255,0.03); padding: 0.75rem 1rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .mission-text { font-size: 0.95rem; word-break: break-all; transition: all 0.2s; }
+        .mission-item.completed .mission-text { text-decoration: line-through; color: #4e5e73; font-style: italic; }
+        .action-btns { display: flex; gap: 0.5rem; }
+        .btn-icon {
+            background: transparent; border: 1px solid transparent; width: 32px; height: 32px;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-comp { border-color: rgba(57, 255, 20, 0.2); color: var(--neon-green); }
+        .btn-comp:hover { background: var(--neon-green); color: #000; }
+        .btn-del { border-color: rgba(255, 20, 83, 0.2); color: var(--neon-red); }
+        .btn-del:hover { background: var(--neon-red); color: #fff; }
+        footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #445469; border-top: 1px solid rgba(255,255,255,0.02); }
+    </style>
+</head>
+<body>
+    <div class="hud-grid"></div>
+    <nav>
+        <div class="nav-brand">
+            <img class="dnu-logo" src="https://inkythuatso.com/uploads/thumbnails/800/2021/12/logo-dai-hoc-dai-nam-inkythuatso-converted-01-23-09-54-10.jpg" alt="DNU Logo">
+            <div class="brand-text">
+                <div class="title">MISSION CTRL</div>
+                <div class="subtitle">KHOA CNTT - ĐẠI HỌC ĐẠI NAM</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--neon-cyan);">LAB_09 // TO-DO ARCHITECTURE</div>
+    </nav>
+    <div class="container">
+        <div class="todo-panel">
+            <div class="panel-header"><i class="fa-solid fa-list-check"></i> TRẠM PHÂN PHỐI NHIỆM VỤ CÁ NHÂN</div>
+            <div class="input-group">
+                <input type="text" id="inp-task-content" placeholder="Nhập định nghĩa tên công việc cần triển khai...">
+                <button class="btn-add" onclick="createNewTask()">Thêm</button>
+            </div>
+            <div class="filter-tabs">
+                <button class="tab-btn active" id="tab-all" onclick="switchFilterTab('all')">Tất cả</button>
+                <button class="tab-btn" id="tab-pending" onclick="switchFilterTab('pending')">Chưa xong</button>
+                <button class="tab-btn" id="tab-done" onclick="switchFilterTab('done')">Đã làm</button>
+            </div>
+            <div class="mission-list" id="task-list-container"></div>
+        </div>
+    </div>
+    <footer>
+        SYS.MGR // ĐẠI HỌC ĐẠI NAM — KHƠI DẬY TIỀM NĂNG VƯƠN TỚI THÀNH CÔNG
+    </footer>
+    <script>
+        let tasksArray = JSON.parse(localStorage.getItem('DNU_TASKS')) || [
+            { id: 1, text: "Xây dựng khung layout HTML trang chủ Lab01", completed: true },
+            { id: 2, text: "Viết logic chuỗi thuật toán xử lý rẽ nhánh đơn hàng", completed: false }
+        ];
+        let currentFilter = 'all';
+        function saveTasksToStorage() {
+            localStorage.setItem('DNU_TASKS', JSON.stringify(tasksArray));
+        }
+        function createNewTask() {
+            const input = document.getElementById('inp-task-content');
+            const text = input.value.trim();
+            if (!text) return;
+            const newTask = {
+                id: Date.now(),
+                text: text,
+                completed: false
+            };
+            tasksArray.push(newTask);
+            input.value = '';
+            saveTasksToStorage();
+            renderTasksList();
+        }
+        function toggleTaskStatus(id) {
+            tasksArray = tasksArray.map(t => {
+                if (t.id === id) t.completed = !t.completed;
+                return t;
+            });
+            saveTasksToStorage();
+            renderTasksList();
+        }
+        function deleteTaskFromList(id) {
+            tasksArray = tasksArray.filter(t => t.id !== id);
+            saveTasksToStorage();
+            renderTasksList();
+        }
+        function switchFilterTab(tabName) {
+            currentFilter = tabName;
+            document.getElementById('tab-all').classList.remove('active');
+            document.getElementById('tab-pending').classList.remove('active');
+            document.getElementById('tab-done').classList.remove('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+            renderTasksList();
+        }
+        function renderTasksList() {
+            const container = document.getElementById('task-list-container');
+            let filteredTasks = tasksArray.filter(t => {
+                if (currentFilter === 'pending') return !t.completed;
+                if (currentFilter === 'done') return t.completed;
+                return true;
+            });
+            if (filteredTasks.length === 0) {
+                container.innerHTML = `<div style="color:#445469; text-align:center; padding-top:2rem;">Không tìm thấy bản ghi nhiệm vụ tương ứng.</div>`;
+                return;
+            }
+            let listHtml = '';
+            filteredTasks.forEach(t => {
+                listHtml += `
+                    <div class="mission-item ${t.completed ? 'completed' : ''}">
+                        <div class="mission-text">${t.text}</div>
+                        <div class="action-btns">
+                            <button class="btn-icon btn-comp" onclick="toggleTaskStatus(${t.id})">
+                                <i class="fa-solid ${t.completed ? 'fa-rotate-left' : 'fa-check'}"></i>
+                            </button>
+                            <button class="btn-icon btn-del" onclick="deleteTaskFromList(${t.id})">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = listHtml;
+        }
+        window.onload = renderTasksList;
+    </script>
+</body>
+</html>                             

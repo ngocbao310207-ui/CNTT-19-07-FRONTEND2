@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Trung Tâm Điều Hành - Lab 15-24</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+        .neo-card {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 16px;
+            box-shadow: 4px 4px 0px #0f172a;
+        }
+        .main-header-title {
+            font-weight: 900;
+            color: #0f172a;
+            text-transform: uppercase;
+        }
+        .cyber-table { color: #0f172a; vertical-align: middle; }
+        .cyber-table thead th {
+            background: #f8fafc !important;
+            color: #0f172a;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 12px;
+            border-bottom: 2px solid #0f172a;
+            padding: 14px;
+        }
+        .cyber-table tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .cyber-table tbody tr:hover { background: #f0fdf4; }
+        .neo-control {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            color: #0f172a;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+        .neo-control:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 3px 3px 0px #0f172a;
+            color: #0f172a;
+        }
+        .page-link-neo {
+            background: #ffffff;
+            color: #0f172a;
+            border: 2px solid #0f172a;
+            padding: 6px 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 2px 2px 0px #0f172a;
+            transition: all 0.15s;
+        }
+        .page-link-neo:hover:not(.disabled) {
+            background: #f3f4f6;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #0f172a;
+        }
+        .page-link-neo.disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+        .counter-badge {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 12px;
+            box-shadow: 3px 3px 0px #0f172a;
+        }
+        .badge-class {
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #0f172a;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="py-4">
+
+    <div class="container-fluid px-2 px-md-4" style="max-width: 1400px;">
+        
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-3 border-bottom border-dark border-opacity-10">
+            <div>
+                <h2 class="main-header-title m-0">Trung Tâm Lưu Trữ Đám Mây</h2>
+                <p class="text-muted small fw-bold m-0 mt-1">Nền tảng kiểm soát các đầu nút API truyền tải thông tin</p>
+            </div>
+            <div class="d-flex gap-2 counter-badge p-2 px-3 align-items-center">
+                <i class="bi bi-cpu-fill text-primary fs-5"></i>
+                <div class="small fw-bold">
+                    <span class="text-muted">Tổng số nút:</span>
+                    <span class="text-dark fs-6 ms-1" id="totalRecords">00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-4">
+                <div class="neo-card p-4">
+                    <h5 class="fw-bold mb-3 text-uppercase font-monospace" id="formTitle">Khởi tạo thực thể mới</h5>
+                    <form id="entityForm">
+                        <input type="hidden" id="entityId">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Họ tên đối tượng</label>
+                            <input type="text" class="form-control neo-control" id="formName" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Hộp thư điện tử</label>
+                            <input type="email" class="form-control neo-control" id="formEmail" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Khối lớp quản lý</label>
+                            <input type="text" class="form-control neo-control" id="formClass" required autocomplete="off">
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-neo-green w-100 fw-bold neo-control" style="background:#3b82f6; border-size:2px; color:white;" id="btnSubmit">Lưu Cấu Trúc</button>
+                            <button type="button" class="btn btn-outline-danger fw-bold d-none" style="border:2px solid #ef4444; border-radius:8px;" id="btnCancelEdit">Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-8">
+                <div class="neo-card p-4">
+                    <div class="row g-2 mb-3">
+                        <div class="col-10 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 border-dark border-2"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" class="form-control neo-control border-start-0 border-2" id="searchBox" placeholder="Tìm kiếm đối tượng thời gian thực...">
+                            </div>
+                        </div>
+                        <div class="col-2 col-md-6 text-end">
+                            <button class="btn btn-white border-2 border-dark h-100 fw-bold" style="border-radius:8px;" id="btnRefresh"><i class="bi bi-arrow-clockwise"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table cyber-table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Email</th>
+                                    <th>Lớp học</th>
+                                    <th class="text-end">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableDataBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <button class="page-link-neo" id="btnPrevPage"><i class="bi bi-chevron-left me-1"></i>Trước</button>
+                        <span class="small font-monospace fw-bold text-muted" id="pageIndicator">Trang 1 / 1</span>
+                        <button class="page-link-neo" id="btnNextPage">Sau<i class="bi bi-chevron-right ms-1"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://664dbfb9ede9608387fa541e.mockapi.io/students";
+        
+        let allCachedData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const itemsPerPage = 6;
+
+        const tableDataBody = document.getElementById("tableDataBody");
+        const totalRecords = document.getElementById("totalRecords");
+        const pageIndicator = document.getElementById("pageIndicator");
+        const searchBox = document.getElementById("searchBox");
+        
+        const entityForm = document.getElementById("entityForm");
+        const entityId = document.getElementById("entityId");
+        const formName = document.getElementById("formName");
+        const formEmail = document.getElementById("formEmail");
+        const formClass = document.getElementById("formClass");
+        const formTitle = document.getElementById("formTitle");
+        const btnSubmit = document.getElementById("btnSubmit");
+        const btnCancelEdit = document.getElementById("btnCancelEdit");
+
+        function syncCoreEngine() {
+            tableDataBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 fw-bold text-muted"><div class="spinner-border spinner-border-sm text-dark me-2"></div>Đang tải dữ liệu mạng...</td></tr>`;
+            fetch(API_URL)
+                .then(res => res.json())
+                .then(data => {
+                    allCachedData = Array.isArray(data) ? data : [];
+                    executeFilterAndRender();
+                })
+                .catch(() => {
+                    tableDataBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-danger fw-bold"><i class="bi bi-wifi-off me-2"></i>Mất kết nối với MockAPI.</td></tr>`;
+                });
+        }
+
+        function executeFilterAndRender() {
+            const keyword = searchBox.value.trim().toLowerCase();
+            filteredData = allCachedData.filter(item => 
+                (item.fullName && item.fullName.toLowerCase().includes(keyword)) ||
+                (item.id && item.id.toString().includes(keyword)) ||
+                (item.classroom && item.classroom.toLowerCase().includes(keyword))
+            );
+
+            totalRecords.textContent = String(allCachedData.length).padStart(2, '0');
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            renderTableSlice();
+        }
+
+        function renderTableSlice() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+            pageIndicator.textContent = `Trang ${currentPage} / ${totalPages}`;
+
+            document.getElementById("btnPrevPage").classList.toggle("disabled", currentPage === 1);
+            document.getElementById("btnNextPage").classList.toggle("disabled", currentPage === totalPages);
+
+            const startIdx = (currentPage - 1) * itemsPerPage;
+            const sliceData = filteredData.slice(startIdx, startIdx + itemsPerPage);
+
+            if(sliceData.length === 0) {
+                tableDataBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 fw-bold text-muted">Không tồn tại đối tượng tương hợp.</td></tr>`;
+                return;
+            }
+
+            tableDataBody.innerHTML = sliceData.map(item => `
+                <tr>
+                    <td class="font-monospace fw-bold text-primary">#${item.id}</td>
+                    <td class="fw-bold">${item.fullName || "Trống"}</td>
+                    <td class="fw-medium text-secondary">${item.email || "N/A"}</td>
+                    <td><span class="badge badge-class">${item.classroom || "N/A"}</span></td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary border-0 fw-bold" onclick="initiateEditMode('${item.id}')"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-outline-danger border-0 fw-bold" onclick="triggerDeleteNode('${item.id}')"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        entityForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const id = entityId.value;
+            const payload = {
+                fullName: formName.value.trim(),
+                email: formEmail.value.trim(),
+                classroom: formClass.value.trim()
+            };
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Xử lý...`;
+
+            const requestConfig = id 
+                ? { url: `${API_URL}/${id}`, method: "PUT" }
+                : { url: API_URL, method: "POST" };
+
+            fetch(requestConfig.url, {
+                method: requestConfig.method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(() => {
+                exitEditState();
+                syncCoreEngine();
+            })
+            .catch(() => alert("Sự cố dữ liệu khi thực thi tác vụ."))
+            .finally(() => {
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = "Lưu Cấu Trúc";
+            });
+        });
+
+        function initiateEditMode(id) {
+            const target = allCachedData.find(item => item.id == id);
+            if(!target) return;
+
+            formTitle.textContent = `Sửa Thực Thể #${id}`;
+            entityId.value = target.id;
+            formName.value = target.fullName || "";
+            formEmail.value = target.email || "";
+            formClass.value = target.classroom || "";
+
+            btnCancelEdit.classList.remove("d-none");
+            btnSubmit.style.background = "#eab308";
+            formName.focus();
+        }
+
+        function exitEditState() {
+            formTitle.textContent = "Khởi tạo thực thể mới";
+            entityId.value = "";
+            entityForm.reset();
+            btnCancelEdit.classList.add("d-none");
+            btnSubmit.style.background = "#3b82f6";
+        }
+
+        function triggerDeleteNode(id) {
+            if(!confirm(`Xác thực lệnh phá hủy đối tượng #${id}?`)) return;
+            fetch(`${API_URL}/${id}`, { method: "DELETE" })
+                .then(() => syncCoreEngine());
+        }
+
+        searchBox.addEventListener("input", () => { currentPage = 1; executeFilterAndRender(); });
+        document.getElementById("btnRefresh").addEventListener("click", syncCoreEngine);
+        btnCancelEdit.addEventListener("click", exitEditState);
+        
+        document.getElementById("btnPrevPage").addEventListener("click", () => { if(currentPage > 1) { currentPage--; renderTableSlice(); } });
+        document.getElementById("btnNextPage").addEventListener("click", () => { const max = Math.ceil(filteredData.length / itemsPerPage); if(currentPage < max) { currentPage++; renderTableSlice(); } });
+
+        window.addEventListener("DOMContentLoaded", syncCoreEngine);
+    </script>
+</body>
+</html> 

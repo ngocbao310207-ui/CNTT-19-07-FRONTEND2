@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 07 - DYNAMIC DOM INTERFACE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-cyber: #0b0f12;
+            --panel-bg: rgba(18, 24, 30, 0.85);
+            --neon-cyan: #00f3ff;
+            --neon-orange: #ff6c00;
+            --neon-green: #39ff14;
+            --text-main: #cbdad5;
+            --border-glow: rgba(0, 243, 255, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-cyber); color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            z-index: 999; background-size: 100% 4px; pointer-events: none;
+        }
+        .space-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 243, 255, 0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.01) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1;
+        }
+        nav {
+            background: rgba(11, 15, 18, 0.95); border-bottom: 2px solid var(--border-glow);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .dnu-logo { height: 60px; filter: drop-shadow(0 0 8px var(--neon-cyan)); }
+        .brand-text .title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .brand-text .subtitle { font-size: 0.8rem; color: var(--neon-cyan); }
+        .container { max-width: 700px; width: 100%; margin: 2rem auto; padding: 0 1.5rem; }
+        .dom-panel {
+            background: var(--panel-bg); border: 1px solid var(--border-glow); padding: 2.5rem 2rem;
+            clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 100%, 25px 100%, 0 calc(100% - 25px));
+            box-shadow: 0 0 25px rgba(0,0,0,0.5); transition: all 0.5s ease;
+        }
+        .media-frame {
+            width: 100%; height: 220px; background: #030507; border: 1px solid rgba(255,255,255,0.03);
+            margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        .media-frame i { font-size: 5rem; color: var(--neon-cyan); transition: all 0.5s ease; filter: drop-shadow(0 0 15px rgba(0,243,255,0.4)); }
+        .media-frame::before { content: "CORE_VISUAL_FEED //"; position: absolute; top: 0.75rem; left: 1rem; font-size: 0.75rem; color: #4b5a66; }
+        .content-title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: #fff; margin-bottom: 0.75rem; font-weight: 700; transition: color 0.3s; }
+        .content-desc { font-size: 1rem; color: #8fa4b3; line-height: 1.5; margin-bottom: 2rem; transition: color 0.3s; }
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn-ctrl {
+            background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan); padding: 0.9rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;
+            cursor: pointer; transition: all 0.3s;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        .btn-ctrl:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .btn-restore { color: var(--neon-orange); border-color: var(--neon-orange); }
+        .btn-restore:hover { background: var(--neon-orange); color: #000; box-shadow: 0 0 15px rgba(255, 108, 0, 0.4); }
+        .state-orange { border-color: var(--neon-orange); box-shadow: inset 0 0 20px rgba(255, 108, 0, 0.05); }
+        .state-orange i { color: var(--neon-orange) !important; filter: drop-shadow(0 0 15px rgba(255,108,0,0.4)) !important; }
+        .state-green { border-color: var(--neon-green); box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.05); }
+        .state-green i { color: var(--neon-green) !important; filter: drop-shadow(0 0 15px rgba(57,255,20,0.4)) !important; }
+        .comms-box {
+            background: rgba(18, 24, 30, 0.9); border: 1px solid var(--border-glow); padding: 1.25rem 2rem;
+            margin: 2rem auto; max-width: 700px; width: calc(100% - 3rem);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .comms-box p { font-size: 0.85rem; color: #7f919e; }
+        .comms-box p i { color: var(--neon-cyan); margin-right: 0.5rem; }
+        footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #4b5a66; border-top: 1px solid rgba(255,255,255,0.02); }
+    </style>
+</head>
+<body>
+    <div class="space-bg"></div>
+    <nav>
+        <div class="nav-brand">
+            <img class="dnu-logo" src="https://inkythuatso.com/uploads/thumbnails/800/2021/12/logo-dai-hoc-dai-nam-inkythuatso-converted-01-23-09-54-10.jpg" alt="DNU Logo">
+            <div class="brand-text">
+                <div class="title">DOM MODIFIER</div>
+                <div class="subtitle">KHOA CNTT - ĐẠI HỌC ĐẠI NAM</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--neon-cyan);">LAB_07 // DOM MUTATION</div>
+    </nav>
+    <div class="container">
+        <div class="dom-panel" id="main-panel">
+            <div class="media-frame">
+                <i class="fa-solid fa-satellite" id="core-icon"></i>
+            </div>
+            <h1 class="content-title" id="txt-title">TRẠNG THÁI GIAO DIỆN MẶC ĐỊNH</h1>
+            <p class="content-desc" id="txt-desc">Hệ thống đang hoạt động ở chế độ kết nối cơ sở tiêu chuẩn. Chưa có bất kỳ tín hiệu DOM hay đột biến cấu trúc nào được kích hoạt từ các lớp sự kiện điều khiển của người dùng.</p>
+            <div class="control-grid">
+                <button class="btn-ctrl" onclick="mutateInterfaceState()">Đổi trạng thái</button>
+                <button class="btn-ctrl btn-restore" onclick="restoreInterfaceDefault()">Khôi phục gốc</button>
+            </div>
+        </div>
+    </div>
+    <section class="comms-box">
+        <div>
+            <p><i class="fa-solid fa-circle-nodes"></i> Nhóm nghiên cứu tương tác DOM - Đại học Đại Nam</p>
+            <p style="margin-top: 0.2rem;"><i class="fa-solid fa-code"></i> Thuộc tính ứng dụng: querySelector, classList, innerText</p>
+        </div>
+    </section>
+    <footer>
+        SYS.MGR // ĐẠI HỌC ĐẠI NAM — KHƠI DẬY TIỀM NĂNG VƯƠN TỚI THÀNH CÔNG
+    </footer>
+    <script>
+        let currentStateIndex = 0;
+        const statesList = [
+            {
+                title: "TRẠNG THÁI KHAI THÁC NĂNG LƯỢNG",
+                desc: "Hệ thống chuyển đổi sang cấu trúc lõi thu phát lò phản ứng hạt nhân. Màu sắc chủ đạo chuyển thành cam cảnh báo. Toàn bộ các tham chiếu icon lớp cha đã hoán đổi thành biểu tượng năng lượng nguyên tử.",
+                iconClass: "fa-solid fa-atom",
+                panelClass: "state-orange"
+            },
+            {
+                title: "TRẠNG THÁI LIÊN LẠC TOÀN CẦU",
+                desc: "Đột biến DOM hoàn tất giai đoạn hai. Hệ thống thiết lập thành công đường truyền vệ tinh băng thông rộng. Các nút điều hướng và đường viền bao phủ đổi sang sắc thái xanh lá cây ổn định.",
+                iconClass: "fa-solid fa-globe",
+                panelClass: "state-green"
+            }
+        ];
+        function mutateInterfaceState() {
+            const panel = document.getElementById('main-panel');
+            const icon = document.getElementById('core-icon');
+            const title = document.getElementById('txt-title');
+            const desc = document.getElementById('txt-desc');
+            panel.className = "dom-panel";
+            let state = statesList[currentStateIndex];
+            title.innerText = state.title;
+            desc.innerText = state.desc;
+            icon.className = state.iconClass;
+            panel.classList.add(state.panelClass);
+            currentStateIndex = (currentStateIndex + 1) % statesList.length;
+        }
+        function restoreInterfaceDefault() {
+            const panel = document.getElementById('main-panel');
+            const icon = document.getElementById('core-icon');
+            const title = document.getElementById('txt-title');
+            const desc = document.getElementById('txt-desc');
+            panel.className = "dom-panel";
+            icon.className = "fa-solid fa-satellite";
+            title.innerText = "TRẠNG THÁI GIAO DIỆN MẶC ĐỊNH";
+            desc.innerText = "Hệ thống đang hoạt động ở chế độ kết nối cơ sở tiêu chuẩn. Chưa có bất kỳ tín hiệu DOM hay đột biến cấu trúc nào được kích hoạt từ các lớp sự kiện điều khiển của người dùng.";
+            currentStateIndex = 0;
+        }
+    </script>
+</body>
+</html>

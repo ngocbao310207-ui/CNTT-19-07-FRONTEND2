@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 01 - BIO-SCANNER SYSTEM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-cyber: #030a0d;
+            --panel-bg: rgba(6, 20, 26, 0.85);
+            --neon-emerald: #00ffaa;
+            --neon-yellow: #ffee00;
+            --neon-orange: #ff9900;
+            --neon-red: #ff2a5f;
+            --text-main: #cbdbe2;
+            --border-glow: rgba(0, 255, 170, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-cyber);
+            color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Scanline Giả Lập Màn Hình */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            z-index: 999; background-size: 100% 4px; pointer-events: none;
+        }
+
+        /* Lưới nền sinh học */
+        .bio-grid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(0, 255, 170, 0.03) 1px, transparent 0);
+            background-size: 24px 24px; z-index: -1;
+        }
+
+        /* Top Navigation */
+        nav {
+            background: rgba(3, 10, 13, 0.95);
+            border-bottom: 2px solid var(--border-glow);
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .dnu-logo { height: 65px; filter: drop-shadow(0 0 10px rgba(0, 255, 170, 0.3)); }
+        .brand-text .title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .brand-text .subtitle { font-size: 0.8rem; color: var(--neon-emerald); letter-spacing: 1px; }
+
+        /* Main Container */
+        .main-container {
+            max-width: 700px; width: 100%; margin: 2rem auto; padding: 0 1.5rem;
+        }
+
+        /* Thẻ khối vát cơ khí độc đáo */
+        .bio-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-glow);
+            padding: 2.5rem 2rem;
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+            box-shadow: inset 0 0 30px rgba(0, 255, 170, 0.02), 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .panel-heading {
+            font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: #fff;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;
+            border-bottom: 1px dashed rgba(0, 255, 170, 0.2); padding-bottom: 1rem;
+        }
+        .panel-heading i { color: var(--neon-emerald); animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; }
+        }
+
+        /* Form styling */
+        .control-group { margin-bottom: 1.5rem; }
+        .control-group label { display: block; font-size: 0.85rem; color: #8fa6b0; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .input-box { position: relative; }
+        .input-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--neon-emerald); }
+        
+        .control-group input {
+            width: 100%; background: #020608; border: 1px solid rgba(0, 255, 170, 0.2);
+            padding: 0.85rem 1rem 0.85rem 2.5rem; color: #fff; font-family: inherit; font-size: 1.1rem;
+            outline: none; transition: all 0.3s;
+        }
+        .control-group input:focus { border-color: var(--neon-emerald); box-shadow: 0 0 12px rgba(0, 255, 170, 0.25); }
+        .btn-scan {
+            width: 100%; background: var(--neon-emerald); color: #030a0d; border: none;
+            padding: 1.1rem; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.1rem;
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; margin-top: 1.5rem;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            transition: all 0.3s;
+        }
+        .btn-scan:hover { background: #fff; box-shadow: 0 0 25px rgba(255,255,255,0.6); }
+
+        /* Màn hình hiển thị kết quả */
+        .display-monitor {
+            background: #010305; border: 1px solid rgba(255,255,255,0.03);
+            padding: 1.5rem; margin-top: 2rem; min-height: 120px; position: relative;
+        }
+        .display-monitor::before { content: "DIAGNOSTIC_RESULT //"; font-size: 0.75rem; color: #435861; display: block; margin-bottom: 1rem; }
+
+        .data-row { display: flex; justify-content: space-between; font-size: 1.05rem; margin-bottom: 0.6rem; }
+        .data-row span:last-child { font-weight: bold; }
+
+        /* Phân loại màu sắc kết quả mở rộng */
+        .lvl-error { color: var(--neon-red) !important; text-shadow: 0 0 8px var(--neon-red); }
+        .lvl-thin { color: var(--neon-yellow) !important; }
+        .lvl-normal { color: var(--neon-emerald) !important; text-shadow: 0 0 10px rgba(0,255,170,0.4); }
+        .lvl-overweight { color: var(--neon-orange) !important; }
+        .lvl-obese { color: var(--neon-red) !important; text-shadow: 0 0 10px var(--neon-red); }
+
+        /* Thẻ liên lạc vệ tinh */
+        .sat-comms-tag {
+            background: rgba(4, 12, 16, 0.9); border: 1px solid var(--border-glow);
+            padding: 1.25rem 2rem; margin: 2rem auto; max-width: 700px; width: calc(100% - 3rem);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .sat-comms-tag p { font-size: 0.85rem; color: #7da0ad; }
+        .sat-comms-tag p i { color: var(--neon-emerald); margin-right: 0.5rem; }
+        .hotline-link {
+            color: #fff; background: var(--neon-red); text-decoration: none; padding: 0.6rem 1.2rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.8rem;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+
+        footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #435861; border-top: 1px solid rgba(255,255,255,0.02); }
+    </style>
+</head>
+<body>
+
+    <div class="bio-grid-bg"></div>
+
+    <nav>
+        <div class="nav-brand">
+            <img class="dnu-logo" src="https://inkythuatso.com/uploads/thumbnails/800/2021/12/logo-dai-hoc-dai-nam-inkythuatso-converted-01-23-09-54-10.jpg" alt="DNU Logo">
+            <div class="brand-text">
+                <div class="title">BIO-METRIC CORE</div>
+                <div class="subtitle">KHOA CNTT - ĐẠI HỌC ĐẠI NAM</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--neon-emerald);">LAB_01 // VER 2026</div>
+    </nav>
+
+    <div class="main-container">
+        <div class="bio-panel">
+            <div class="panel-heading">
+                <i class="fa-solid fa-heart-pulse"></i> HỆ THỐNG PHÂN TÍCH CHỈ SỐ CƠ THỂ PHÒNG LAB
+            </div>
+
+            <div class="control-group">
+                <label>Nhập Chiều Cao (Mét)</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-arrows-up-down"></i>
+                    <input type="number" id="inp-height" step="0.01" placeholder="Ví dụ: 1.68">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Nhập Cân Nặng (Kilogram)</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-weight-scale"></i>
+                    <input type="number" id="inp-weight" step="0.1" placeholder="Ví dụ: 58">
+                </div>
+            </div>
+
+            <button class="btn-scan" onclick="runBioScanner()">Khởi chạy quét chỉ số</button>
+
+            <div class="display-monitor" id="scan-result-screen">
+                <div style="color: #435861; text-align: center; margin-top: 1rem;">Đang đợi nạp dữ liệu từ các thiết bị ngoại vi...</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="sat-comms-tag">
+        <div>
+            <p><i class="fa-solid fa-building-user"></i> Trung tâm thực hành CNTT - Tòa nhà Trung tâm DNU</p>
+            <p style="margin-top: 0.2rem;"><i class="fa-solid fa-circle-info"></i> Giáo trình kiểm định chất lượng: FIT4015</p>
+        </div>
+        <a href="tel:0981295226" class="hotline-link"><i class="fa-solid fa-phone"></i> HOTLINE</a>
+    </section>
+
+    <footer>
+    </footer>
+
+    <script>
+        function runBioScanner() {
+            const hRaw = document.getElementById('inp-height').value;
+            const wRaw = document.getElementById('inp-weight').value;
+            const screen = document.getElementById('scan-result-screen');
+            if (!hRaw || !wRaw) {
+                screen.innerHTML = `<div class="lvl-error">[CẢNH BÁO] Hệ thống không thể quét trường dữ liệu rỗng!</div>`;
+                return;
+            }
+
+            const height = Number(hRaw);
+            const weight = Number(wRaw);
+
+            if (height <= 0 || weight <= 0) {
+                screen.innerHTML = `<div class="lvl-error">[CẢNH BÁO] Tọa độ sinh học không hợp lệ (Phải lớn hơn 0)!</div>`;
+                return;
+            }
+            const bmi = weight / (height * height);
+            const fixedBmi = bmi.toFixed(2);
+
+            let colorClass = '';
+            let textVerdict = '';
+            if (bmi < 18.5) {
+                textVerdict = "Thể trạng gầy (Thiếu hụt chỉ số khối)";
+                colorClass = "lvl-thin";
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                textVerdict = "Trạng thái bình thường (Cấu trúc cơ thể ổn định)";
+                colorClass = "lvl-normal";
+            } else if (bmi >= 25 && bmi < 29.9) {
+                textVerdict = "Thừa cân nhẹ (Khuyến nghị điều chỉnh năng lượng nạp vào)";
+                colorClass = "lvl-overweight";
+            } else {
+                textVerdict = "Béo phì cấp độ nguy cơ (Hệ thống báo động)";
+                colorClass = "lvl-obese";
+            }
+            screen.innerHTML = `
+                <div class="data-row"><span>KẾT QUẢ ĐO ĐẠC BMI:</span> <span class="${colorClass}">${fixedBmi}</span></div>
+                <div class="data-row"><span>KẾT LUẬN Y TẾ:</span> <span class="${colorClass}">${textVerdict}</span></div>
+            `;
+        }
+    </script>
+</body>
+</html>

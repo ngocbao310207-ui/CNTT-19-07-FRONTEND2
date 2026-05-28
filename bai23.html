@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slicing Segments Terminal - Lab 23</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0b0802; font-family: 'Share Tech Mono', monospace; color: #ffaa00; }
+        .cyber-panel { background: #141005; border: 2px solid #ffaa00; box-shadow: 0 0 15px rgba(255, 170, 0, 0.2); border-radius: 4px; max-width: 600px; margin: auto; }
+        .cyber-item-row { border: 1px solid #ffaa00; background: #070502; padding: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .btn-page-cyber { background: transparent; color: #ffaa00; border: 1px solid #ffaa00; font-family: 'Orbitron', sans-serif; font-weight: bold; padding: 6px 18px; border-radius: 2px; }
+        .btn-page-cyber:hover:not(:disabled) { background: #ffaa00; color: #0b0802; box-shadow: 0 0 10px #ffaa00; }
+        .btn-page-cyber:disabled { opacity: 0.2; cursor: not-allowed; }
+    </style>
+</head>
+<body class="py-5">
+    <div class="container">
+        <div class="cyber-panel p-4">
+            <h5 class="fw-bold font-monospace text-white text-uppercase mb-4 fs-6">// DATA_STREAM_SEGMENTATION (4_ROWS_PER_BLOCK) //</h5>
+            <div id="pageList" class="mb-4"></div>
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="btn-page-cyber" id="pBtn">&lt;&lt; BACK</button>
+                <span class="font-monospace fw-bold text-white" id="pIndicator">INDEX: 0 / 0</span>
+                <button class="btn-page-cyber" id="nBtn">NEXT &gt;&gt;</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API = "https://664dbfb9ede9608387fa541e.mockapi.io/students";
+        let masterList = [];
+        let index = 1;
+        const size = 4;
+        window.addEventListener("DOMContentLoaded", () => {
+            fetch(API).then(res => res.json()).then(data => {
+                masterList = Array.isArray(data) ? data : [];
+                renderSlice();
+            });
+        });
+        function renderSlice() {
+            const total = Math.ceil(masterList.length / size) || 1;
+            document.getElementById("pIndicator").textContent = `BLOCK: ${index} / ${total}`;
+            document.getElementById("pBtn").disabled = (index === 1);
+            document.getElementById("nBtn").disabled = (index === total);
+            const start = (index - 1) * size;
+            const chunk = masterList.slice(start, start + size);
+            document.getElementById("pageList").innerHTML = chunk.map(item => `
+                <div class="cyber-item-row font-monospace text-white">
+                    <span>NODE_#${item.id} : ${item.fullName || "NULL"}</span>
+                    <span style="color: #ffaa00;">SEC_&gt; ${item.classroom || "NULL"}</span>
+                </div>
+            `).join('');
+        }
+        document.getElementById("pBtn").addEventListener("click", () => { if(index > 1) { index--; renderSlice(); } });
+        document.getElementById("nBtn").addEventListener("click", () => { const max = Math.ceil(masterList.length / size); if(index < max) { index++; renderSlice(); } });
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 05 - LOGISTICS CONTROL CENTER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-cyber: #02020a;
+            --panel-bg: rgba(9, 9, 30, 0.85);
+            --neon-purple: #a14eff;
+            --neon-blue: #0088ff;
+            --neon-cyan: #00f3ff;
+            --text-main: #c9cee0;
+            --border-glow: rgba(161, 78, 255, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-cyber); color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            z-index: 999; background-size: 100% 4px; pointer-events: none;
+        }
+        .scifi-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 136, 255, 0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 136, 255, 0.01) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1;
+        }
+        nav {
+            background: rgba(2, 2, 10, 0.95); border-bottom: 2px solid var(--border-glow);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .dnu-logo { height: 60px; filter: drop-shadow(0 0 8px var(--neon-purple)); }
+        .brand-text .title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .brand-text .subtitle { font-size: 0.8rem; color: var(--neon-purple); }
+        .container { max-width: 1100px; width: 100%; margin: 2rem auto; padding: 0 1.5rem; }
+        .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
+        @media (max-width: 900px) { .grid-layout { grid-template-columns: 1fr; } }
+        .control-panel {
+            background: var(--panel-bg); border: 1px solid var(--border-glow); padding: 1.5rem;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+        .panel-subtitle { font-family: 'Orbitron', sans-serif; font-size: 0.95rem; color: #fff; margin-bottom: 1rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem; }
+        .form-row { margin-bottom: 1rem; }
+        .form-row label { display: block; font-size: 0.8rem; color: #8792b3; margin-bottom: 0.4rem; text-transform: uppercase; }
+        .input-inline { position: relative; }
+        .input-inline i { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--neon-blue); }
+        .form-row input, .form-row select {
+            width: 100%; background: #03030f; border: 1px solid rgba(161, 78, 255, 0.2);
+            padding: 0.6rem 0.75rem 0.6rem 2.2rem; color: #fff; font-family: inherit; font-size: 0.95rem; outline: none;
+        }
+        .form-row input:focus, .form-row select:focus { border-color: var(--neon-cyan); }
+        .btn-action {
+            width: 100%; background: var(--neon-purple); color: #fff; border: none; padding: 0.75rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        .btn-action:hover { background: var(--neon-blue); }
+        .display-panel {
+            background: var(--panel-bg); border: 1px solid rgba(0, 136, 255, 0.15); padding: 1.5rem;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+        .stock-summary {
+            background: #020208; border-left: 3px solid var(--neon-cyan); padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+            display: flex; justify-content: space-between; font-size: 0.95rem;
+        }
+        .stock-summary span span { color: var(--neon-cyan); font-weight: bold; }
+        .product-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
+        .product-table th { font-family: 'Orbitron', sans-serif; padding: 0.75rem; background: rgba(0, 136, 255, 0.08); color: #fff; font-size: 0.85rem; text-transform: uppercase; }
+        .product-table td { padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .product-table tr:hover { background: rgba(255,255,255,0.01); }
+        .cls-price { color: var(--neon-cyan); font-weight: bold; }
+        .comms-block {
+            background: rgba(9, 9, 30, 0.9); border: 1px solid var(--border-glow); padding: 1.25rem 2rem;
+            margin: 2rem auto; max-width: 1100px; width: calc(100% - 3rem);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .comms-block p { font-size: 0.85rem; color: #878ea6; }
+        .comms-block p i { color: var(--neon-purple); margin-right: 0.5rem; }
+        .hotline-btn {
+            color: #fff; background: #ff2a5f; text-decoration: none; padding: 0.5rem 1rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.8rem;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #505670; border-top: 1px solid rgba(255,255,255,0.02); }
+    </style>
+</head>
+<body>
+    <div class="scifi-bg"></div>
+    <nav>
+        <div class="nav-brand">
+            <img class="dnu-logo" src="https://inkythuatso.com/uploads/thumbnails/800/2021/12/logo-dai-hoc-dai-nam-inkythuatso-converted-01-23-09-54-10.jpg" alt="DNU Logo">
+            <div class="brand-text">
+                <div class="title">LOGISTICS HUB</div>
+                <div class="subtitle">KHOA CNTT - ĐẠI HỌC ĐẠI NAM</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--neon-cyan);">LAB_05 // OBJECT ARRAYS</div>
+    </nav>
+    <div class="container">
+        <div class="grid-layout">
+            <div class="control-panel">
+                <div class="panel-subtitle">Bộ lọc & Tìm kiếm</div>
+                <div class="form-row">
+                    <label>Tìm kiếm theo tên</label>
+                    <div class="input-inline">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-name" oninput="renderProducts()" placeholder="Nhập tên sản phẩm...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>Lọc theo khoảng giá tối đa</label>
+                    <div class="input-inline">
+                        <i class="fa-solid fa-filter"></i>
+                        <input type="number" id="filter-price" oninput="renderProducts()" placeholder="Ví dụ: 15000000">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>Sắp xếp theo giá tiền</label>
+                    <div class="input-inline">
+                        <i class="fa-solid fa-sort"></i>
+                        <select id="sort-order" onchange="renderProducts()">
+                            <option value="none">Không sắp xếp</option>
+                            <option value="asc">Giá tăng dần ↑</option>
+                            <option value="desc">Giá giảm dần ↓</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="display-panel">
+                <div class="panel-subtitle">Danh sách cơ sở dữ liệu hàng hóa</div>
+                <div class="stock-summary">
+                    <span>Tổng số lượng sản phẩm: <span id="total-qty">0</span></span>
+                    <span>Tổng giá trị tồn kho: <span id="total-value">0 VNĐ</span></span>
+                </div>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list-rows"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <section class="comms-block">
+        <div>
+            <p><i class="fa-solid fa-satellite-dish"></i> Phân khu Kho vận & Chuỗi cung ứng số - Đại học Đại Nam</p>
+            <p style="margin-top: 0.2rem;"><i class="fa-solid fa-code"></i> Hàm ES6 sử dụng: map(), filter(), reduce()</p>
+        </div>
+        <a href="tel:0981295226" class="hotline-btn">LIÊN HỆ QUẢN TRỊ</a>
+    </section>
+    <footer>
+        SYS.MGR // ĐẠI HỌC ĐẠI NAM — KHƠI DẬY TIỀM NĂNG VƯƠN TỚI THÀNH CÔNG
+    </footer>
+    <script>
+        const productsArray = [
+            { id: "DNU-01", name: "Laptop ASUS ROG Cyber", price: 28500000, quantity: 12 },
+            { id: "DNU-02", name: "Bàn phím cơ Matrix Neon", price: 2450000, quantity: 45 },
+            { id: "DNU-03", name: "Chuột Gaming Quantum Blue", price: 1850000, quantity: 30 },
+            { id: "DNU-04", name: "Màn hình vô cực Hologram", price: 12400000, quantity: 8 },
+            { id: "DNU-05", name: "Nguồn máy tính Core Power", price: 3200000, quantity: 15 }
+        ];
+        function renderProducts() {
+            const searchKeyword = document.getElementById('search-name').value.trim().toLowerCase();
+            const maxPriceFilter = document.getElementById('filter-price').value;
+            const sortOrder = document.getElementById('sort-order').value;
+            const tbody = document.getElementById('product-list-rows');
+            let filteredList = productsArray.filter(function(p) {
+                const matchName = p.name.toLowerCase().includes(searchKeyword);
+                let matchPrice = true;
+                if (maxPriceFilter) {
+                    matchPrice = p.price <= Number(maxPriceFilter);
+                }
+                return matchName && matchPrice;
+            });
+            if (sortOrder === 'asc') {
+                filteredList.sort((a, b) => a.price - b.price);
+            } else if (sortOrder === 'desc') {
+                filteredList.sort((a, b) => b.price - a.price);
+            }
+            let rowsHtml = '';
+            filteredList.map(function(p) {
+                rowsHtml += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td style="color:#fff; font-weight:bold;">${p.name}</td>
+                        <td class="cls-price">${p.price.toLocaleString('vi-VN')} đ</td>
+                        <td>${p.quantity}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = rowsHtml;
+            const totalQuantity = filteredList.reduce((acc, p) => acc + p.quantity, 0);
+            const totalValue = filteredList.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+            document.getElementById('total-qty').innerText = totalQuantity;
+            document.getElementById('total-value').innerText = totalValue.toLocaleString('vi-VN') + " VNĐ";
+        }
+        window.onload = renderProducts;
+    </script>
+</body>
+</html>

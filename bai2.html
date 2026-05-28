@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 02 - CYBER-CART TRANSACTION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-cyber: #050512;
+            --panel-bg: rgba(12, 12, 36, 0.85);
+            --neon-cyan: #00f3ff;
+            --neon-purple: #b14eff;
+            --neon-red: #ff2a5f;
+            --neon-green: #39ff14;
+            --text-main: #c4ccdc;
+            --border-glow: rgba(177, 78, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-cyber); color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            z-index: 999; background-size: 100% 4px; pointer-events: none;
+        }
+
+        .matrix-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(177, 78, 255, 0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(177, 78, 255, 0.01) 1px, transparent 1px);
+            background-size: 50px 50px; z-index: -1;
+        }
+
+        /* Top Bar Navigation */
+        nav {
+            background: rgba(5, 5, 18, 0.95); border-bottom: 2px solid var(--border-glow);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .dnu-logo { height: 65px; filter: drop-shadow(0 0 10px rgba(177, 78, 255, 0.4)); }
+        .brand-text .title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .brand-text .subtitle { font-size: 0.8rem; color: var(--neon-purple); letter-spacing: 1px; }
+
+        /* Main Container */
+        .main-wrapper { max-width: 750px; width: 100%; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* Khối xử lý giao dịch thương mại điện tử */
+        .cart-panel {
+            background: var(--panel-bg); border: 1px solid var(--border-glow);
+            padding: 2.5rem 2rem;
+            clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 100%, 25px 100%, 0 calc(100% - 25px));
+            box-shadow: inset 0 0 25px rgba(177, 78, 255, 0.03), 0 0 25px rgba(0,0,0,0.6);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #fff;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.08); padding-bottom: 1rem;
+        }
+        .panel-title i { color: var(--neon-cyan); }
+
+        /* Form styling */
+        .form-row { margin-bottom: 1.25rem; }
+        .form-row label { display: block; font-size: 0.85rem; color: #8fa1bd; margin-bottom: 0.5rem; text-transform: uppercase; }
+        
+        .field-box { position: relative; }
+        .field-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--neon-purple); }
+
+        .form-row input, .form-row select {
+            width: 100%; background: #060614; border: 1px solid rgba(177, 78, 255, 0.2);
+            padding: 0.8rem 1rem 0.8rem 2.5rem; color: #fff; font-family: inherit; font-size: 1rem;
+            outline: none; transition: all 0.3s;
+        }
+        .form-row input:focus, .form-row select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+
+        /* Nút tính toán cơ máy */
+        .btn-execute {
+            width: 100%; background: var(--neon-purple); color: #fff; border: none;
+            padding: 1rem; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.05rem;
+            text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; margin-top: 1.5rem;
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+            transition: all 0.3s; box-shadow: 0 0 15px rgba(177, 78, 255, 0.3);
+        }
+        .btn-execute:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+
+        /* Màn hình xuất dữ liệu hóa đơn */
+        .invoice-terminal {
+            background: #020208; border: 1px solid rgba(255,255,255,0.03);
+            padding: 1.5rem; margin-top: 2rem; min-height: 150px;
+        }
+        .invoice-terminal::before { content: "INVOICE_DATA_STREAM //"; font-size: 0.75rem; color: #535673; display: block; margin-bottom: 1rem; }
+
+        .invoice-line { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.6rem; }
+        .invoice-line .bold-val { font-weight: bold; color: #fff; }
+
+        .color-err { color: var(--neon-red) !important; text-shadow: 0 0 8px var(--neon-red); }
+        .color-ok { color: var(--neon-green) !important; text-shadow: 0 0 8px var(--neon-green); }
+
+        /* Hộp liên lạc vệ tinh */
+        .comms-tag-block {
+            background: rgba(12, 12, 36, 0.9); border: 1px solid var(--border-glow);
+            padding: 1.25rem 2rem; margin: 2rem auto; max-width: 750px; width: calc(100% - 3rem);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .comms-tag-block p { font-size: 0.85rem; color: #878ca1; }
+        .comms-tag-block p i { color: var(--neon-purple); margin-right: 0.5rem; }
+        .hotline-cyber-btn {
+            color: #fff; background: var(--neon-red); text-decoration: none; padding: 0.6rem 1.2rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.8rem;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+
+        footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #535673; border-top: 1px solid rgba(255,255,255,0.02); }
+    </style>
+</head>
+<body>
+
+    <div class="matrix-bg"></div>
+
+    <nav>
+        <div class="nav-brand">
+            <img class="dnu-logo" src="https://inkythuatso.com/uploads/thumbnails/800/2021/12/logo-dai-hoc-dai-nam-inkythuatso-converted-01-23-09-54-10.jpg" alt="DNU Logo">
+            <div class="brand-text">
+                <div class="title">TRANSACTION MGR</div>
+                <div class="subtitle">KHOA CNTT - ĐẠI HỌC ĐẠI NAM</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--neon-purple);">LAB_02 // KINH TẾ SỐ</div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="cart-panel">
+            <div class="panel-title">
+                <i class="fa-solid fa-receipt"></i> BỘ ĐỊNH TUYẾN PHÂN PHỐI KHUYẾN MÃI ĐƠN HÀNG
+            </div>
+
+            <div class="form-row">
+                <label>Tổng giá trị đơn hàng gốc (VNĐ)</label>
+                <div class="field-box">
+                    <i class="fa-solid fa-calculator"></i>
+                    <input type="number" id="inp-amount" placeholder="Nhập số tiền đơn hàng cần tính">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>Hạng tài khoản (Membership Rank)</label>
+                <div class="field-box">
+                    <i class="fa-solid fa-crown"></i>
+                    <select id="sel-rank">
+                        <option value="Standard">Standard (Thành viên Thường)</option>
+                        <option value="Silver">Silver (Thành viên Bạc)</option>
+                        <option value="Gold">Gold (Thành viên Vàng)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>Nhập mã Voucher cấu trúc (Yêu cầu mở rộng)</label>
+                <div class="field-box">
+                    <i class="fa-solid fa-ticket-simple"></i>
+                    <input type="text" id="inp-voucher" placeholder="Nhập mã DNU2026 để nhận quà nâng cấp" style="text-transform: uppercase;">
+                </div>
+            </div>
+
+            <button class="btn-execute" onclick="processInvoice()">Xử lý luồng tài chính</button>
+
+            <div class="invoice-terminal" id="invoice-terminal-screen">
+                <div style="color: #535673; text-align: center; margin-top: 1.5rem;">Hệ thống đang chờ lệnh nạp luồng hóa đơn đơn vị...</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="comms-tag-block">
+        <div>
+            <p><i class="fa-solid fa-building-columns"></i> Bộ môn Kỹ thuật phần mềm - Đại học Đại Nam</p>
+            <p style="margin-top: 0.2rem;"><i class="fa-solid fa-code-branch"></i> Cấu trúc rẽ nhánh điều kiện logic đa tầng: if...else if</p>
+        </div>
+        <a href="tel:0981295226" class="hotline-cyber-btn"><i class="fa-solid fa-headset"></i> LIÊN HỆ</a>
+    </section>
+
+    <footer>
+        SYS.MGR // ĐẠI HỌC ĐẠI NAM — KHƠI DẬY TIỀM NĂNG VƯƠN TỚI THÀNH CÔNG
+    </footer>
+
+    <script>
+        function processInvoice() {
+            const amountRaw = document.getElementById('inp-amount').value;
+            const rank = document.getElementById('sel-rank').value;
+            const voucher = document.getElementById('inp-voucher').value.trim().toUpperCase();
+            const screen = document.getElementById('invoice-terminal-screen');
+
+            // Bắt lỗi rỗng và lỗi tiền âm
+            if (!amountRaw) {
+                screen.innerHTML = `<div class="color-err">[LỖI HỆ THỐNG] Vui lòng nhập số tiền tổng của đơn hàng!</div>`;
+                return;
+            }
+
+            let baseMoney = Number(amountRaw);
+            if (baseMoney < 0) {
+                screen.innerHTML = `<div class="color-err">[LỖI HỆ THỐNG] Tổng giá trị tiền tệ không được phép âm!</div>`;
+                return;
+            }
+
+            let saleRate = 0; // % Giảm giá theo bảng phân phối quy định
+
+            // Cấu trúc phân phối tối thiểu 3 mức khuyến mãi lồng hạng thành viên (Bài Lab 02)
+            if (baseMoney >= 1000000) {
+                saleRate = (rank === 'Gold') ? 20 : (rank === 'Silver' ? 15 : 10);
+            } else if (baseMoney >= 500000) {
+                saleRate = (rank === 'Gold') ? 15 : (rank === 'Silver' ? 10 : 5);
+            } else if (baseMoney >= 200000) {
+                saleRate = (rank === 'Gold') ? 10 : (rank === 'Silver' ? 5 : 2);
+            }
+
+            // Tính toán số tiền được giảm theo tỷ lệ % chiết khấu
+            let discountByRate = baseMoney * (saleRate / 100);
+
+            // Tính năng mở rộng: Voucher trừ tiền mặt trực tiếp
+            let voucherBonus = 0;
+            if (voucher === 'DNU2026') {
+                voucherBonus = 20000;
+            }
+
+            // Tính năng mở rộng: Miễn phí vận chuyển (FreeShip) khi đạt hạn mức quy định (ví dụ 800.000đ)
+            let shipFee = (baseMoney >= 800000) ? 0 : 30000;
+            let shipDisplayText = (shipFee === 0) ? "0đ (Miễn phí vận chuyển)" : "30.000đ";
+
+            // Tính tiền thanh toán cuối cùng
+            let totalReduction = discountByRate + voucherBonus;
+            let finalBill = baseMoney - totalReduction + shipFee;
+            if (finalBill < 0) finalBill = 0; // Bảo vệ luồng tiền không bị âm toán học
+
+            // Hàm định dạng tiền xu VNĐ
+            const formatVND = (num) => num.toLocaleString('vi-VN') + " VNĐ";
+
+            // Kết xuất luồng dữ liệu ra giao diện hiển thị
+            screen.innerHTML = `
+                <div class="invoice-line"><span>Tiền gốc đơn hàng:</span> <span class="bold-val">${formatVND(baseMoney)}</span></div>
+                <div class="invoice-line"><span>Tỷ lệ giảm theo hạng [${rank}]:</span> <span class="bold-val color-ok">${saleRate}% (-${formatVND(discountByRate)})</span></div>
+                <div class="invoice-line"><span>Khấu trừ voucher cố định:</span> <span class="bold-val color-ok">-${formatVND(voucherBonus)}</span></div>
+                <div class="invoice-line"><span>Cước phí vận chuyển:</span> <span class="bold-val">${shipDisplayText}</span></div>
+                <div class="invoice-line" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 0.6rem; margin-top: 0.6rem;">
+                    <span>TỔNG KHỐI THANH TOÁN cuối cùng:</span> <span class="bold-val color-err" style="font-size: 1.15rem;">${formatVND(finalBill)}</span>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

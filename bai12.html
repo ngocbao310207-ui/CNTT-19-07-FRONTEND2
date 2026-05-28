@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khởi Tạo Định Danh - Lab 12</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+        .neo-box {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 16px;
+            box-shadow: 6px 6px 0px #0f172a;
+            transition: all 0.2s ease;
+        }
+        .neo-box:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px #06b6d4;
+        }
+        .neo-title {
+            font-weight: 900;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .neo-input {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            color: #0f172a;
+            font-weight: 500;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .neo-input:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 4px 4px 0px #0f172a;
+            color: #0f172a;
+        }
+        .input-group-text {
+            background: #f8fafc;
+            border: 2px solid #0f172a;
+            border-right: none;
+            color: #0f172a;
+            font-weight: bold;
+            border-radius: 10px 0 0 10px;
+        }
+        .neo-input { border-radius: 0 10px 10px 0; }
+        .btn-neo {
+            background: #06b6d4;
+            border: 2px solid #0f172a;
+            color: #0f172a;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 3px 3px 0px #0f172a;
+            transition: all 0.15s ease;
+        }
+        .btn-neo:hover {
+            background: #22d3ee;
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px #0f172a;
+            color: #0f172a;
+        }
+        .status-box {
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            color: #334155;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center py-5">
+
+    <div class="container">
+        <div class="row justify-content-center w-100 m-0">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-5 p-0">
+                
+                <div class="text-center mb-4">
+                    <h2 class="neo-title m-0">Cổng Đăng Ký</h2>
+                    <p class="text-muted small fw-bold mt-1">Hệ thống phân tách lõi dữ liệu người dùng</p>
+                </div>
+
+                <div class="neo-box p-4 p-sm-5">
+                    <form id="registerForm" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase">Họ và tên</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control neo-input" id="regName" placeholder="Nguyen Van A" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase">Địa chỉ Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control neo-input" id="regEmail" placeholder="name@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Lớp học</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-collection"></i></span>
+                                <input type="text" class="form-control neo-input" id="regClass" placeholder="Nhập mã lớp..." required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-neo w-100 text-uppercase">Khởi Tạo Tài Khoản</button>
+                    </form>
+
+                    <div id="statusWrapper" class="status-box p-3 text-center mt-4 small">
+                        <i class="bi bi-shield-check text-success me-2"></i>Thiết bị bảo mật đã sẵn sàng kiểm thử dữ liệu.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ENDPOINT_API = "https://664dbfb9ede9608387fa541e.mockapi.io/students";
+        const registerForm = document.getElementById("registerForm");
+        const statusWrapper = document.getElementById("statusWrapper");
+
+        registerForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            if (!registerForm.checkValidity()) {
+                registerForm.classList.add('was-validated');
+                return;
+            }
+
+            statusWrapper.innerHTML = `
+                <div class="spinner-border spinner-border-sm text-dark me-2"></div>
+                <span class="fw-bold">Đang đóng gói dữ liệu gửi lên MockAPI...</span>
+            `;
+
+            const payload = {
+                fullName: document.getElementById("regName").value.trim(),
+                email: document.getElementById("regEmail").value.trim(),
+                classroom: document.getElementById("regClass").value.trim()
+            };
+
+            fetch(ENDPOINT_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Không thể thiết lập liên kết cấu trúc đám mây.");
+                return res.json();
+            })
+            .then(data => {
+                statusWrapper.innerHTML = `
+                    <div class="text-success fw-bold mb-2"><i class="bi bi-check-circle-fill me-2"></i>Ghi nhận thành công!</div>
+                    <div class="text-start bg-dark text-white p-3 rounded-3 font-monospace" style="font-size:12px; border: 2px solid #0f172a;">
+                        <b>ID:</b> ${data.id}<br><b>Name:</b> ${data.fullName}<br><b>Class:</b> ${data.classroom}
+                    </div>
+                `;
+                registerForm.reset();
+                registerForm.classList.remove('was-validated');
+            })
+            .catch(err => {
+                statusWrapper.innerHTML = `<span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Lỗi: ${err.message}</span>`;
+            });
+        });
+    </script>
+</body>
+</html>

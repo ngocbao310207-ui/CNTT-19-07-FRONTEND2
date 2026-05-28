@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đẩy Thực Thể Mới - Lab 17</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8fafc; font-family: 'Segoe UI', system-ui, sans-serif; color: #1e293b; }
+        .flat-card { background: #ffffff; border: 2px solid #0f172a; border-radius: 12px; max-width: 500px; margin: auto; }
+        .flat-input { border: 2px solid #0f172a; border-radius: 8px; padding: 10px; font-weight: 500; }
+        .flat-input:focus { border-color: #2563eb; box-shadow: none; }
+        .btn-flat { background: #0f172a; color: white; border: 2px solid #0f172a; border-radius: 8px; font-weight: 700; padding: 12px; }
+        .btn-flat:hover { background: #1e293b; }
+    </style>
+</head>
+<body class="d-flex align-items-center min-vh-100">
+    <div class="container">
+        <div class="flat-card p-4 shadow-sm">
+            <h5 class="fw-bold text-uppercase mb-3 text-center">Ghi Bản Ghi Mới</h5>
+            <form id="postForm">
+                <div class="mb-2">
+                    <label class="small fw-bold text-secondary">HỌ TÊN</label>
+                    <input type="text" class="form-control flat-input" id="name" required autocomplete="off">
+                </div>
+                <div class="mb-2">
+                    <label class="small fw-bold text-secondary">EMAIL</label>
+                    <input type="email" class="form-control flat-input" id="email" required autocomplete="off">
+                </div>
+                <div class="mb-4">
+                    <label class="small fw-bold text-secondary">MÃ LỚP</label>
+                    <input type="text" class="form-control flat-input" id="classroom" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-flat w-100" id="btnSubmit">KHỞI CHẠY GỬI</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const API = "https://664dbfb9ede9608387fa541e.mockapi.io/students";
+        document.getElementById("postForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const btn = document.getElementById("btnSubmit");
+            btn.disabled = true;
+            btn.textContent = "ĐANG XỬ LÝ GÓI TIN...";
+            
+            const payload = {
+                fullName: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                classroom: document.getElementById("classroom").value.trim()
+            };
+
+            fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert("Đã thêm thành công!");
+                document.getElementById("postForm").reset();
+                btn.disabled = false;
+                btn.textContent = "KHỞI CHẠY GỬI";
+            });
+        });
+    </script>
+</body>

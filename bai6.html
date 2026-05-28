@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 06 - QUANTUM ORDER CALLBACK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-cyber: #04020a;
+            --panel-bg: rgba(13, 8, 28, 0.85);
+            --neon-purple: #9d4edd;
+            --neon-gold: #ffaa00;
+            --neon-cyan: #00e5ff;
+            --text-main: #d3cbdc;
+            --border-glow: rgba(157, 78, 221, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-cyber); color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+            z-index: 999; background-size: 100% 4px; pointer-events: none;
+        }
+        .quantum-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(157, 78, 221, 0.04) 1px, transparent 0);
+            background-size: 25px 25px; z-index: -1;
+        }
+        nav {
+            background: rgba(4, 2, 10, 0.95); border-bottom: 2px solid var(--border-glow);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 1rem; }
+        .dnu-logo { height: 60px; filter: drop-shadow(0 0 8px var(--neon-purple)); }
+        .brand-text .title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; }
+        .brand-text .subtitle { font-size: 0.8rem; color: var(--neon-purple); }
+        .container { max-width: 750px; width: 100%; margin: 2rem auto; padding: 0 1.5rem; }
+        .calc-panel {
+            background: var(--panel-bg); border: 1px solid var(--border-glow); padding: 2.5rem 2rem;
+            clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 100%, 25px 100%, 0 calc(100% - 25px));
+            box-shadow: inset 0 0 20px rgba(157, 78, 221, 0.03), 0 0 30px rgba(0,0,0,0.6);
+        }
+        .panel-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.15rem; color: #fff;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.08); padding-bottom: 1rem;
+        }
+        .panel-title i { color: var(--neon-gold); }
+        .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        .btn-scenario {
+            background: #110924; border: 1px solid rgba(157, 78, 221, 0.3); color: #fff; padding: 0.8rem;
+            font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        .btn-scenario:hover, .btn-scenario.active { background: var(--neon-purple); border-color: var(--neon-cyan); box-shadow: 0 0 12px rgba(157, 78, 221, 0.4); }
+        .stream-display { background: #020105; border: 1px solid rgba(255,255,255,0.02); padding: 1.5rem; min-height: 250px; }
+        .stream-display::before { content: "CALLBACK_PIPELINE_STREAM //"; font-size: 0.75rem; color: #625375; display: block; margin-bottom: 1rem; }
+        .log-step { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; margin-bottom: 0.8rem; border-left: 2px solid rgba(157, 78, 221, 0.2); padding-left: 0.75rem; }
+        .log-step i { color: var(--neon-cyan); margin-top: 0.2rem; }
+        .log-step .val { margin-left: auto; font-weight: bold; color: #fff; }
+        .total-row { display: flex; font-family: 'Orbitron', sans-serif; font-size: 1.15rem; color: var(--neon-gold); border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.8rem; margin-top: 1rem; }
+        .total-row .val { margin-left: auto; font-weight: 900; text-shadow: 0 0 10px rgba(255, 170, 0, 0.4); }
+        .comms-box {
+            background: rgba(13, 8, 28, 0.9); border: 1px solid var(--border-glow); padding: 1.25rem 2rem;
+            margin: 2rem auto; max-width: 750px; width: calc(100% - 3rem);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .comms-box p { font-size: 0.85rem; color: #857994; }
+        .comms-box p i { color: var(--neon-purple); margin-right: 0.5rem; }
+        .hotline-btn {
+            color: #fff; background: #ff2a5f; text-decoration: none; padding: 0.5rem 1rem;
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.8rem;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        }
+        footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #625375; border-top: 1px solid rgba(255,255,255,0.02); }
+    </style>
+</head>
+<body>
+    <div class="quantum-grid"></div>
+    <nav>
+        <div class="nav-brand">
+            <img class="dnu-logo" src="https://inkythuatso.com/uploads/thumbnails/800/2021/12/logo-dai-hoc-dai-nam-inkythuatso-converted-01-23-09-54-10.jpg" alt="DNU Logo">
+            <div class="brand-text">
+                <div class="title">ORDER PIPELINE</div>
+                <div class="subtitle">KHOA CNTT - ĐẠI HỌC ĐẠI NAM</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--neon-gold);">LAB_06 // CALLBACK FUNCTIONS</div>
+    </nav>
+    <div class="container">
+        <div class="calc-panel">
+            <div class="panel-title">
+                <i class="fa-solid fa-network-wired"></i> CHUỖI XỬ LÝ ĐƠN HÀNG ĐA TẦNG QUA CALLBACK
+            </div>
+            <div style="font-size: 0.85rem; color: #857994; margin-bottom: 0.5rem; text-transform: uppercase;">Chọn tập dữ liệu kiểm thử</div>
+            <div class="scenario-grid">
+                <button class="btn-scenario active" id="btn-s1" onclick="runPipelineScenario(1)">Đơn hàng mẫu 01 (VIP)</button>
+                <button class="btn-scenario" id="btn-s2" onclick="runPipelineScenario(2)">Đơn hàng mẫu 02 (Standard)</button>
+            </div>
+            <div class="stream-display" id="pipeline-screen"></div>
+        </div>
+    </div>
+    <section class="comms-box">
+        <div>
+            <p><i class="fa-solid fa-microchip"></i> Trung tâm Tính toán hiệu năng cao - Đại học Đại Nam</p>
+            <p style="margin-top: 0.2rem;"><i class="fa-solid fa-code-branch"></i> Cấu trúc: Mô hình hóa hàm truyền hàm Callback tuyến tính</p>
+        </div>
+        <a href="tel:0981295226" class="hotline-btn">KHOA CNTT</a>
+    </section>
+    <footer>
+        SYS.MGR // ĐẠI HỌC ĐẠI NAM — KHƠI DẬY TIỀM NĂNG VƯƠN TỚI THÀNH CÔNG
+    </footer>
+    <script>
+        const scenario1 = {
+            products: [
+                { name: "Mainboard Core X", price: 4500000, qty: 1 },
+                { name: "RAM RGB 16GB", price: 1800000, qty: 2 }
+            ],
+            discountCode: "DNU2026",
+            membership: "VIP"
+        };
+        const scenario2 = {
+            products: [
+                { name: "Cáp mạng Cat6 5m", price: 150000, qty: 3 },
+                { name: "Đầu bấm RJ45", price: 5000, qty: 20 }
+            ],
+            discountCode: "NONE",
+            membership: "Standard"
+        };
+        const formatVND = (num) => num.toLocaleString('vi-VN') + " VNĐ";
+        function calculateBase(orderObj, callback) {
+            let base = 0;
+            let detailLines = '';
+            orderObj.products.forEach(p => {
+                let itemTotal = p.price * p.qty;
+                base += itemTotal;
+                detailLines += `<div class="log-step" style="border-left:none; padding-left:1.5rem; color:#857994;"><i class="fa-solid fa-minus" style="color:#625375;"></i> ${p.name} (x${p.qty}) <span class="val">${formatVND(itemTotal)}</span></div>`;
+            });
+            let html = `<div class="log-step"><i class="fa-solid fa-calculator"></i> Bước 1: Tính tổng giá trị hàng hóa gốc <span class="val">${formatVND(base)}</span></div>` + detailLines;
+            let context = { total: base, html: html, order: orderObj };
+            callback(context);
+        }
+        function applyDiscount(context, callback) {
+            let discount = 0;
+            if (context.order.membership === "VIP") discount += context.total * 0.1;
+            if (context.order.discountCode === "DNU2026") discount += 50000;
+            let nextTotal = context.total - discount;
+            if (nextTotal < 0) nextTotal = 0;
+            context.html += `<div class="log-step"><i class="fa-solid fa-tags"></i> Bước 2: Áp dụng chiết khấu hạn mức & Voucher <span class="val" style="color:var(--neon-cyan);">- ${formatVND(discount)}</span></div>`;
+            context.total = nextTotal;
+            callback(context);
+        }
+        function applyShipping(context, callback) {
+            let shipFee = context.total >= 5000000 ? 0 : 40000;
+            let nextTotal = context.total + shipFee;
+            let shipText = shipFee === 0 ? "Miễn phí cước vận chuyển" : formatVND(shipFee);
+            context.html += `<div class="log-step"><i class="fa-solid fa-truck-fast"></i> Bước 3: Kiểm tra định mức phí vận chuyển <span class="val">+ ${shipText}</span></div>`;
+            context.total = nextTotal;
+            callback(context);
+        }
+        function applyTax(context, callback) {
+            let tax = context.total * 0.08;
+            let nextTotal = context.total + tax;
+            context.html += `<div class="log-step"><i class="fa-solid fa-percent"></i> Bước 4 (Mở rộng): Thuế giá trị gia tăng VAT (8%) <span class="val">+ ${formatVND(tax)}</span></div>`;
+            context.total = nextTotal;
+            callback(context);
+        }
+        function runPipelineScenario(id) {
+            document.getElementById('btn-s1').classList.remove('active');
+            document.getElementById('btn-s2').classList.remove('active');
+            document.getElementById('btn-s' + id).classList.add('active');
+            const targetData = id === 1 ? scenario1 : scenario2;
+            const screen = document.getElementById('pipeline-screen');
+            calculateBase(targetData, function(c1) {
+                applyDiscount(c1, function(c2) {
+                    applyShipping(c2, function(c3) {
+                        applyTax(c3, function(finalContext) {
+                            finalContext.html += `
+                                <div class="total-row">
+                                    <span>TỔNG KHỐI PHẢI THANH TOÁN:</span>
+                                    <span class="val">${formatVND(finalContext.total)}</span>
+                                </div>
+                            `;
+                            screen.innerHTML = finalContext.html;
+                        });
+                    });
+                });
+            });
+        }
+        window.onload = () => runPipelineScenario(1);
+    </script>
+</body>
+</html>
