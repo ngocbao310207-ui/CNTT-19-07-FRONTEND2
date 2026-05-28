@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 09 - Ứng dụng Quản lý công việc cá nhân</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 480px; }
+        h2 { font-weight: 600; margin-bottom: 20px; color: #111; text-align: center; }
+        
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; }
+        input[type="text"]:focus { border-color: #222; background: #fff; outline: none; }
+        
+        button { padding: 12px 18px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-add { background: #111; color: #fff; }
+        .btn-add:hover { background: #333; }
+        
+        /* Bộ lọc Tab (Yêu cầu mở rộng) */
+        .filter-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .tab { background: none; color: #777; padding: 6px 12px; font-size: 13px; font-weight: 500; border-radius: 4px; }
+        .tab:hover { color: #111; background: #f1f3f5; }
+        .tab.active { background: #111; color: #fff; }
+        
+        /* Danh sách công việc */
+        .todo-list { list-style: none; max-height: 280px; overflow-y: auto; }
+        .todo-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; transition: all 0.3s; }
+        .todo-item:hover { background: #f5f5f5; }
+        .todo-item.completed .todo-text { text-decoration: line-through; color: #aaa; }
+        
+        .todo-content { display: flex; align-items: center; gap: 10px; flex: 1; cursor: pointer; }
+        .todo-checkbox { width: 16px; height: 16px; cursor: pointer; }
+        .todo-text { font-size: 14px; font-weight: 500; word-break: break-all; }
+        
+        .btn-delete { background: none; color: #cc3333; padding: 4px 8px; font-size: 12px; font-weight: 500; border-radius: 4px; }
+        .btn-delete:hover { background: #fde8e8; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Task Manager</h2>
+    
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="Thêm công việc mới của bạn...">
+        <button class="btn-add" onclick="addTask()">Thêm</button>
+    </div>
+
+    <div class="filter-tabs">
+        <button class="tab active" id="tabAll" onclick="changeFilter('all')">Tất cả</button>
+        <button class="tab" id="tabActive" onclick="changeFilter('active')">Chưa xong</button>
+        <button class="tab" id="tabCompleted" onclick="changeFilter('completed')">Đã xong</button>
+    </div>
+
+    <ul id="todoList" class="todo-list"></ul>
+</div>
+
+<script>
+let todos = JSON.parse(localStorage.getItem('todos')) || [
+    { id: 1, text: "Nghiên cứu tài liệu API thực hành", completed: false },
+    { id: 2, text: "Hoàn thiện bài thực hành Lab 08", completed: true },
+    { id: 3, text: "Chuẩn bị slide thuyết trình nhóm", completed: false }
+];
+
+let currentFilter = 'all';
+
+function renderTodos() {
+    const listContainer = document.getElementById('todoList');
+    listContainer.innerHTML = '';
+
+  
+    let filteredTodos = todos;
+    if (currentFilter === 'active') {
+        filteredTodos = todos.filter(t => !t.completed);
+    } else if (currentFilter === 'completed') {
+        filteredTodos = todos.filter(t => t.completed);
+    }
+
+    filteredTodos.forEach(todo => {
+        const li = document.createElement('li');
+        li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+
+        li.innerHTML = `
+            <div class="todo-content" onclick="toggleTodo(${todo.id})">
+                <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} onclick="event.stopPropagation(); toggleTodo(${todo.id})">
+                <span class="todo-text">${todo.text}</span>
+            </div>
+            <button class="btn-delete" onclick="deleteTodo(${todo.id})">Xóa</button>
+        `;
+        listContainer.appendChild(li);
+    });
+
+ 
+    localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+function addTask() {
+    const input = document.getElementById('taskInput');
+    const text = input.value.trim();
+
+    if (!text) {
+        alert("Nội dung công việc không được phép bỏ trống!");
+        return;
+    }
+
+    const newTodo = {
+        id: Date.now(), 
+        text: text,
+        completed: false
+    };
+
+    todos.push(newTodo);
+    input.value = '';
+    input.focus();
+    renderTodos();
+}
+
+function toggleTodo(id) {
+    todos = todos.map(todo => {
+        if (todo.id === id) {
+            return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+    });
+    renderTodos();
+}
+
+function deleteTodo(id) {
+    todos = todos.filter(todo => todo.id !== id);
+    renderTodos();
+}
+
+
+function changeFilter(filterValue) {
+    currentFilter = filterValue;
+    
+    document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+    if (filterValue === 'all') document.getElementById('tabAll').classList.add('active');
+    if (filterValue === 'active') document.getElementById('tabActive').classList.add('active');
+    if (filterValue === 'completed') document.getElementById('tabCompleted').classList.add('active');
+    
+    renderTodos();
+}
+
+document.getElementById('taskInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        addTask();
+    }
+});
+
+window.onload = renderTodos;
+</script>
+</body>
+</html>

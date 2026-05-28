@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 08 - Bộ đếm tương tác</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .card { background: #fff; padding: 35px; border-radius: 16px; box-shadow: 0 4px 25px rgba(0,0,0,0.04); width: 100%; max-width: 380px; text-align: center; }
+        h2 { font-size: 14px; font-weight: 600; text-transform: uppercase; color: #888; letter-spacing: 1px; margin-bottom: 10px; }
+        
+        .counter-value { font-size: 72px; font-weight: 700; color: #222; margin: 15px 0; transition: color 0.3s ease; }
+        .counter-value.positive { color: #15803d; }
+        .counter-value.negative { color: #b91c1c; }
+        
+        .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+        button { padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-action { background: #111; color: #fff; }
+        .btn-action:hover { background: #333; }
+        .btn-reset { grid-column: span 2; background: #eee; color: #333; }
+        .btn-reset:hover { background: #ddd; }
+        .step-info { font-size: 12px; color: #999; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Interactive Counter</h2>
+    <div id="counter" class="counter-value">0</div>
+    
+    <div class="btn-grid">
+        <button class="btn-action" id="btnDecrement">- 1</button>
+        <button class="btn-action" id="btnIncrement">+ 1</button>
+        <button class="btn-action" id="btnDecFast" style="background:#555;">- 5</button>
+        <button class="btn-action" id="btnIncFast" style="background:#555;">+ 5</button>
+        <button class="btn-reset" id="btnReset">Đặt lại về 0</button>
+    </div>
+
+    <div class="step-info">Mẹo: Sử dụng các nút x5 để thay đổi giá trị nhanh hơn.</div>
+</div>
+
+<script>
+let count = 0;
+
+const counterDisplay = document.getElementById('counter');
+const btnInc = document.getElementById('btnIncrement');
+const btnDec = document.getElementById('btnDecrement');
+const btnIncFast = document.getElementById('btnIncFast');
+const btnDecFast = document.getElementById('btnDecFast');
+const btnReset = document.getElementById('btnReset');
+
+function render() {
+    counterDisplay.innerText = count;
+
+    counterDisplay.className = "counter-value"; // Reset class cũ
+    if (count > 0) {
+        counterDisplay.classList.add('positive');
+    } else if (count < 0) {
+        counterDisplay.classList.add('negative');
+    }
+}
+
+btnInc.addEventListener('click', () => {
+    count += 1;
+    render();
+});
+
+btnDec.addEventListener('click', () => {
+    count -= 1;
+    render();
+});
+
+btnIncFast.addEventListener('click', () => {
+    count += 5;
+    render();
+});
+
+btnDecFast.addEventListener('click', () => {
+    count -= 5;
+    render();
+});
+
+btnReset.addEventListener('click', () => {
+    count = 0;
+    render();
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 21 - Ứng dụng CRUD hoàn chỉnh với Ajax</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; color: #333; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 950px; display: grid; grid-template-columns: 320px 1fr; gap: 30px; }
+        
+        /* Cấu trúc Form quản trị */
+        .panel-form { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); height: fit-content; }
+        h3 { font-weight: 600; margin-bottom: 15px; color: #111; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #666; font-weight: 500; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; }
+        input[type="text"]:focus { border-color: #222; background: #fff; outline: none; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        button { width: 100%; padding: 11px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-save { background: #111; color: #fff; }
+        .btn-save:hover { background: #333; }
+        .btn-cancel { background: #eee; color: #333; display: none; }
+        .btn-cancel:hover { background: #ddd; }
+        
+        /* Cấu trúc Bảng hiển thị */
+        .panel-data { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); }
+        .search-bar { margin-bottom: 15px; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f1f3f5; font-weight: 600; color: #555; }
+        tr:hover { background-color: #fafafa; }
+        
+        .action-links { display: flex; gap: 10px; }
+        .btn-table-edit { background: none; color: #1a73e8; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-table-del { background: none; color: #d93025; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-table-edit:hover { text-decoration: underline; }
+        .btn-table-del:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="panel-form">
+        <h3 id="formTitle">Thêm Thành Viên</h3>
+        <input type="hidden" id="hiddenMemberId">
+        
+        <div class="form-group">
+            <label for="txtName">Họ và Tên:</label>
+            <input type="text" id="txtName" placeholder="Nhập tên thành viên...">
+        </div>
+        <div class="form-group">
+            <label for="txtRole">Chức vụ:</label>
+            <input type="text" id="txtRole" placeholder="Ví dụ: Giảng viên viên">
+        </div>
+        <div class="form-group">
+            <label for="txtEmail">Email liên hệ:</label>
+            <input type="text" id="txtEmail" placeholder="Nhập email...">
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn-save" id="btnSave" onclick="handleSave()">Lưu Thông Tin</button>
+            <button class="btn-cancel" id="btnCancel" onclick="resetFormState()">Hủy chỉnh sửa</button>
+        </div>
+    </div>
+
+    <div class="panel-data">
+        <h3>Quản Lý Thành Viên Hệ Thống</h3>
+        
+        <div class="search-bar">
+            <input type="text" id="txtSearch" placeholder="🔍 Nhập từ khóa tìm kiếm nhanh theo tên...">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Họ và Tên</th>
+                    <th>Chức vụ</th>
+                    <th>Email</th>
+                    <th style="width: 100px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="memberTbody">
+                <tr><td colspan="4" style="text-align:center; color:#999;">Đang đồng bộ dữ liệu...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const MAIN_API = "https://6654be941c6afcebc6af5403.mockapi.io/api/v1/members";
+
+// 1. Chức năng Đọc dữ liệu (GET ALL)
+function fetchAllMembers() {
+    $.ajax({
+        url: MAIN_API,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            renderTable(response);
+        },
+        error: function() {
+            $('#memberTbody').html('<tr><td colspan="4" style="text-align:center; color:#c53030;">Lỗi không thể tải danh sách.</td></tr>');
+        }
+    });
+}
+
+function renderTable(data) {
+    const tbody = $('#memberTbody');
+    tbody.empty();
+
+    if(data.length === 0) {
+        tbody.html('<tr><td colspan="4" style="text-align:center; color:#999;">Không có bản ghi nào tồn tại.</td></tr>');
+        return;
+    }
+
+    $.each(data, function(index, item) {
+        const row = `
+            <tr class="data-row">
+                <td><strong class="searchable-name">${item.name}</strong></td>
+                <td><span style="color:#555;">${item.role}</span></td>
+                <td><span style="color:#777; font-size:13px;">${item.email}</span></td>
+                <td>
+                    <div class="action-links">
+                        <button class="btn-table-edit" onclick="editMode('${item.id}', '${item.name}', '${item.role}', '${item.email}')">Sửa</button>
+                        <button class="btn-table-del" onclick="deleteMember('${item.id}')">Xóa</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
+
+// 2. Chức năng Điều phối Lưu thông tin (Phân tách THÊM MỚI hoặc CẬP NHẬT)
+function handleSave() {
+    const id = $('#hiddenMemberId').val();
+    const name = $('#txtName').val().trim();
+    const role = $('#txtRole').val().trim();
+    const email = $('#txtEmail').val().trim();
+
+    if(!name || !role || !email) {
+        alert("Vui lòng điền đầy đủ thông tin!");
+        return;
+    }
+
+    const payload = { name: name, role: role, email: email };
+
+    if(id) {
+        // Nếu có ID -> Thực hiện lệnh CẬP NHẬT (PUT)
+        $.ajax({
+            url: `${MAIN_API}/${id}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function() {
+                alert("Cập nhật thông tin thành công!");
+                resetFormState();
+                fetchAllMembers(); // Làm mới danh sách
+            }
+        });
+    } else {
+        // Nếu không có ID -> Thực hiện lệnh THÊM MỚI (POST)
+        $.ajax({
+            url: MAIN_API,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function() {
+                alert("Thêm mới thành viên thành công!");
+                resetFormState();
+                fetchAllMembers();
+            }
+        });
+    }
+}
+
+// 3. Chức năng XÓA BẢN GHI (DELETE)
+function deleteMember(id) {
+    if(confirm("Bạn có chắc chắn muốn loại bỏ thành viên này khỏi hệ thống?")) {
+        $.ajax({
+            url: `${MAIN_API}/${id}`,
+            type: 'DELETE',
+            success: function() {
+                alert("Đã xóa bản ghi thành công!");
+                fetchAllMembers();
+            }
+        });
+    }
+}
+
+// Hàm bổ trợ: Kích hoạt trạng thái SỬA thông tin (Đẩy ngược dữ liệu lên form)
+function editMode(id, name, role, email) {
+    $('#formTitle').text('Chỉnh sửa thành viên');
+    $('#hiddenMemberId').val(id);
+    $('#txtName').val(name);
+    $('#txtRole').val(role);
+    $('#txtEmail').val(email);
+    
+    $('#btnCancel').show();
+    $('#btnSave').text('Cập Nhật Bản Ghi');
+    $('#txtName').focus();
+}
+
+// Hàm bổ trợ: Đưa form về trạng thái Thêm mới ban đầu
+function resetFormState() {
+    $('#formTitle').text('Thêm Thành Viên');
+    $('#hiddenMemberId').val('');
+    $('#txtName').val('');
+    $('#txtRole').val('');
+    $('#txtEmail').val('');
+    
+    $('#btnCancel').hide();
+    $('#btnSave').text('Lưu Thông Tin');
+}
+
+// 4. Yêu cầu mở rộng: Bộ lọc tìm kiếm nhanh phía Client (Client-side Search)
+$(document).ready(function() {
+    fetchAllMembers();
+
+    $('#txtSearch').on('input', function() {
+        const searchKey = $(this).val().toLowerCase().trim();
+        
+        $('.data-row').each(function() {
+            const currentName = $(this).find('.searchable-name').text().toLowerCase();
+            if(currentName.includes(searchKey)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

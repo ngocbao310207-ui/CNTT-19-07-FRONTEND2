@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 15 - Kiểm tra dữ liệu biểu mẫu (Validation)</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 440px; }
+        h2 { font-weight: 600; margin-bottom: 20px; text-align: center; color: #111; }
+        
+        .form-group { margin-bottom: 16px; position: relative; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #666; font-weight: 500; }
+        input { width: 100%; padding: 11px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; transition: all 0.2s; }
+        input:focus { border-color: #222; background: #fff; outline: none; }
+        
+        input.is-invalid { border-color: #e53e3e !important; background-color: #fff5f5; }
+        input.is-valid { border-color: #38a169 !important; background-color: #f0fff4; }
+        
+        .error-msg { font-size: 12px; color: #e53e3e; margin-top: 5px; display: none; font-weight: 500; }
+        
+        button.btn-submit { width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button.btn-submit:hover { background: #333; }
+        
+        .success-banner { background: #f0fff4; border: 1px solid #c6f6d5; color: #2f855a; padding: 15px; border-radius: 6px; font-size: 14px; text-align: center; display: none; margin-bottom: 15px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Đăng Ký Tài Khoản</h2>
+    
+    <div id="successBanner" class="success-banner">🎉 Đăng ký thành công! Dữ liệu biểu mẫu hợp lệ.</div>
+
+    <form id="registerForm" novalidate>
+        <div class="form-group">
+            <label for="fullName">Họ và tên:</label>
+            <input type="text" id="fullName" placeholder="Nhập đầy đủ họ tên">
+            <div class="error-msg" id="errFullName">Họ tên không được phép để trống.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Địa chỉ Email:</label>
+            <input type="email" id="email" placeholder="viDu@domain.com">
+            <div class="error-msg" id="errEmail">Email không hợp lệ hoặc để trống.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Số điện thoại:</label>
+            <input type="text" id="phone" placeholder="Ví dụ: 0912345678">
+            <div class="error-msg" id="errPhone">Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" placeholder="Tối thiểu 6 ký tự">
+            <div class="error-msg" id="errPassword">Mật khẩu phải có độ dài tối thiểu từ 6 ký tự trở lên.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Xác nhận mật khẩu:</label>
+            <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu phía trên">
+            <div class="error-msg" id="errConfirmPassword">Xác nhận mật khẩu chưa trùng khớp.</div>
+        </div>
+
+        <button type="submit" class="btn-submit">Hoàn Tất Đăng Ký</button>
+    </form>
+</div>
+
+<script>
+$(document).ready(function() {
+    
+    $('#registerForm').submit(function(event) {
+    
+        event.preventDefault();
+        
+        let isValidForm = true;
+        $('#successBanner').hide();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^0[0-9]{9}$/; 
+
+        const fullName = $('#fullName').val().trim();
+        if(fullName === "") {
+            showError('#fullName', '#errFullName');
+            isValidForm = false;
+        } else {
+            showValid('#fullName', '#errFullName');
+        }
+
+        const email = $('#email').val().trim();
+        if(email === "" || !emailRegex.test(email)) {
+            showError('#email', '#errEmail');
+            isValidForm = false;
+        } else {
+            showValid('#email', '#errEmail');
+        }
+
+        const phone = $('#phone').val().trim();
+        if(phone === "" || !phoneRegex.test(phone)) {
+            showError('#phone', '#errPhone');
+            isValidForm = false;
+        } else {
+            showValid('#phone', '#errPhone');
+        }
+
+        const password = $('#password').val();
+        if(password.length < 6) {
+            showError('#password', '#errPassword');
+            isValidForm = false;
+        } else {
+            showValid('#password', '#errPassword');
+        }
+
+        const confirmPassword = $('#confirmPassword').val();
+        if(confirmPassword === "" || confirmPassword !== password) {
+            showError('#confirmPassword', '#errConfirmPassword');
+            isValidForm = false;
+        } else {
+            showValid('#confirmPassword', '#errConfirmPassword');
+        }
+
+        if(isValidForm) {
+            $('#successBanner').slideDown(300);
+            
+        }
+    });
+
+    function showError(inputSelector, errorSelector) {
+        $(inputSelector).addClass('is-invalid').removeClass('is-valid');
+        $(errorSelector).show();
+    }
+
+    function showValid(inputSelector, errorSelector) {
+        $(inputSelector).addClass('is-valid').removeClass('is-invalid');
+        $(errorSelector).hide();
+    }
+});
+</script>
+</body>
+</html>

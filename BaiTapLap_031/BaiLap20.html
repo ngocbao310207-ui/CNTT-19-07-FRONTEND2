@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 20 - Thêm mới dữ liệu bằng Ajax POST</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 440px; margin-bottom: 20px; }
+        h2 { font-weight: 600; margin-bottom: 20px; text-align: center; color: #111; }
+        
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #666; font-weight: 500; }
+        input[type="text"] { width: 100%; padding: 11px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; }
+        input[type="text"]:focus { border-color: #222; background: #fff; outline: none; }
+        
+        button.btn-submit { width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button.btn-submit:hover { background: #333; }
+        
+        .notify-banner { padding: 12px; border-radius: 6px; font-size: 14px; text-align: center; display: none; margin-bottom: 15px; font-weight: 500; }
+        .success { background: #f0fff4; border: 1px solid #c6f6d5; color: #2f855a; }
+        .error { background: #fff5f5; border: 1px solid #fed7d7; color: #c53030; }
+
+        /* Log tóm tắt hiển thị dòng vừa thêm */
+        .preview-box { background: #fafafa; border: 1px dashed #ddd; border-radius: 6px; padding: 15px; font-size: 13px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Thêm Thành Viên Mới</h2>
+    
+    <div id="notifyBanner" class="notify-banner"></div>
+
+    <form id="memberForm" novalidate>
+        <div class="form-group">
+            <label for="inputName">Họ và Tên:</label>
+            <input type="text" id="inputName" name="name" placeholder="Ví dụ: Trần Minh Hoàng">
+        </div>
+        <div class="form-group">
+            <label for="inputRole">Chức vụ / Vị trí:</label>
+            <input type="text" id="inputRole" name="role" placeholder="Ví dụ: Lớp trưởng">
+        </div>
+        <div class="form-group">
+            <label for="inputEmail">Địa chỉ Email:</label>
+            <input type="text" id="inputEmail" name="email" placeholder="Ví dụ: hoangtm@dnu.edu.vn">
+        </div>
+        <button type="submit" class="btn-submit" id="btnSubmit">Gửi dữ liệu (POST)</button>
+    </form>
+</div>
+
+<div class="card" id="previewCard" style="max-width: 440px; display: none;">
+    <h3 style="font-size: 14px; text-transform: uppercase; color: #888; margin-bottom: 10px;">Dữ liệu vừa cập nhật từ Server:</h3>
+    <div id="previewContent" class="preview-box"></div>
+</div>
+
+<script>
+const API_URL = "https://6654be941c6afcebc6af5403.mockapi.io/api/v1/members";
+
+$(document).ready(function() {
+    
+    // Bắt sự kiện submit biểu mẫu bằng jQuery
+    $('#memberForm').on('submit', function(event) {
+        // Ngăn form tải lại trang mặc định (preventDefault)
+        event.preventDefault();
+        
+        // 1. Yêu cầu mở rộng: Kiểm tra dữ liệu rỗng trước khi gửi
+        const name = $('#inputName').val().trim();
+        const role = $('#inputRole').val().trim();
+        const email = $('#inputEmail').val().trim();
+
+        if(!name || !role || !email) {
+            showMessage("Vui lòng nhập đầy đủ toàn bộ 3 trường thông tin trước khi gửi!", "error");
+            return;
+        }
+
+        // Đóng gói dữ liệu thủ công hoặc sử dụng $(this).serialize() nếu tên các input khớp với API
+        const payload = {
+            name: name,
+            role: role,
+            email: email
+        };
+
+        // Vô hiệu hóa nút bấm trong lúc xử lý tránh double-submit
+        $('#btnSubmit').prop('disabled', true).text('Đang gửi dữ liệu...');
+
+        // 2. Gửi dữ liệu lên server bằng phương thức $.ajax POST
+        $.ajax({
+            url: API_URL,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function(response) {
+                // 3. Sau khi thêm thành công, hiển thị thông báo và dữ liệu mới lên UI
+                showMessage("🎉 Đã thêm mới thành viên lên server thành công!", "success");
+                
+                // Hiển thị khung phản hồi dữ liệu sinh tự động từ server (có kèm ID)
+                $('#previewContent').html(`
+                    ID bản ghi: <b>#${response.id}</b><br>
+                    Họ tên: <b>${response.name}</b><br>
+                    Chức vụ: <b>${response.role}</b><br>
+                    Email: <b>${response.email}</b>
+                `).show();
+                $('#previewCard').slideDown(300);
+
+                // 4. Yêu cầu mở rộng: Xóa sạch dữ liệu trong form sau khi hoàn tất
+                $('#memberForm')[0].reset();
+            },
+            error: function() {
+                showMessage("⚠️ Gặp lỗi trong tiến trình gửi dữ liệu lên Server giả lập.", "error");
+            },
+            complete: function() {
+                // Kích hoạt lại trạng thái nút bấm
+                $('#btnSubmit').prop('disabled', false).text('Gửi dữ liệu (POST)');
+            }
+        });
+    });
+
+    // Hàm tiện ích điều phối thông báo nhanh
+    function showMessage(msg, type) {
+        const banner = $('#notifyBanner');
+        banner.text(msg).removeClass('success error').addClass(type).slideDown(200);
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 13 - Thao tác Ẩn/Hiện bằng jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+        h2 { font-weight: 600; margin-bottom: 20px; color: #111; }
+        
+        .content-box { background: #fafafa; border: 1px solid #eee; padding: 20px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #555; }
+        
+        .btn-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        button { flex: 1; padding: 11px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-dark { background: #111; color: #fff; }
+        .btn-dark:hover { background: #333; }
+        .btn-light { background: #eee; color: #333; }
+        .btn-light:hover { background: #ddd; }
+        
+        .status-box { font-size: 13px; font-weight: 500; color: #888; padding-top: 10px; border-top: 1px dashed #eee; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>jQuery Selectors & Toggle</h2>
+    
+    <div id="targetBox" class="content-box">
+        Hệ thống tài liệu hướng dẫn thực hành dùng chung cho giảng viên và sinh viên học phần <b>FIT4015 (JavaScript & jQuery nâng môn)</b>. Khối nội dung này có thể ẩn hoặc hiện thông qua việc điều khiển các Selector tương ứng.
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-light" id="btnHide">Ẩn khối</button>
+        <button class="btn-light" id="btnShow">Hiện khối</button>
+        <button class="btn-dark" id="btnToggle">Đổi nhãn (Toggle)</button>
+    </div>
+
+    <button class="btn-light" id="btnCheckStatus" style="width:100%; margin-bottom:15px; background:#f1f3f5;">Kiểm tra trạng thái hộp</button>
+    <div id="lblStatusText" class="status-box">Trạng thái: <b>Đang hiển thị</b></div>
+</div>
+
+<script>
+
+$(document).ready(function() {
+    
+    $('#btnHide').click(function() {
+        $('#targetBox').hide();
+        updateStatusLabel();
+    });
+
+    $('#btnShow').click(function() {
+        $('#targetBox').show();
+        updateStatusLabel();
+    });
+
+    $('#btnToggle').click(function() {
+        $('#targetBox').toggle();
+        updateStatusLabel();
+    });
+
+    $('#btnCheckStatus').click(function() {
+        if ($('#targetBox').is(':visible')) {
+            alert("Thông báo: Khối nội dung hiện TẠI ĐANG HIỂN THỊ trên màn hình.");
+        } else {
+            alert("Thông báo: Khối nội dung hiện TẠI ĐANG ẨN.");
+        }
+    });
+
+    function updateStatusLabel() {
+        if ($('#targetBox').is(':visible')) {
+            $('#lblStatusText').html('Trạng thái: <b style="color: #15803d;">Đang hiển thị</b>');
+            $('#btnToggle').text('Chuyển sang Ẩn');
+        } else {
+            $('#lblStatusText').html('Trạng thái: <b style="color: #b91c1c;">Đang ẩn</b>');
+            $('#btnToggle').text('Chuyển sang Hiện');
+        }
+    }
+});
+</script>
+</body>
+</html>

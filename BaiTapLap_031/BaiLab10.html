@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 10 - Hiển thị dữ liệu từ API</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; }
+        h2 { font-weight: 600; margin-bottom: 8px; text-align: center; color: #111; }
+        p.subtitle { text-align: center; font-size: 13px; color: #888; margin-bottom: 25px; }
+        
+        .loading-box { text-align: center; padding: 30px 0; color: #666; font-size: 14px; font-weight: 500; display: none; }
+        .spinner { width: 24px; height: 24px; border: 2.5px solid #eee; border-top: 2.5px solid #111; border-radius: 50%; margin: 0 auto 10px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .error-box { background: #ffebee; border: 1px solid #ffcdd2; color: #c62828; padding: 15px; border-radius: 6px; font-size: 14px; text-align: center; display: none; margin-bottom: 15px; }
+        
+        .user-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .user-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; transition: transform 0.2s, box-shadow 0.2s; }
+        .user-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); background: #fff; }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: #eee; border: 1px solid #ddd; }
+        .user-info { flex: 1; }
+        .user-name { font-size: 15px; font-weight: 600; color: #111; margin-bottom: 2px; }
+        .user-email { font-size: 13px; color: #666; }
+        .user-id { font-size: 12px; color: #aaa; font-family: monospace; }
+        
+        button.btn-refresh { display: block; margin: 20px auto 0; padding: 10px 20px; background: #111; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        button.btn-refresh:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Danh Sách Thành Viên</h2>
+    <p class="subtitle">Dữ liệu đồng bộ trực tiếp từ Endpoint MockAPI</p>
+
+    <div id="errorBox" class="error-box"></div>
+
+    <div id="loadingBox" class="loading-box">
+        <div class="spinner"></div>
+        <span>Đang kết nối tới server và tải dữ liệu...</span>
+    </div>
+
+    <ul id="userListContainer" class="user-list"></ul>
+
+    <button class="btn-refresh" onclick="fetchUsers()">Tải lại dữ liệu</button>
+</div>
+
+<script>
+
+const API_URL = "https://6654be941c6afcebc6af5403.mockapi.io/api/v1/users";
+
+async function fetchUsers() {
+    const loadingBox = document.getElementById('loadingBox');
+    const errorBox = document.getElementById('errorBox');
+    const container = document.getElementById('userListContainer');
+
+    container.innerHTML = '';
+    errorBox.style.display = 'none';
+    loadingBox.style.display = 'block';
+
+    try {
+        const response = await fetch(API_URL);
+        
+        if (!response.ok) {
+            throw new Error(`Lỗi kết nối Server! Mã phản hồi: ${response.status}`);
+        }
+
+        const usersData = await response.json();
+
+        renderUserList(usersData);
+
+    } catch (error) {
+        errorBox.innerText = `⚠️ Đã có lỗi xảy ra: ${error.message}. Vui lòng kiểm tra lại đường truyền internet!`;
+        errorBox.style.display = 'block';
+    } finally {
+        loadingBox.style.display = 'none';
+    }
+}
+
+function renderUserList(users) {
+    const container = document.getElementById('userListContainer');
+    
+    if(users.length === 0) {
+        container.innerHTML = `<li style="text-align:center; color:#999; font-size:14px;">Không có dữ liệu người dùng nào trên hệ thống.</li>`;
+        return;
+    }
+
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.className = 'user-item';
+        li.innerHTML = `
+            <img class="user-avatar" src="${user.avatar}" alt="Avatar">
+            <div class="user-info">
+                <div class="user-name">${user.name}</div>
+                <div class="user-email">${user.email}</div>
+            </div>
+            <div class="user-id">ID: #${user.id}</div>
+        `;
+        container.appendChild(li);
+    });
+}
+
+window.onload = fetchUsers;
+</script>
+</body>
+</html>

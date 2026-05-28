@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 19 - Tải dữ liệu bằng jQuery Ajax</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 600px; }
+        h2 { font-weight: 600; margin-bottom: 5px; text-align: center; color: #111; }
+        p.subtitle { text-align: center; font-size: 13px; color: #888; margin-bottom: 20px; }
+        
+        .loading-box { text-align: center; padding: 25px 0; color: #666; font-size: 14px; font-weight: 500; }
+        .spinner { width: 24px; height: 24px; border: 2.5px solid #eee; border-top: 2.5px solid #111; border-radius: 50%; margin: 0 auto 10px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .error-box { background: #ffebee; border: 1px solid #ffcdd2; color: #c62828; padding: 12px; border-radius: 6px; font-size: 14px; text-align: center; display: none; margin-bottom: 15px; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; display: none; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f1f3f5; font-weight: 600; color: #555; }
+        tr:hover { background-color: #fafafa; }
+        .member-id { font-family: monospace; color: #888; }
+        
+        button.btn-load { display: block; margin: 20px auto 0; padding: 10px 20px; background: #111; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        button.btn-load:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Danh Sách Lớp Học</h2>
+    <p class="subtitle">Dữ liệu nạp bất đồng bộ bằng phương thức $.ajax GET</p>
+
+    <div id="errorBox" class="error-box"></div>
+
+    <div id="loadingBox" class="loading-box">
+        <div class="spinner"></div>
+        <span>Đang kết nối API và lấy danh sách thành viên...</span>
+    </div>
+
+    <table id="memberTable">
+        <thead>
+            <tr>
+                <th>Mã ID</th>
+                <th>Họ và Tên</th>
+                <th>Vị trí / Chức vụ</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <button class="btn-load" onclick="loadData()">Làm mới danh sách</button>
+</div>
+
+<script>
+const API_ENDPOINT = "https://6654be941c6afcebc6af5403.mockapi.io/api/v1/members";
+
+function loadData() {
+    $('#errorBox').hide();
+    $('#memberTable').hide();
+    $('#loadingBox').show();
+    $('#tableBody').empty();
+
+    $.ajax({
+        url: API_ENDPOINT,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            renderTable(response);
+            $('#loadingBox').hide();
+            $('#memberTable').show();
+        },
+        error: function(xhr, status, error) {
+            $('#loadingBox').hide();
+            $('#errorBox').html(`⚠️ <b>Lỗi tải dữ liệu:</b> Không thể lấy thông tin từ hệ thống server (${error}).`).show();
+        }
+    });
+}
+
+function renderTable(data) {
+    if(data.length === 0) {
+        $('#tableBody').html('<tr><td colspan="3" style="text-align:center; color:#999;">Hệ thống rỗng. Không có thành viên nào.</td></tr>');
+        return;
+    }
+
+    $.each(data, function(index, item) {
+        const row = `
+            <tr>
+                <td class="member-id">#${item.id}</td>
+                <td><strong>${item.name}</strong></td>
+                <td><span style="color: #666;">${item.role || 'Thành viên'}</span></td>
+            </tr>
+        `;
+        $('#tableBody').append(row);
+    });
+}
+
+$(document).ready(function() {
+    loadData();
+});
+</script>
+</body>
+</html>

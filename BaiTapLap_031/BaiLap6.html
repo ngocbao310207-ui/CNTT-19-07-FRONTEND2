@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 06 - Tính toán bằng Callback</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
+        h2 { font-weight: 600; margin-bottom: 10px; text-align: center; color: #111; }
+        p.desc { text-align: center; font-size: 14px; color: #666; margin-bottom: 25px; }
+        .select-scenario { margin-bottom: 20px; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; background: #fff; font-weight: 500; }
+        .log-box { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 20px; font-size: 14px; }
+        .log-line { padding: 6px 0; border-bottom: 1px dashed #eee; color: #555; }
+        .log-line:last-child { border-bottom: none; }
+        .log-line strong { color: #111; }
+        .total-box { display: flex; justify-content: space-between; align-items: center; background: #111; color: #fff; padding: 15px; border-radius: 6px; font-weight: 600; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Quy Trình Đơn Hàng (Callback)</h2>
+    <p class="desc">Mô phỏng chuỗi xử lý tính toán bất đồng bộ/liên tiếp qua hàm Callback</p>
+
+    <label style="font-size: 13px; font-weight:600; color:#888; text-transform:uppercase; display:block; margin-bottom:6px;">Chọn kịch bản test dữ liệu:</label>
+    <select id="selScenario" class="select-scenario" onchange="runOrderPipeline()">
+        <option value="0">Tình huống 1: Đơn hàng nhỏ (Dưới 500k, phí ship 30k)</option>
+        <option value="1">Tình huống 2: Đơn hàng VIP (Trên 1 triệu, giảm giá sâu, Freeship)</option>
+    </select>
+
+    <div style="font-size: 13px; font-weight:600; color:#888; text-transform:uppercase; margin-bottom:8px;">Nhật ký chuỗi xử lý (Logs):</div>
+    <div class="log-box" id="logContainer"></div>
+
+    <div class="total-box">
+        <span>TỔNG KHÁCH PHẢI TRẢ:</span>
+        <span id="lblFinalCost">0đ</span>
+    </div>
+</div>
+
+<script>
+
+const testCases = [
+    {
+        cart: [{ name: "Sách kỹ năng", price: 120000, qty: 2 }],
+        promoCode: "GIAM20"
+    },
+    {
+        cart: [
+            { name: "Bàn phím cơ cơ học", price: 1200000, qty: 1 },
+            { name: "Chuột không dây", price: 350000, qty: 1 }
+        ],
+        promoCode: "GIAM50"
+    }
+];
+
+function formatVND(amount) {
+    return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+}
+
+function printLog(message) {
+    const logBox = document.getElementById('logContainer');
+    logBox.innerHTML += `<div class="log-line">${message}</div>`;
+}
+
+function stepCalculateRawTotal(cart, callback) {
+    let rawTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    printLog(`⚙️ <b>Bước 1:</b> Tính tổng tiền hàng gốc = <strong>${formatVND(rawTotal)}</strong>`);
+    
+    callback(rawTotal); 
+}
+
+function stepApplyDiscount(rawTotal, promoCode, callback) {
+    let discount = 0;
+    if (promoCode === "GIAM20") discount = 20000;
+    else if (promoCode === "GIAM50") discount = 50000;
+    
+    let afterDiscount = rawTotal - discount;
+    printLog(`⚙️ <b>Bước 2:</b> Áp dụng mã [${promoCode}]. Giảm: -${formatVND(discount)} $\rightarrow$ Còn: <strong>${formatVND(afterDiscount)}</strong>`);
+    
+    callback(afterDiscount);
+}
+
+function stepApplyShipping(amount, callback) {
+    let shippingFee = amount >= 500000 ? 0 : 30000;
+    let afterShipping = amount + shippingFee;
+    
+    let shipText = shippingFee === 0 ? "Miễn phí vận chuyển (Đơn > 500k)" : formatVND(shippingFee);
+    printLog(`⚙️ <b>Bước 3:</b> Phí giao hàng: <strong>${shipText}</strong> $\rightarrow$ Luỹ kế: <strong>${formatVND(afterShipping)}</strong>`);
+    
+    callback(afterShipping);
+}
+
+function stepApplyTax(amount, callback) {
+    let tax = amount * 0.1;
+    let finalTotal = amount + tax;
+    printLog(`⚙️ <b>Bước 4 (Mở rộng):</b> Tính thuế VAT (10%): +${formatVND(tax)}`);
+    
+    callback(finalTotal);
+}
+
+function runOrderPipeline() {
+    document.getElementById('logContainer').innerHTML = '';
+    
+    const index = document.getElementById('selScenario').value;
+    const currentData = testCases[index];
+
+    printLog(`🏁 <i>Bắt đầu xử lý chuỗi đơn hàng...</i>`);
+
+    stepCalculateRawTotal(currentData.cart, function(rawTotal) {
+        stepApplyDiscount(rawTotal, currentData.promoCode, function(afterDiscount) {
+            stepApplyShipping(afterDiscount, function(afterShipping) {
+                stepApplyTax(afterShipping, function(finalTotal) {
+                    printLog(`✅ <i>Quy trình xử lý hoàn tất thành công!</i>`);
+                    document.getElementById('lblFinalCost').innerText = formatVND(finalTotal);
+                });
+            });
+        });
+    });
+}
+
+window.onload = runOrderPipeline;
+</script>
+</body>
+</html>

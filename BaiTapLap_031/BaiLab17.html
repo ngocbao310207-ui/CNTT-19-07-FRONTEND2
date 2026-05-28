@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 17 - Giỏ hàng đơn giản jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; }
+        h2 { font-weight: 600; margin-bottom: 20px; color: #111; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px dashed #eee; }
+        .item-details { flex: 1; }
+        .item-name { font-weight: 600; color: #111; font-size: 15px; }
+        .item-price { font-size: 13px; color: #666; margin-top: 2px; }
+        
+        .qty-control { display: flex; align-items: center; gap: 5px; margin: 0 20px; }
+        .btn-qty { width: 28px; height: 28px; background: #eee; border: none; font-weight: 600; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .btn-qty:hover { background: #ddd; }
+        .qty-val { width: 30px; text-align: center; font-size: 14px; font-weight: 600; }
+        
+        .item-subtotal { font-weight: 600; width: 100px; text-align: right; font-size: 14px; color: #111; }
+        
+        .cart-total { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; font-size: 16px; font-weight: 700; color: #000; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Giỏ Hàng Của Bạn</h2>
+    
+    <div id="cartList">
+        <div class="cart-item" data-price="15000000">
+            <div class="item-details">
+                <div class="item-name">iPad Air M2</div>
+                <div class="item-price">Đơn giá: 15.000.000 đ</div>
+            </div>
+            <div class="qty-control">
+                <button class="btn-qty btn-minus">-</button>
+                <span class="qty-val">1</span>
+                <button class="btn-qty btn-plus">+</button>
+            </div>
+            <div class="item-subtotal">15.000.000 đ</div>
+        </div>
+
+        <div class="cart-item" data-price="2500000">
+            <div class="item-details">
+                <div class="item-name">Apple Pencil Pro</div>
+                <div class="item-price">Đơn giá: 2.500.000 đ</div>
+            </div>
+            <div class="qty-control">
+                <button class="btn-qty btn-minus">-</button>
+                <span class="qty-val">1</span>
+                <button class="btn-qty btn-plus">+</button>
+            </div>
+            <div class="item-subtotal">2.500.000 đ</div>
+        </div>
+    </div>
+
+    <div class="cart-total">
+        <span>TỔNG CỘNG HÓA ĐƠN:</span>
+        <span id="lblTotalCart">17.500.000 đ</span>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    
+    function formatVND(amount) {
+        return amount.toLocaleString('vi-VN') + " đ";
+    }
+
+    function updateCartSummary() {
+        let grandTotal = 0;
+
+        $('.cart-item').each(function() {
+            const unitPrice = parseInt($(this).data('price'));
+            const quantity = parseInt($(this).find('.qty-val').text());
+            
+            const subtotal = unitPrice * quantity;
+            grandTotal += subtotal;
+
+            $(this).find('.item-subtotal').text(formatVND(subtotal));
+        });
+
+        $('#lblTotalCart').text(formatVND(grandTotal));
+    }
+
+    $('.btn-plus').click(function() {
+        const qtyElement = $(this).prev('.qty-val');
+        let currentQty = parseInt(qtyElement.text());
+        qtyElement.text(currentQty + 1);
+        updateCartSummary();
+    });
+
+    $('.btn-minus').click(function() {
+        const qtyElement = $(this).next('.qty-val');
+        let currentQty = parseInt(qtyElement.text());
+        
+        if (currentQty > 0) {
+            qtyElement.text(currentQty - 1);
+            updateCartSummary();
+        }
+    });
+});
+</script>
+</body>
+</html>

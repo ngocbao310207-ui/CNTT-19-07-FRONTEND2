@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 11 - Tra cứu đối tượng theo ID</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 440px; }
+        h2 { font-weight: 600; margin-bottom: 20px; text-align: center; color: #111; }
+        
+        .search-box { display: flex; gap: 8px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; background: #fafafa; }
+        input[type="text"]:focus { border-color: #222; background: #fff; outline: none; }
+        
+        button { padding: 12px 18px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-search { background: #111; color: #fff; }
+        .btn-search:hover { background: #333; }
+        .btn-clear { background: #eee; color: #333; }
+        .btn-clear:hover { background: #ddd; }
+
+        .detail-box { border: 1px solid #eee; border-radius: 8px; background: #fafafa; padding: 20px; display: none; text-align: center; }
+        .detail-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .detail-name { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 5px; }
+        .detail-email { font-size: 14px; color: #666; margin-bottom: 15px; }
+        .detail-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; border-top: 1px dashed #ddd; padding-top: 15px; text-align: left; }
+        .meta-item { font-size: 13px; color: #555; }
+        .meta-item span { font-weight: 600; color: #111; }
+
+        .status-msg { text-align: center; font-size: 14px; color: #666; padding: 20px; display: none; background: #f8f9fa; border-radius: 6px; border: 1px dashed #ccc; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Tra Cứu Thành Viên</h2>
+    
+    <div class="search-box">
+        <input type="text" id="txtMemberId" placeholder="Nhập mã định danh ID cần tra cứu (Ví dụ: 1, 2, 3...)">
+        <button class="btn-search" onclick="searchMember()">Tìm</button>
+        <button class="btn-clear" onclick="clearSearch()">Xóa</button>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
+
+    <div id="detailBox" class="detail-box">
+        <img id="imgAvatar" class="detail-avatar" src="" alt="Avatar">
+        <div id="lblName" class="detail-name">-</div>
+        <div id="lblEmail" class="detail-email">-</div>
+        
+        <div class="detail-meta-grid">
+            <div class="meta-item">Mã số: <span id="lblId">-</span></div>
+            <div class="meta-item">Ngày tạo: <span id="lblDate">-</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+const BASE_API = "https://6654be941c6afcebc6af5403.mockapi.io/api/v1/users";
+
+async function searchMember() {
+    const idInput = document.getElementById('txtMemberId').value.trim();
+    const detailBox = document.getElementById('detailBox');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // Reset trạng thái hiển thị
+    detailBox.style.display = 'none';
+    statusMsg.style.display = 'none';
+
+    if(!idInput) {
+        alert("Vui lòng nhập mã định danh ID trước khi bấm tìm kiếm!");
+        return;
+    }
+
+    statusMsg.innerText = "Đang truy vấn dữ liệu từ máy chủ...";
+    statusMsg.style.display = 'block';
+
+    try {
+        const dynamicUrl = `${BASE_API}/${idInput}`;
+        const response = await fetch(dynamicUrl);
+
+        if (response.status === 404) {
+            statusMsg.innerHTML = `❌ Không tìm thấy đối tượng thành viên nào có mã định danh ID: <b>${idInput}</b>`;
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error("Lỗi hệ thống trong quá trình xử lý phản hồi từ Server.");
+        }
+
+        const member = await response.json();
+
+        statusMsg.style.display = 'none';
+        
+        document.getElementById('imgAvatar').src = member.avatar;
+        document.getElementById('lblName').innerText = member.name;
+        document.getElementById('lblEmail').innerText = member.email;
+        document.getElementById('lblId').innerText = `#${member.id}`;
+        
+        const formattedDate = new Date(member.createdAt).toLocaleDateString('vi-VN');
+        document.getElementById('lblDate').innerText = formattedDate;
+
+        detailBox.style.display = 'block';
+
+    } catch (error) {
+        statusMsg.innerText = `⚠️ Lỗi hệ thống: ${error.message}`;
+    }
+}
+
+function clearSearch() {
+    document.getElementById('txtMemberId').value = '';
+    document.getElementById('detailBox').style.display = 'none';
+    document.getElementById('statusMsg').style.display = 'none';
+    document.getElementById('txtMemberId').focus();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 18 - Quản lý thành viên động với jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; padding: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); width: 100%; max-width: 500px; }
+        h2 { font-weight: 600; margin-bottom: 20px; text-align: center; color: #111; }
+        
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        input[type="text"] { flex: 1; padding: 11px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #fafafa; }
+        input[type="text"]:focus { border-color: #222; background: #fff; outline: none; }
+        
+        button { padding: 11px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-add { background: #111; color: #fff; }
+        .btn-add:hover { background: #333; }
+        
+        .member-list { list-style: none; margin-top: 15px; }
+        .member-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; }
+        
+        .member-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+        .index-number { color: #aaa; font-size: 12px; font-weight: 600; width: 20px; }
+        .member-name { color: #111; }
+        
+        .edit-input { padding: 4px 8px; border: 1px solid #111; border-radius: 4px; font-size: 14px; font-weight: 500; display: none; width: 180px; }
+
+        .btn-actions { display: flex; gap: 5px; }
+        .btn-edit { background: #eee; color: #333; }
+        .btn-edit:hover { background: #ddd; }
+        .btn-save { background: #15803d; color: #fff; display: none; }
+        .btn-delete { background: none; color: #b91c1c; }
+        .btn-delete:hover { background: #fdf2f2; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Team Members</h2>
+    
+    <div class="input-group">
+        <input type="text" id="txtMemberName" placeholder="Nhập tên thành viên mới...">
+        <button class="btn-add" id="btnAdd">Thêm mới</button>
+    </div>
+    <div class="input-group">
+        <input type="text" id="txtSearch" placeholder="🔍 Tìm kiếm nhanh thành viên theo tên...">
+    </div>
+
+    <ul id="memberListContainer" class="member-list">
+        <li class="member-item">
+            <div class="member-info">
+                <span class="index-number">1</span>
+                <span class="member-name">Nguyễn Văn Đại Nam</span>
+                <input type="text" class="edit-input" value="Nguyễn Văn Đại Nam">
+            </div>
+            <div class="btn-actions">
+                <button class="btn-edit">Sửa</button>
+                <button class="btn-save">Lưu</button>
+                <button class="btn-delete">Xóa</button>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<script>
+$(document).ready(function() {
+
+    function reIndexMembers() {
+        $('#memberListContainer .member-item').each(function(index) {
+            $(this).find('.index-number').text(index + 1);
+        });
+    }
+
+    $('#btnAdd').click(function() {
+        const name = $('#txtMemberName').val().trim();
+        if(!name) {
+            alert("Tên thành viên không được để trống!");
+            return;
+        }
+
+        const newRow = `
+            <li class="member-item">
+                <div class="member-info">
+                    <span class="index-number"></span>
+                    <span class="member-name">${name}</span>
+                    <input type="text" class="edit-input" value="${name}">
+                </div>
+                <div class="btn-actions">
+                    <button class="btn-edit">Sửa</button>
+                    <button class="btn-save">Lưu</button>
+                    <button class="btn-delete">Xóa</button>
+                </div>
+            </li>
+        `;
+
+        $('#memberListContainer').append(newRow);
+        $('#txtMemberName').val('').focus();
+        reIndexMembers();
+    });
+
+    $('#memberListContainer').on('click', '.btn-delete', function() {
+        if(confirm("Bạn có chắc chắn muốn xóa thành viên này không?")) {
+            $(this).closest('.member-item').remove();
+            reIndexMembers();
+        }
+    });
+
+    $('#memberListContainer').on('click', '.btn-edit', function() {
+        const item = $(this).closest('.member-item');
+        item.find('.member-name').hide();
+        item.find('.edit-input').show().focus();
+        
+        $(this).hide();
+        item.find('.btn-save').show();
+    });
+
+    $('#memberListContainer').on('click', '.btn-save', function() {
+        const item = $(this).closest('.member-item');
+        const updatedName = item.find('.edit-input').val().trim();
+
+        if(!updatedName) {
+            alert("Tên thành viên không được bỏ trống!");
+            return;
+        }
+
+        item.find('.member-name').text(updatedName).show();
+        item.find('.edit-input').hide();
+        
+        $(this).hide();
+        item.find('.btn-edit').show();
+    });
+
+    $('#txtSearch').on('input', function() {
+        const searchKey = $(this).val().toLowerCase().trim();
+        
+        $('#memberListContainer .member-item').each(function() {
+            const name = $(this).find('.member-name').text().toLowerCase();
+            if (name.includes(searchKey)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+
+    reIndexMembers();
+});
+</script>
+</body>
+</html>

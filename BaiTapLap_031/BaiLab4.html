@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 04 - Xử lý điểm sinh viên</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 480px; }
+        h2 { font-weight: 600; margin-bottom: 20px; text-align: center; color: #111; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; background: #fafafa; }
+        input:focus { border-color: #222; background: #fff; outline: none; }
+        button { padding: 12px 20px; background: #111; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        button:hover { background: #333; }
+        .checkbox-group { margin-bottom: 15px; font-size: 14px; display: flex; align-items: center; gap: 8px; color: #555; }
+        .checkbox-group input { flex: none; width: 16px; height: 16px; cursor: pointer; }
+        .section-title { font-size: 14px; font-weight: 600; text-transform: uppercase; color: #888; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .badge-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: #fafafa; border: 1px solid #eee; border-radius: 6px; margin-bottom: 20px; min-height: 45px; }
+        .score-badge { background: #eee; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 500; color: #444; }
+        .report-box { border-top: 1px dashed #ddd; padding-top: 20px; }
+        .report-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; }
+        .report-row strong { color: #000; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Xử Lý Điểm Sinh Viên</h2>
+    
+    <div class="input-group">
+        <input type="number" id="scoreInput" min="0" max="10" step="0.1" placeholder="Nhập điểm học phần (0 - 10)...">
+        <button onclick="addScore()">Thêm điểm</button>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="chkExcludeLowest" onchange="calculateReport()">
+        <label for="chkExcludeLowest">Loại bỏ 1 điểm thấp nhất trước khi tính điểm trung bình</label>
+    </div>
+
+    <div class="section-title">Danh sách điểm hiện tại</div>
+    <div id="scoreContainer" class="badge-container"></div>
+
+    <div class="report-box">
+        <div class="section-title">Kết quả tổng hợp</div>
+        <div class="report-row"><span>Tổng số đầu điểm:</span><strong id="lblCount">0</strong></div>
+        <div class="report-row"><span>Tổng điểm tích lũy:</span><strong id="lblSum">0</strong></div>
+        <div class="report-row"><span>Điểm trung bình ĐTB:</span><strong id="lblAvg">0.00</strong></div>
+        <div class="report-row"><span>Xếp loại học lực:</span><strong id="lblRank">-</strong></div>
+    </div>
+</div>
+
+<script>
+let scoreArray = [8.5, 6.4, 7.0, 4.5, 9.2];
+
+function renderScores() {
+    const container = document.getElementById('scoreContainer');
+    container.innerHTML = '';
+    scoreArray.forEach(score => {
+        const badge = document.createElement('span');
+        badge.className = 'score-badge';
+        badge.innerText = score.toFixed(1);
+        container.appendChild(badge);
+    });
+}
+
+function addScore() {
+    const input = document.getElementById('scoreInput');
+    const val = input.value;
+    
+    if(!val || val < 0 || val > 10) {
+        alert("Vui lòng nhập điểm hợp lệ từ 0 đến 10!");
+        return;
+    }
+    
+    scoreArray.push(Number(val));
+    input.value = '';
+    renderScores();
+    calculateReport();
+}
+
+function calculateReport() {
+    if(scoreArray.length === 0) return;
+
+    let processedScores = [...scoreArray];
+    const excludeLowest = document.getElementById('chkExcludeLowest').checked;
+
+    if (excludeLowest && processedScores.length > 1) {
+        const minScore = Math.min(...processedScores);
+        const minIndex = processedScores.indexOf(minScore);
+        processedScores.splice(minIndex, 1);
+    }
+
+    const totalSum = processedScores.reduce((sum, score) => sum + score, 0);
+    const average = totalSum / processedScores.length;
+
+    let rank = "";
+    if (average >= 8.5) rank = "Giỏi";
+    else if (average >= 7.0) rank = "Khá";
+    else if (average >= 5.0) rank = "Trung bình";
+    else rank = "Yếu";
+
+    document.getElementById('lblCount').innerText = processedScores.length;
+    document.getElementById('lblSum').innerText = totalSum.toFixed(1);
+    document.getElementById('lblAvg').innerText = average.toFixed(2);
+    document.getElementById('lblRank').innerText = rank;
+}
+
+window.onload = function() {
+    renderScores();
+    calculateReport();
+}
+</script>
+</body>
+</html>
