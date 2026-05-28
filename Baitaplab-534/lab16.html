@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 16 - Bộ đếm tương tác</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+body{
+    font-family:Arial;
+    background:#f2f5f9;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.container{
+    background:white;
+    width:350px;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(0,0,0,0.1);
+}
+h2{
+    margin-bottom:20px;
+}
+#counter{
+    font-size:60px;
+    font-weight:bold;
+    margin:25px;
+    transition:0.3s;
+}
+button{
+    padding:12px 18px;
+    border:none;
+    border-radius:10px;
+    margin:5px;
+    font-size:15px;
+    cursor:pointer;
+    color:white;
+}
+#increase{
+    background:#4CAF50;
+}
+#decrease{
+    background:#f44336;
+}
+#reset{
+    background:#ff9800;
+}
+#fast{
+    background:#2196F3;
+}
+button:hover{
+    transform:scale(1.05);
+}
+.duong{
+    color:green;
+}
+.am{
+    color:red;
+}
+.khong{
+    color:black;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Bộ đếm tương tác</h2>
+<div id="counter" class="khong">0</div>
+<button id="increase">+1</button>
+<button id="decrease">-1</button>
+<button id="reset">Reset</button>
+<button id="fast">+10</button>
+</div>
+<script>
+let count=0;
+function updateDisplay(){
+    $("#counter").text(count);
+    if(count>0){
+        $("#counter")
+        .removeClass()
+        .addClass("duong");
+    }
+    else if(count<0){
+        $("#counter")
+        .removeClass()
+        .addClass("am");
+    }
+    else{
+        $("#counter")
+        .removeClass()
+        .addClass("khong");
+    }
+
+}
+$("#increase").click(function(){
+    count++;
+    updateDisplay();
+});
+$("#decrease").click(function(){
+    count--;
+    updateDisplay();
+});
+$("#reset").click(function(){
+    count=0;
+    updateDisplay();
+});
+$("#fast").click(function(){
+    count+=10;
+    updateDisplay();
+});
+</script>
+</body>
+</html>

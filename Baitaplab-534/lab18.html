@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 18 - Danh sách thành viên</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+body{
+    font-family:Arial;
+    background:#f3f6fa;
+}
+.container{
+    width:500px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.1);
+}
+h2{
+    text-align:center;
+}
+.input-area{
+    display:flex;
+    gap:10px;
+}
+input{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+#add{
+    background:#4CAF50;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:10px;
+    cursor:pointer;
+}
+ul{
+    padding:0;
+}
+li{
+    list-style:none;
+    background:#f8f9fb;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.edit{
+    background:#2196F3;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+}
+.delete{
+    background:#f44336;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+}
+button{
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Danh sách thành viên</h2>
+<div class="input-area">
+<input type="text"
+id="name"
+placeholder="Nhập tên thành viên">
+<button id="add">
+Thêm
+</button>
+</div>
+<ul id="memberList">
+</ul>
+</div>
+<script>
+$("#add").click(function(){
+let name=$("#name").val();
+if(name==""){
+    alert("Vui lòng nhập tên");
+    return;
+}
+let member=`
+<li>
+<span>${name}</span>
+<div>
+<button class="edit">
+Sửa
+</button>
+<button class="delete">
+Xóa
+</button>
+</div>
+</li>
+`;
+$("#memberList").append(member);
+$("#name").val("");
+});
+$(document).on(
+"click",
+".delete",
+function(){
+$(this)
+.closest("li")
+.remove();
+});
+$(document).on(
+"click",
+".edit",
+function(){
+let oldName=$(this)
+.parent()
+.parent()
+.find("span")
+.text();
+let newName=prompt(
+"Nhập tên mới:",
+oldName
+);
+if(newName!=null && newName!=""){
+$(this)
+.parent()
+.parent()
+.find("span")
+.text(newName);
+}
+});
+</script>
+</body>
+</html>

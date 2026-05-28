@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 17 - Giỏ hàng đơn giản</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+body{
+    font-family: Arial;
+    display:flex;
+    justify-content:center;
+    margin-top:50px;
+}
+.product{
+    width:350px;
+    border:1px solid gray;
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0px 0px 10px lightgray;
+}
+.product img{
+    width:250px;
+    height:200px;
+    object-fit:cover;
+    border-radius:10px;
+}
+button{
+    width:40px;
+    height:40px;
+    font-size:20px;
+}
+#quantity{
+    margin:0 15px;
+    font-size:20px;
+    font-weight:bold;
+}
+#total{
+    color:red;
+    font-size:25px;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+<div class="product">
+    <h2>Điện thoại Samsung</h2>
+    <img src="https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTYa8SWUPt0JKi6c5n79qJqQfV2ouRdqNcUhWril8KZCCdh4VH87cJxBR__DsDfGxKtZjEQZU7YnoOTRpWW9aK0jGz-btpjFLXX4eYzKRDTgVRjHh70BqknJ444BEjQqrIs9eZEDGA4N5Q&usqp=CAc"
+         alt="Samsung">
+    <p>Đơn giá: <b>15,500,000 VNĐ</b></p>
+    <button id="minus">-</button>
+    <span id="quantity">1</span>
+    <button id="plus">+</button>
+    <h3>
+        Thành tiền:
+        <span id="total"></span>
+        VNĐ
+    </h3>
+</div>
+<script>
+let price = 15500000;
+let quantity = 1;
+function updateCart(){
+    $("#quantity").text(quantity);
+    let total = price * quantity;
+    $("#total").text(
+        total.toLocaleString()
+    );
+}
+$("#plus").click(function(){
+    quantity++;
+    updateCart();
+});
+$("#minus").click(function(){
+    if(quantity > 1){
+        quantity--;
+    }
+    updateCart();
+});
+updateCart();
+</script>
+</body>
+</html>
