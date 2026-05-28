@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 14 - Hiệu ứng jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; text-align: center; }
+        #alert-box { padding: 20px; background-color: #ecf0f1; border: 2px dashed #bdc3c7; margin: 20px auto; border-radius: 4px; font-weight: bold; }
+        /* Yêu cầu mở rộng: Class highlight CSS */
+        .highlight { background-color: #f1c40f !important; border-color: #f39c12 !important; color: #2c3e50; transition: background 0.3s; }
+        button { padding: 8px 12px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Hiệu Ứng Giao Diện Động</h2>
+    
+    <div id="alert-box">
+        Khối thông báo hiệu ứng đặc biệt!
+    </div>
+
+    <div>
+        <button id="btn-fade-out">Fade Out (Mờ dần)</button>
+        <button id="btn-fade-in">Fade In (Rõ dần)</button>
+        <button id="btn-slide-up">Slide Up (Cuộn lên)</button>
+        <button id="btn-slide-down">Slide Down (Cuộn xuống)</button>
+        <button id="btn-chain" style="background:#9b59b6; color:white; border:none;">Chaining + Highlight</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Thiết lập tốc độ mặc định là 500ms
+            const speed = 500;
+
+            $('#btn-fade-out').click(function() {
+                $('#alert-box').fadeOut(speed);
+            });
+
+            $('#btn-fade-in').click(function() {
+                $('#alert-box').fadeIn(speed);
+            });
+
+            $('#btn-slide-up').click(function() {
+                $('#alert-box').slideUp(speed);
+            });
+
+            $('#btn-slide-down').click(function() {
+                $('#alert-box').slideDown(speed);
+            });
+
+            // Yêu cầu mở rộng: Chaining chuỗi hiệu ứng liên tiếp và thêm bớt class highlight
+            $('#btn-chain').click(function() {
+                $('#alert-box')
+                    .removeClass('highlight')
+                    .fadeOut(300)
+                    .fadeIn(300, function() {
+                        // Thêm class highlight khi hiệu ứng kết thúc nửa chặng đường
+                        $(this).addClass('highlight');
+                    })
+                    .slideUp(300)
+                    .slideDown(300);
+            });
+        });
+    </script>
+</body>
+</html>

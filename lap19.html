@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 19 - Ajax Get</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 30px auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #34495e; color: white; }
+        .status-msg { font-weight: bold; padding: 10px; margin: 10px 0; }
+        .loading { color: #f39c12; }
+        .error { color: #e74c3c; border: 1px solid #e74c3c; background: #fdedec;}
+    </style>
+</head>
+<body>
+
+    <h2>Danh Sách Người Dùng (Ajax GET)</h2>
+    <div id="msg-box"></div>
+
+    <table id="data-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên người dùng</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            const API_URL = 'https://jsonplaceholder.typicode.com/users';
+
+            // Yêu cầu mở rộng: Hiển thị thông báo đang tải dữ liệu
+            $('#msg-box').addClass('status-msg loading').text('Đang kết nối hệ thống và tải dữ liệu...');
+
+            $.ajax({
+                url: API_URL,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#msg-box').removeClass('loading').hide(); // Ẩn vùng thông báo
+                    
+                    let rows = '';
+                    // Duyệt dữ liệu và render tối thiểu 3 trường thông tin
+                    data.forEach(user => {
+                        rows += `
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.name}</td>
+                                <td>${user.email}</td>
+                            </tr>`;
+                    });
+
+                    $('#data-table tbody').html(rows);
+                    $('#data-table').show(); // Hiển thị bảng dữ liệu
+                },
+                error: function(xhr, status, error) {
+                    // Yêu cầu mở rộng: Xử lý trường hợp lỗi kết nối API
+                    $('#msg-box')
+                        .removeClass('loading')
+                        .addClass('error')
+                        .text('Không thể đồng bộ dữ liệu. Lỗi: ' + error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

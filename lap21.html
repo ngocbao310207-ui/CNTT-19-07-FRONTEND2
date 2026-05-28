@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 21 - Full CRUD Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 30px auto; padding: 20px; }
+        .layout { display: flex; gap: 30px; }
+        form { flex: 1; background: #f4f6f7; padding: 15px; border-radius: 6px; height: fit-content; }
+        .main-list { flex: 2; }
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
+        input { padding: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #2c3e50; color: white; }
+        button { padding: 6px 12px; cursor: pointer; }
+        .search-container { margin-bottom: 15px; }
+        .search-container input { width: 100%; padding: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <h2>Quản Lý Nhân Viên Toàn Diện (jQuery Ajax Full CRUD)</h2>
+
+    <div class="search-container">
+        <input type="text" id="live-search" placeholder="Nhập tên nhân viên để lọc danh sách nhanh...">
+    </div>
+
+    <div class="layout">
+        <form id="crud-form">
+            <h3 id="f-title">Thêm Nhân Viên</h3>
+            <input type="hidden" id="emp-id">
+            <div class="form-group">
+                <label>Họ và tên</label>
+                <input type="text" id="emp-name" required>
+            </div>
+            <div class="form-group">
+                <label>Bộ phận làm việc</label>
+                <input type="text" id="emp-dept" required>
+            </div>
+            <button type="submit" id="btn-submit" style="background:#27ae60; color:white; border:none;">Lưu dữ liệu</button>
+            <button type="button" id="btn-clear-form" style="background:#7f8c8d; color:white; border:none; margin-top:5px;">Hủy bỏ</button>
+        </form>
+
+        <div class="main-list">
+            <h3>Danh sách dữ liệu thực tế</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Họ tên</th>
+                        <th>Bộ phận</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="emp-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Cần thay endpoint này bằng resource mockapi.io của riêng bạn
+        const API_ENDPOINT = 'https://66549a1d3c1d3b6029373977.mockapi.io/api/v1/users';
+        let cachedData = [];
+
+        // 1. Tải danh sách dữ liệu đầu kỳ (GET)
+        function loadRecords() {
+            $.ajax({
+                url: API_ENDPOINT,
+                type: 'GET',
+                success: function(data) {
+                    cachedData = data;
+                    renderTable(cachedData);
+                }
+            });
+        }
+
+        function renderTable(arrayData) {
+            let htmlRows = '';
+            arrayData.forEach(item => {
+                htmlRows += `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.department || 'Chưa phân phối'}</td>
+                        <td>
+                            <button style="background:#f39c12; color:white; border:none;" onclick="populateToForm('${item.id}', '${item.name}', '${item.department || ''}')">Sửa</button>
+                            <button style="background:#e74c3c; color:white; border:none;" onclick="deleteRecord('${item.id}')">Xóa</button>
+                        </td>
+                    </tr>`;
+            });
+            $('#emp-table-body').html(htmlRows);
+        }
+
+        // 2. Thao tác Xử lý sự kiện Submit Form (POST hoặc PUT)
+        $('#crud-form').submit(function(e) {
+            e.preventDefault();
+            const id = $('#emp-id').val();
+            const name = $('#emp-name').val().trim();
+            const dept = $('#emp-dept').val().trim();
+
+            const payload = { name: name, department: dept };
+
+            if(id) {
+                // Thực thi cập nhật dữ liệu (PUT)
+                $.ajax({
+                    url: `${API_ENDPOINT}/${id}`,
+                    type: 'PUT',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json',
+                    success: function() { resetForm(); loadRecords(); }
+                });
+            } else {
+                // Thực thi thêm mới dữ liệu (POST)
+                $.ajax({
+                    url: API_ENDPOINT,
+                    type: 'POST',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json',
+                    success: function() { resetForm(); loadRecords(); }
+                });
+            }
+        });
+
+        // 3. Thao tác Xóa bản ghi dữ liệu (DELETE)
+        window.deleteRecord = function(id) {
+            if(confirm('Hệ thống xác nhận xóa bản ghi mang mã số này?')) {
+                $.ajax({
+                    url: `${API_ENDPOINT}/${id}`,
+                    type: 'DELETE',
+                    success: function() { loadRecords(); }
+                });
+            }
+        }
+
+        // Đổ ngược dữ liệu lên form để chỉnh sửa thông tin
+        window.populateToForm = function(id, name, dept) {
+            $('#emp-id').val(id);
+            $('#emp-name').val(name);
+            $('#emp-dept').val(dept);
+            $('#f-title').text('Cập Nhật Nhân Viên');
+            $('#btn-submit').css('background', '#db7806');
+        }
+
+        function resetForm() {
+            $('#emp-id').val('');
+            $('#crud-form')[0].reset();
+            $('#f-title').text('Thêm Nhân Viên');
+            $('#btn-submit').css('background', '#27ae60');
+        }
+
+        $('#btn-clear-form').click(resetForm);
+
+        // Yêu cầu mở rộng: Bộ tìm kiếm lọc trực tiếp thời gian thực
+        $('#live-search').on('input', function() {
+            const val = $(this).val().toLowerCase();
+            const matched = cachedData.filter(item => item.name.toLowerCase().includes(val));
+            renderTable(matched);
+        });
+
+        // Khởi động nạp dữ liệu ban đầu
+        $(document).ready(loadRecords);
+    </script>
+</body>
+</html>

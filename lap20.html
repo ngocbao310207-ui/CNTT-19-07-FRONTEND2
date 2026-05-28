@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 20 - Ajax Post</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 450px; margin: 40px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; }
+        input { padding: 8px; font-size: 1rem; }
+        button { padding: 10px; background: #27ae60; color: white; border: none; font-size: 1rem; cursor: pointer; }
+        #post-status { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Thêm Bài Viết Mới (Ajax POST)</h2>
+    
+    <form id="post-form">
+        <div class="form-group">
+            <label>Tiêu đề bài viết</label>
+            <input type="text" id="title" name="title">
+        </div>
+        <div class="form-group">
+            <label>Tác giả (Mã User)</label>
+            <input type="number" id="userId" name="userId">
+        </div>
+        <div class="form-group">
+            <label>Tóm tắt nội dung ngắn</label>
+            <input type="text" id="body" name="body">
+        </div>
+        <button type="submit">Gửi dữ liệu</button>
+    </form>
+
+    <div id="post-status"></div>
+
+    <script>
+        $(document).ready(function() {
+            const API_URL = 'https://jsonplaceholder.typicode.com/posts';
+
+            $('#post-form').submit(function(e) {
+                e.preventDefault();
+
+                const title = $('#title').val().trim();
+                const userId = $('#userId').val().trim();
+                const body = $('#body').val().trim();
+
+                // Yêu cầu mở rộng: Kiểm tra dữ liệu rỗng trước khi gửi đi
+                if (!title || !userId || !body) {
+                    $('#post-status').css('color', '#e74c3c').text('Vui lòng hoàn thiện toàn bộ dữ liệu trên form!');
+                    return;
+                }
+
+                $('#post-status').css('color', '#f39c12').text('Đang đẩy dữ liệu lên server...');
+
+                // Tạo đối tượng dữ liệu gửi đi
+                const formData = {
+                    title: title,
+                    userId: userId,
+                    body: body
+                };
+
+                $.ajax({
+                    url: API_URL,
+                    type: 'POST',
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json; charset=UTF-8',
+                    success: function(response) {
+                        $('#post-status').css('color', '#2ecc71').html(`
+                            Thêm mới dữ liệu thành công! <br>
+                            ID bản ghi mới trả về từ Server: <strong>${response.id}</strong>
+                        `);
+                        
+                        // Yêu cầu mở rộng: Xóa sạch dữ liệu trong form sau khi hoàn tất thành công
+                        $('#post-form')[0].reset();
+                    },
+                    error: function() {
+                        $('#post-status').css('color', '#e74c3c').text('Đã xảy ra sự cố trong quá trình POST dữ liệu.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

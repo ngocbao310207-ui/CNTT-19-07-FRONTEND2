@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 07: Thao tác giao diện qua HTML DOM</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; transition: all 0.3s ease; }
+        
+        /* Các trạng thái giao diện động (Sử dụng classList) */
+        .theme-dark { background: #2c3e50; color: white; }
+        .theme-dark p { color: #bdc3c7 !important; }
+        .theme-nature { background: #e8f5e9; color: #1b5e20; }
+        .theme-nature p { color: #4caf50 !important; }
+
+        /* Khối hiển thị ảnh / icon đại diện */
+        .image-wrapper { width: 120px; height: 120px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; background: #eee; display: flex; justify-content: center; align-items: center; }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        h2 { margin: 10px 0; color: #333; }
+        .theme-dark h2 { color: #fff; }
+        p { color: #666; font-size: 14px; line-height: 1.4; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        button { padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        .btn-primary { background-color: #3498db; color: white; }
+        .btn-dark { background-color: #34495e; color: white; }
+        .btn-success { background-color: #2ecc71; color: white; }
+        .btn-reset { background-color: #e74c3c; color: white; grid-column: span 2; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+    <div class="image-wrapper">
+        <img id="cardImage" class="avatar-img" src="https://picsum.photos/id/1/200/200" alt="Học tập">
+    </div>
+    
+    <h2 id="cardTitle">Chế độ: Mặc định</h2>
+    <p id="cardDescription">Đây là giao diện cơ bản ban đầu của trang web khi vừa tải. Bạn có thể sử dụng các tùy chọn điều khiển bên dưới để tương tác thay đổi trực tiếp cấu trúc DOM thành các trạng thái khác nhau.</p>
+
+    <div class="btn-group">
+        <button class="btn-dark" onclick="changeState('dark')">Chế độ Tối 🌙</button>
+        <button class="btn-success" onclick="changeState('nature')">Chế độ Lá Cây 🌱</button>
+        <button class="btn-primary" onclick="changeState('work')">Đổi Nội Dung Học 💻</button>
+        <button class="btn-reset" onclick="changeState('reset')">Khôi phục mặc định 🔄</button>
+    </div>
+</div>
+
+<script>
+// 2. Sử dụng document.getElementById để lấy tham chiếu các phần tử
+const mainCard = document.getElementById('mainCard');
+const cardImage = document.getElementById('cardImage');
+const cardTitle = document.getElementById('cardTitle');
+const cardDescription = document.getElementById('cardDescription');
+
+// 3 & 4. Hàm tập trung xử lý nhiều trạng thái hiển thị khác nhau dựa trên tham số truyền vào
+function changeState(mode) {
+    // Trước tiên reset các class thay đổi giao diện cũ tránh xung đột
+    mainCard.classList.remove('theme-dark', 'theme-nature');
+
+    if (mode === 'dark') {
+        // Thay đổi class bằng classList và đổi văn bản innerText
+        mainCard.classList.add('theme-dark');
+        cardTitle.innerText = "Chế độ: Đêm Tối";
+        cardDescription.innerText = "Giao diện đã chuyển sang chế độ Night-mode bảo vệ mắt. Màu nền của thẻ Card đã được nạp class mới thông qua đối tượng classList.";
+        // Thay đổi thuộc tính ảnh thông qua gán giá trị thuộc tính .src
+        cardImage.src = "https://picsum.photos/id/12/200/200"; // Ảnh phong cảnh tối
+    } 
+    else if (mode === 'nature') {
+        mainCard.classList.add('theme-nature');
+        cardTitle.innerText = "Chế độ: Thiên Nhiên";
+        cardDescription.innerText = "Tông màu xanh lục dịu mát đã được kích hoạt, tạo cảm giác thân thiện với môi trường tự nhiên.";
+        cardImage.src = "https://picsum.photos/id/10/200/200"; // Ảnh rừng cây
+    } 
+    else if (mode === 'work') {
+        // Giữ nguyên giao diện nền nhưng đổi sâu sắc phần chữ và ảnh học tập công việc
+        cardTitle.innerText = "Chế độ: Làm việc tập trung";
+        cardDescription.innerText = "Nội dung văn bản được cập nhật tự động! Bạn đang chuyển sang trạng thái tập trung làm việc cường độ cao với máy tính.";
+        cardImage.src = "https://picsum.photos/id/180/200/200"; // Ảnh laptop công việc
+    } 
+    else if (mode === 'reset') {
+        // Yêu cầu mở rộng: Đưa mọi thứ về trạng thái sơ khai ban đầu của tệp HTML
+        cardTitle.innerText = "Chế độ: Mặc định";
+        cardDescription.innerText = "Đây là giao diện cơ bản ban đầu của trang web khi vừa tải. Bạn có thể sử dụng các tùy chọn điều khiển bên dưới để tương tác thay đổi trực tiếp cấu trúc DOM thành các trạng thái khác nhau.";
+        cardImage.src = "https://picsum.photos/id/1/200/200";
+    }
+}
+</script>
+
+</body>
+</html>

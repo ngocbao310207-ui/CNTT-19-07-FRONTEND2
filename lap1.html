@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 01: Tính chỉ số BMI</title>
+    <style>
+        /* CSS Cơ bản giúp giao diện hiện đại, dễ nhìn */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            display: none; /* Ẩn đi khi chưa có kết quả */
+        }
+        /* Các màu sắc thay đổi động theo kết quả */
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .thin { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .normal { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .overweight { background-color: #ffeeba; color: #856404; border: 1px solid #ffeeba; }
+        .obese { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tính Chỉ Số BMI</h2>
+    
+    <div class="form-group">
+        <label for="height">Chiều cao (mét):</label>
+        <input type="number" id="height" step="0.01" placeholder="Ví dụ: 1.65">
+    </div>
+    
+    <div class="form-group">
+        <label for="weight">Cân nặng (kg):</label>
+        <input type="number" id="weight" step="0.1" placeholder="Ví dụ: 55">
+    </div>
+    
+    <button onclick="calculateBMI()">Tính Kết Quả</button>
+    
+    <div id="result-box"></div>
+</div>
+
+<script>
+function calculateBMI() {
+    // 1. Lấy dữ liệu từ input và chuyển sang kiểu số thực (Float)
+    const height = parseFloat(document.getElementById('height').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+    const resultBox = document.getElementById('result-box');
+    
+    // Hiện hộp kết quả
+    resultBox.style.display = "block";
+    resultBox.className = ""; // Reset class màu sắc cũ
+
+    // 2. Yêu cầu mở rộng: Kiểm tra dữ liệu rỗng, số âm hoặc bằng 0
+    if (isNaN(height) || isNaN(weight)) {
+        resultBox.innerText = "Vui lòng nhập đầy đủ chiều cao và cân nặng!";
+        resultBox.classList.add("error");
+        return;
+    }
+    if (height <= 0 || weight <= 0) {
+        resultBox.innerText = "Chiều cao và cân nặng phải lớn hơn 0!";
+        resultBox.classList.add("error");
+        return;
+    }
+
+    // 3. Tính toán công thức chuẩn: BMI = Cân nặng / (Chiều cao * Chiều cao)
+    const bmi = weight / (height * height);
+    
+    // Làm tròn kết quả đến 2 chữ số thập phân bằng .toFixed(2)
+    const bmiRounded = bmi.toFixed(2);
+    
+    let classification = "";
+    let colorClass = "";
+
+    // 4. Phân loại 4 mức theo chuẩn WHO
+    if (bmi < 18.5) {
+        classification = "Gầy";
+        colorClass = "thin";
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+        classification = "Bình thường";
+        colorClass = "normal";
+    } else if (bmi >= 25 && bmi < 29.9) {
+        classification = "Thừa cân";
+        colorClass = "overweight";
+    } else {
+        classification = "Béo phì";
+        colorClass = "obese";
+    }
+
+    // 5. Hiển thị kết quả lên giao diện và thay đổi màu nền động
+    resultBox.innerHTML = `Chỉ số BMI của bạn là: <strong>${bmiRounded}</strong><br>Thể trạng: <strong>${classification}</strong>`;
+    resultBox.classList.add(colorClass);
+}
+</script>
+
+</body>
+</html>

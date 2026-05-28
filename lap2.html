@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 02: Tính Toán Khuyến Mãi Đơn Hàng</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 450px;
+        }
+        h2 {
+            text-align: center;
+            color: #1a73e8;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+        }
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        input:focus, select:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        /* Khu vực hiển thị hóa đơn kết quả */
+        .invoice {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 5px solid #28a745;
+            border-radius: 6px;
+            display: none;
+        }
+        .invoice-title {
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+            font-size: 18px;
+        }
+        .invoice-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #555;
+        }
+        .invoice-row.total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d93025;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .text-danger { color: #d93025; font-weight: bold; }
+        .text-success { color: #28a745; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Hóa Đơn Khuyến Mãi</h2>
+    
+    <div class="form-group">
+        <label for="orderValue">Giá trị đơn hàng (VNĐ):</label>
+        <input type="number" id="orderValue" min="0" placeholder="Nhập số tiền, ví dụ: 500000">
+    </div>
+    
+    <div class="form-group">
+        <label for="memberRank">Hạng thành viên:</label>
+        <select id="memberRank">
+            <option value="Bronze">Đồng (Bronze)</option>
+            <option value="Silver">Bạc (Silver)</option>
+            <option value="Gold">Vàng (Gold)</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="couponCode">Mã giảm giá (Nếu có):</label>
+        <input type="text" id="couponCode" placeholder="Nhập mã GIAM50K hoặc FREE">
+    </div>
+    
+    <button onclick="processOrder()">Tính Toán Đơn Hàng</button>
+    
+    <div id="invoiceBox" class="invoice">
+        <div class="invoice-title">CHI TIẾT THANH TOÁN</div>
+        <div class="invoice-row">
+            <span>Tiền gốc:</span>
+            <span id="resOriginal">0đ</span>
+        </div>
+        <div class="invoice-row">
+            <span>Tỷ lệ giảm theo hạng/mức:</span>
+            <span id="resRate" class="text-success">0%</span>
+        </div>
+        <div class="invoice-row">
+            <span>Số tiền giảm theo %:</span>
+            <span id="resDiscountAmount" class="text-success">-0đ</span>
+        </div>
+        <div class="invoice-row">
+            <span>Mã giảm giá áp dụng:</span>
+            <span id="resCouponAmount" class="text-success">-0đ</span>
+        </div>
+        <div class="invoice-row">
+            <span>Phí vận chuyển:</span>
+            <span id="resShipping">0đ</span>
+        </div>
+        <div class="invoice-row total">
+            <span>Tổng thanh toán:</span>
+            <span id="resTotal">0đ</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// Định dạng hiển thị tiền tệ VNĐ (ví dụ: 500000 -> 500.000 đ)
+function formatCurrency(amount) {
+    return amount.toLocaleString('vi-VN') + ' đ';
+}
+
+// 3. Hàm xử lý logic tính toán riêng biệt để code tường minh
+function calculateDiscountRate(orderValue, memberRank) {
+    let rate = 0; // Tỷ lệ phần trăm giảm giá (%)
+
+    // Áp dụng tối thiểu 3 mức khuyến mãi kết hợp hạng thành viên
+    if (orderValue >= 1000000) { // Mức 3: Đơn hàng từ 1 triệu trở lên
+        if (memberRank === "Gold") rate = 15;
+        else if (memberRank === "Silver") rate = 12;
+        else rate = 10;
+    } 
+    else if (orderValue >= 500000) { // Mức 2: Đơn hàng từ 500k đến dưới 1 triệu
+        if (memberRank === "Gold") rate = 10;
+        else if (memberRank === "Silver") rate = 8;
+        else rate = 5;
+    } 
+    else if (orderValue >= 200000) { // Mức 1: Đơn hàng từ 200k đến dưới 500k
+        if (memberRank === "Gold") rate = 5;
+        else if (memberRank === "Silver") rate = 3;
+        else rate = 2;
+    } 
+    else { // Dưới 200k không được giảm theo %
+        rate = 0;
+    }
+    
+    return rate;
+}
+
+// Hàm xử lý chính khi nhấn nút
+function processOrder() {
+    // 2. Lấy dữ liệu đầu vào
+    const orderValueInput = document.getElementById('orderValue').value;
+    const memberRank = document.getElementById('memberRank').value;
+    const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+    const invoiceBox = document.getElementById('invoiceBox');
+
+    // Kiểm tra dữ liệu hợp lệ (Yêu cầu mở rộng chống nhập

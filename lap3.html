@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 03: Trò Chơi Đoán Số</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #eef2f3; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .game-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #333; margin-top: 0; }
+        select, input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .btn-restart { background-color: #6c757d; }
+        .btn-restart:hover { background-color: #5a6268; }
+        #message { font-weight: bold; margin: 15px 0; font-size: 17px; min-height: 25px; }
+        .status-info { display: flex; justify-content: space-between; font-size: 14px; color: #666; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .history-box { text-align: left; background: #f8f9fa; padding: 10px; border-radius: 6px; max-height: 120px; overflow-y: auto; font-size: 14px; color: #555; }
+        .text-danger { color: #dc3545; }
+        .text-success { color: #28a745; }
+        .text-warning { color: #ffc107; }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <h2>Con Số Bí Mật? 🕵️‍♂️</h2>
+    
+    <div class="status-info">
+        <label for="difficulty">Mức độ:</label>
+        <select id="difficulty" onchange="initGame()">
+            <option value="10">Dễ (Từ 1 đến 10 - 3 lượt)</option>
+            <option value="100" selected>Khó (Từ 1 đến 100 - 7 lượt)</option>
+        </select>
+    </div>
+
+    <div class="status-info">
+        <span>Số lần đã đoán: <strong id="guessCount">0</strong></span>
+        <span>Lượt còn lại: <strong id="turnsLeft" class="text-danger">7</strong></span>
+    </div>
+
+    <input type="number" id="userGuess" placeholder="Nhập số bạn đoán...">
+    <button id="btnCheck" onclick="checkGuess()">Kiểm tra</button>
+    <button class="btn-restart" onclick="initGame()">Chơi lại ván mới 🔄</button>
+
+    <div id="message">Chọn mức độ và bắt đầu đoán!</div>
+
+    <div style="text-align: left; font-weight: bold; margin-top: 10px; font-size: 13px;">Lịch sử đoán:</div>
+    <div id="history" class="history-box">Chưa có lượt đoán nào.</div>
+</div>
+
+<script>
+// 1. Khai báo các biến lưu trữ toàn cục của trò chơi
+let secretNumber;
+let maxRange;
+let guessCount;
+let maxTurns;
+let historyArray = [];
+
+// Hàm khởi tạo ván chơi mới
+function initGame() {
+    maxRange = parseInt(document.getElementById('difficulty').value);
+    
+    // Thuật toán sinh số ngẫu nhiên chuẩn từ 1 đến maxRange
+    secretNumber = Math.floor(Math.random() * maxRange) + 1;
+    
+    guessCount = 0;
+    maxTurns = maxRange === 10 ? 3 : 7; // Thiết lập số lượt tương ứng độ khó
+    historyArray = [];
+
+    // Reset giao diện
+    document.getElementById('userGuess').value = "";
+    document.getElementById('userGuess').disabled = false;
+    document.getElementById('btnCheck').disabled = false;
+    document.getElementById('guessCount').innerText = guessCount;
+    document.getElementById('turnsLeft').innerText = maxTurns;
+    
+    const msg = document.getElementById('message');
+    msg.innerText = `Máy đã chọn 1 số từ 1 đến ${maxRange}. Mời bạn đoán!`;
+    msg.className = "";
+    
+    document.getElementById('history').innerHTML = "Chưa có lượt đoán nào.";
+}
+
+// 3. Hàm xử lý logic so sánh khi người dùng bấm nút Kiểm tra
+function checkGuess() {
+    const inputEl = document.getElementById('userGuess');
+    const userGuess = parseInt(inputEl.value);
+    const msg = document.getElementById('message');
+
+    // Kiểm tra dữ liệu đầu vào (Bảo vệ chương trình)
+    if (isNaN(userGuess) || userGuess < 1 || userGuess > maxRange) {
+        alert(`Vui lòng nhập một số hợp lệ từ 1 đến ${maxRange}!`);
+        return;
+    }
+
+    guessCount++;
+    let turnsRemaining = maxTurns - guessCount;
+    
+    document.getElementById('guessCount').innerText = guessCount;
+    document.getElementById('turnsLeft').innerText = turnsRemaining;
+
+    let currentHint = "";
+    
+    // So sánh giá trị và đưa ra gợi ý phù hợp
+    if (userGuess === secretNumber) {
+        msg.innerHTML = `🎉 CHÍNH XÁC! Số bí mật là ${secretNumber}.<br>Bạn đã thắng sau ${guessCount} lần thử!`;
+        msg.className = "text-success";
+        endGame();
+        return;
+    } else if (userGuess < secretNumber) {
+        currentHint = "Nhỏ hơn số bí mật ↓";
+        msg.innerText = `Gợi ý: Số bạn đoán HOẶC kết quả đang BÉ hơn!`;
+        msg.className = "text-warning";
+    } else {
+        currentHint = "Lớn hơn số bí mật ↑";
+        msg.innerText = `Gợi ý: Số bạn đoán HOẶC kết quả đang LỚN hơn!`;
+        msg.className = "text-warning";
+    }
+
+    // Cập nhật lịch sử đoán (Yêu cầu mở rộng)
+    historyArray.push(`Lần ${guessCount}: Bạn đoán số <b>${userGuess}</b> (${currentHint})`);
+    document.getElementById('history').innerHTML = historyArray.reverse().join("<br>"); // Đảo mảng để lượt mới lên đầu
+    historyArray.reverse(); // Trả mảng lại trạng thái cũ để push tiếp
+
+    // Kiểm tra nếu hết lượt (Yêu cầu mở rộng)
+    if (turnsRemaining <= 0) {
+        msg.innerHTML = `💥 Hết lượt rồi! Bạn đã thua.<br>Số bí mật là: <strong>${secretNumber}</strong>.`;
+        msg.className = "text-danger";
+        endGame();
+    }
+    
+    inputEl.value = ""; // Xóa dữ liệu ô nhập để tiện đoán lần sau
+    inputEl.focus();
+}
+
+// Khóa tương tác khi ván chơi kết thúc
+function endGame() {
+    document.getElementById('userGuess').disabled = true;
+    document.getElementById('btnCheck').disabled = true;
+}
+
+// Chạy khởi tạo trò chơi ngay khi tải trang lần đầu
+initGame();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 09 - To-Do List</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 50px; margin: 30px auto; padding: 0 20px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 10px; font-size: 1rem; }
+        button { padding: 10px 15px; cursor: pointer; }
+        .filters { margin-bottom: 15px; }
+        .filters button { background: #eee; border: none; margin-right: 5px; }
+        .filters button.active { background: #3498db; color: white; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .completed { text-decoration: line-through; color: #aaa; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <h2>Quản Lý Công Việc Cá Nhân</h2>
+    
+    <div class="input-group">
+        <input type="text" id="todo-input" placeholder="Nhập công việc mới...">
+        <button id="add-btn">Thêm</button>
+    </div>
+
+    <div class="filters">
+        <button id="filter-all" class="active">Tất cả</button>
+        <button id="filter-active">Chưa xong</button>
+        <button id="filter-completed">Đã xong</button>
+    </div>
+
+    <ul id="todo-list"></ul>
+
+    <script>
+        // 1. Cấu trúc dữ liệu lưu danh sách (Có kết hợp Yêu cầu mở rộng: localStorage)
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let currentFilter = 'all';
+
+        const todoInput = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+
+        // 2. Hàm render danh sách ra HTML
+        function render() {
+            todoList.innerHTML = '';
+            
+            // Lọc danh sách theo bộ lọc hiện tại
+            let filteredTodos = todos.filter(todo => {
+                if (currentFilter === 'active') return !todo.completed;
+                if (currentFilter === 'completed') return todo.completed;
+                return true;
+            });
+
+            filteredTodos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                
+                // Checkbox hoàn thành
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+                checkbox.addEventListener('change', () => toggleTodo(todo.id));
+
+                // Nội dung text
+                const span = document.createElement('span');
+                span.textContent = todo.text;
+                if (todo.completed) span.classList.add('completed');
+
+                // Nút xóa
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Xóa';
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+
+                const leftDiv = document.createElement('div');
+                leftDiv.style.display = 'flex';
+                leftDiv.style.display = 'inline-flex';
+                leftDiv.style.gap = '10px';
+                leftDiv.appendChild(checkbox);
+                leftDiv.appendChild(span);
+
+                li.appendChild(leftDiv);
+                li.appendChild(deleteBtn);
+                todoList.appendChild(li);
+            });
+
+            // Lưu vào localStorage
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        // 3. Xử lý các sự kiện
+        function addTodo() {
+            const text = todoInput.value.trim();
+            if (text === '') return;
+            
+            todos.push({
+                id: Date.now(),
+                text: text,
+                completed: false
+            });
+            todoInput.value = '';
+            render();
+        }
+
+        function toggleTodo(id) {
+            todos = todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo);
+            render();
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            render();
+        }
+
+        // Event Listeners
+        addBtn.addEventListener('click', addTodo);
+        todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
+
+        // Xử lý sự kiện cho bộ lọc
+        document.querySelectorAll('.filters button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.id.replace('filter-', '');
+                render();
+            });
+        });
+
+        // Chạy lần đầu tiên khi tải trang
+        render();
+    </script>
+</body>
+</html>

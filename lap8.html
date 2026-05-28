@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 08 - Counter</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        #counter { font-size: 4rem; font-weight: bold; margin: 20px; transition: color 0.3s; }
+        .positive { color: #2ecc71; }
+        .negative { color: #e74c3c; }
+        .zero { color: #2c3e50; }
+        button { font-size: 1rem; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc; }
+        button:hover { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+    <h2>Bộ Đếm Tương Tác</h2>
+    <div id="counter" class="zero">0</div>
+    
+    <div>
+        <button id="btn-decrease">-1</button>
+        <button id="btn-decrease-5">-5</button>
+        <button id="btn-reset">Đặt lại</button>
+        <button id="btn-increase-5">+5</button>
+        <button id="btn-increase">+1</button>
+    </div>
+
+    <script>
+        // 1. Tạo biến lưu trạng thái số đếm
+        let count = 0;
+
+        // Dom Elements
+        const counterEl = document.getElementById('counter');
+        const btnIncrease = document.getElementById('btn-increase');
+        const btnDecrease = document.getElementById('btn-decrease');
+        const btnIncrease5 = document.getElementById('btn-increase-5');
+        const btnDecrease5 = document.getElementById('btn-decrease-5');
+        const btnReset = document.getElementById('btn-reset');
+
+        // 4. Hàm render để cập nhật giao diện
+        function render() {
+            counterEl.textContent = count;
+            
+            // Yêu cầu mở rộng: Đổi màu số đếm khi âm hoặc dương
+            counterEl.className = ''; // Reset class
+            if (count > 0) {
+                counterEl.classList.add('positive');
+            } else if (count < 0) {
+                counterEl.classList.add('negative');
+            } else {
+                counterEl.classList.add('zero');
+            }
+        }
+
+        // 3. Gắn sự kiện cho từng nút và cập nhật biến trạng thái
+        btnIncrease.addEventListener('click', () => { count += 1; render(); });
+        btnDecrease.addEventListener('click', () => { count -= 1; render(); });
+        btnReset.addEventListener('click', () => { count = 0; render(); });
+        
+        // Yêu cầu mở rộng: Tăng/giảm nhanh theo bội số 5
+        btnIncrease5.addEventListener('click', () => { count += 5; render(); });
+        btnDecrease5.addEventListener('click', () => { count -= 5; render(); });
+    </script>
+</body>
+</html>

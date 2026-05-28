@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 04: Xử Lý Điểm Sinh Viên</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px; display: flex; justify-content: center; }
+        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { text-align: center; color: #2c3e50; margin-top: 0; }
+        .flex-input { display: flex; gap: 10px; margin-bottom: 15px; }
+        input[type="number"] { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 15px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #219653; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        .data-display { background: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 15px; margin-bottom: 15px; word-wrap: break-word; }
+        .result-row { margin: 8px 0; font-size: 16px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; }
+        .giỏi { background: #27ae60; } .khá { background: #2980b9; } .trungbình { background: #f39c12; } .yếu { background: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Quản Lý & Xử Lý Điểm Số 📑</h2>
+    
+    <label style="font-weight: bold; display:block; margin-bottom: 5px;">Thêm điểm vào danh sách (0 - 10):</label>
+    <div class="flex-input">
+        <input type="number" id="newScore" min="0" max="10" step="0.1" placeholder="Nhập điểm số, VD: 8.5">
+        <button onclick="addScore()">Thêm Điểm</button>
+    </div>
+
+    <div class="result-row"><strong>Danh sách điểm hiện tại:</strong></div>
+    <div id="scoreListDisplay" class="data-display">[]</div>
+
+    <div style="margin-bottom: 15px;">
+        <button class="btn-danger" onclick="removeLowestAndCalculate()">Loại bỏ điểm thấp nhất & Tính toán ✂️</button>
+        <button style="background: #34495e;" onclick="resetScores()">Reset Mảng Gốc 🔄</button>
+    </div>
+
+    <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+
+    <div class="result-row">Số lượng đầu điểm: <strong id="resCount">0</strong></div>
+    <div class="result-row">Tổng điểm tích lũy: <strong id="resSum">0</strong></div>
+    <div class="result-row">Điểm trung bình (ĐTB): <strong id="resAvg" style="color:#d35400;">0.00</strong></div>
+    <div class="result-row">Phân loại học lực: <span id="resRank" class="badge yếu">Chưa xếp loại</span></div>
+</div>
+
+<script>
+// 1. Khai báo mảng dữ liệu mẫu ban đầu (Có ít nhất 5 phần tử số theo yêu cầu)
+const initialScores = [8.5, 6.2, 4.5, 9.0, 7.8];
+let scores = [...initialScores]; // Sử dụng kĩ thuật spread để sao chép mảng gốc
+
+// Hàm hiển thị mảng hiện hành lên giao diện dạng chuỗi dễ hiểu
+function displayScores() {
+    const displayBox = document.getElementById('scoreListDisplay');
+    if (scores.length === 0) {
+        displayBox.innerText = "[Mảng trống]";
+    } else {
+        displayBox.innerText = `[ ${scores.join(" | ")} ]`;
+    }
+}
+
+// Yêu cầu mở rộng: Hàm đẩy thêm một phần tử điểm hợp lệ vào mảng
+function addScore() {
+    const input = document.getElementById('newScore');
+    const val = parseFloat(input.value);
+
+    if (isNaN(val) || val < 0 || val > 10) {
+        alert("Vui lòng nhập điểm số hợp lệ từ 0 đến 10!");
+        return;
+    }
+
+    scores.push(val); // Thêm phần tử vào mảng
+    input.value = ""; // Xóa dữ liệu ô nhập
+    input.focus();
+    
+    displayScores();
+    processStatistics(); // Tự động tính toán lại dữ liệu sau khi thêm điểm
+}
+
+// Yêu cầu mở rộng: Tìm điểm bé nhất, cắt bỏ nó khỏi mảng rồi mới tính toán
+function removeLowestAndCalculate() {
+    if (scores.length <= 1) {
+        alert("Mảng phải có từ 2 phần tử trở lên để thực hiện tính năng này!");
+        return;
+    }
+    
+    // Tìm giá trị nhỏ nhất bằng Math.min phối hợp spread operator
+    const minScore = Math.min(...scores);
+    // Tìm vị trí xuất hiện đầu tiên của phần tử đó
+    const minIndex = scores.indexOf(minScore);
+    
+    // Tiến hành xóa 1 phần tử tại vị trí index tìm thấy
+    scores.splice(minIndex, 1);
+    
+    alert(`Đã loại bỏ điểm thấp nhất là: ${minScore}`);
+    displayScores();
+    processStatistics();
+}
+
+// 2 & 3. Hàm xử lý logic lõi: Duyệt mảng bằng forEach để tính tổng và phân loại
+function processStatistics() {
+    const count = scores.length;
+    let sum = 0;
+    
+    if (count === 0) {
+        document.getElementById('resCount').innerText = 0;
+        document.getElementById('resSum').innerText = 0;
+        document.getElementById('resAvg').innerText = "0.00";
+        const rankBadge = document.getElementById('resRank');
+        rankBadge.innerText = "Trống";
+        rankBadge.className = "badge yếu";
+        return;
+    }
+
+    // Duyệt mảng sử dụng forEach tính tổng tích lũy
+    scores.forEach(function(score) {
+        sum += score;
+    });
+
+    // Tính điểm trung bình học phần
+    const avg = sum / count;
+
+    // 3. Cấu trúc điều kiện phân loại học lực theo các ngưỡng điểm chuẩn thông dụng
+    let ranking = "";
+    let badgeClass = "";
+    if (avg >= 8.0) {
+        ranking = "Giỏi";
+        badgeClass = "giỏi";
+    } else if (avg >= 6.5) {
+        ranking = "Khá";
+        badgeClass = "khá";
+    } else if (avg >= 5.0) {
+        ranking = "Trung bình";
+        badgeClass = "trungbình";
+    } else {
+        ranking = "Yếu";
+        badgeClass = "yếu";
+    }
+
+    // 4. Trình bày kết quả trực tiếp ra DOM của HTML
+    document.getElementById('resCount').innerText = count;
+    document.getElementById('resSum').innerText = sum.toFixed(2);
+    document.getElementById('resAvg').innerText = avg.toFixed(2); // Làm tròn 2 số thập phân
+    
+    const rankBadge = document.getElementById('resRank');
+    rankBadge.innerText = ranking;
+    rankBadge.className = `badge ${badgeClass}`; // Gán class động để đổi màu nền phù hợp học lực
+}
+
+// Hàm hỗ trợ khôi phục lại mảng 5 số mẫu như lúc đầu
+function resetScores() {
+    scores = [...initialScores];
+    displayScores();
+    processStatistics();
+}
+
+// Chạy nạp dữ liệu lập tức khi vừa mở trang web
+displayScores();
+processStatistics();
+</script>
+
+</body>
+</html>

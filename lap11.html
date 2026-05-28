@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 11 - Tra cứu đối tượng</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select, button { padding: 8px 12px; font-size: 1rem; }
+        input { flex: 1; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .success { border: 1px solid #2ecc71; background: #eafaf1; }
+        .error { border: 1px solid #e74c3c; background: #fdedec; color: #c0392b; }
+        .loading { font-style: italic; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+    <h2>Tra Cứu Thông Tin Người Dùng</h2>
+    
+    <div class="search-box">
+        <select id="search-field">
+            <option value="id">Mã số (ID)</option>
+            <option value="username">Tài khoản (Username)</option>
+        </select>
+        <input type="text" id="search-input" placeholder="Nhập giá trị cần tìm...">
+        <button id="btn-search">Tìm kiếm</button>
+        <button id="btn-clear" style="background:#95a5a6; color:white; border:none;">Xóa</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const searchField = document.getElementById('search-field');
+        const btnSearch = document.getElementById('btn-search');
+        const btnClear = document.getElementById('btn-clear');
+        const resultDiv = document.getElementById('result');
+
+        // Thay URL này bằng endpoint mockapi.io thực tế của bạn
+        const API_BASE = 'https://jsonplaceholder.typicode.com/users';
+
+        async function lookupData() {
+            const queryValue = searchInput.value.trim();
+            const field = searchField.value;
+
+            if (!queryValue) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = 'Vui lòng nhập từ khóa tìm kiếm!';
+                return;
+            }
+
+            resultDiv.className = '';
+            resultDiv.innerHTML = '<span class="loading">Đang truy vấn dữ liệu...</span>';
+
+            try {
+                // Thiết lập URL động dựa trên loại tìm kiếm
+                let url = field === 'id' ? `${API_BASE}/${queryValue}` : `${API_BASE}?${field}=${queryValue}`;
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    if (response.status === 404) throw new Error('Không tìm thấy đối tượng hợp lệ.');
+                    throw new Error('Lỗi hệ thống khi kết nối API.');
+                }
+
+                const data = await response.json();
+
+                // Xử lý dữ liệu trả về (Nếu tìm kiếm theo field khác ID, kết quả trả về dạng mảng)
+                const user = Array.isArray(data) ? data[0] : data;
+
+                if (!user || (Array.isArray(data) && data.length === 0)) {
+                    resultDiv.className = 'error';
+                    resultDiv.innerHTML = `Không tìm thấy thông tin phù hợp với dữ liệu yêu cầu.`;
+                } else {
+                    resultDiv.className = 'success';
+                    resultDiv.innerHTML = `
+                        <h3>📋 Chi tiết đối tượng:</h3>
+                        <p><strong>Mã định danh (ID):</strong> ${user.id}</p>
+                        <p><strong>Họ và tên:</strong> ${user.name}</p>
+                        <p><strong>Tên tài khoản:</strong> ${user.username}</p>
+                        <p><strong>Email liên hệ:</strong> ${user.email}</p>
+                        <p><strong>Thành phố:</strong> ${user.address?.city || 'N/A'}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = error.message;
+            }
+        }
+
+        btnSearch.addEventListener('click', lookupData);
+        searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') lookupData(); });
+        
+        btnClear.addEventListener('click', () => {
+            searchInput.value = '';
+            resultDiv.className = '';
+            resultDiv.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

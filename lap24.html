@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 24 - Landing Page Sự Kiện</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase" href="#">TechEvent 2026</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-span navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#intro">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Lịch trình</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#register">Đăng ký</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="background: url('https://picsum.photos/1920/600?random=10') center/cover; height: 450px;">
+                <div class="carousel-caption d-flex flex-column h-100 align-items-center justify-content-center text-center">
+                    <h1 class="display-4 fw-bold text-uppercase">Hội Nghị Công Nghệ Toàn Cầu</h1>
+                    <p class="lead">Cập nhật xu thế trí tuệ nhân tạo đột phá năm 2026</p>
+                    <a href="#register" class="btn btn-primary btn-lg font-weight-bold">Đăng Ký Tham Gia Ngay</a>
+                </div>
+            </div>
+            <div class="carousel-item" style="background: url('https://picsum.photos/1920/600?random=11') center/cover; height: 450px;">
+                <div class="carousel-caption d-flex flex-column h-100 align-items-center justify-content-center text-center">
+                    <h1 class="display-4 fw-bold text-uppercase">Kết Nối Chuyên Gia Đầu Ngành</h1>
+                    <p class="lead">Cơ hội trao đổi trực tiếp cùng các nhà quản lý, kỹ sư danh tiếng</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <section id="intro" class="container my-5 py-4">
+        <h2 class="text-center fw-bold mb-5">ĐIỂM NỔI BẬT CỦA SỰ KIỆN</h2>
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <div class="card h-100 text-center p-3 border-0 bg-light shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title fw-bold text-primary mb-3">Chủ đề hấp dẫn</h4>
+                        <p class="card-text text-muted">Hơn 20 chuyên đề chuyên sâu xoay quanh tương lai kỷ nguyên số.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100 text-center p-3 border-0 bg-light shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title fw-bold text-primary mb-3">Diễn giả nổi tiếng</h4>
+                        <p class="card-text text-muted">Quy tụ các chuyên gia hàng đầu từ các tập đoàn đa quốc gia danh tiếng.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card h-100 text-center p-3 border-0 bg-light shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title fw-bold text-primary mb-3">Mở rộng mạng lưới</h4>
+                        <p class="card-text text-muted">Giao lưu, tìm kiếm đối tác và cơ hội thăng tiến sự nghiệp lý tưởng.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="schedule" class="bg-light py-5">
+        <div class="container py-3">
+            <h2 class="text-center fw-bold mb-5">LỊCH TRÌNH CHI TIẾT</h2>
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="list-group shadow-sm">
+                        <div class="list-group-item p-4">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">08:00 - 09:00</h5>
+                                <small class="badge bg-secondary d-flex align-items-center">Khai mạc</small>
+                            </div>
+                            <p class="mb-1 fw-semibold mt-2">Đón tiếp đại biểu và phát biểu khai mạc sự kiện.</p>
+                        </div>
+                        <div class="list-group-item p-4">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">09:00 - 11:30</h5>
+                                <small class="badge bg-success d-flex align-items-center">Phiên thảo luận</small>
+                            </div>
+                            <p class="mb-1 fw-semibold mt-2">Tương lai của Trí tuệ nhân tạo (AI) và Điện toán đám mây.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="register" class="container my-5 py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="bg-white p-4 p-sm-5 border rounded-3 shadow-sm">
+                    <h2 class="text-center fw-bold mb-4">ĐĂNG KÝ THAM GIA</h2>
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Họ và tên</label>
+                            <input type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Địa chỉ Email</label>
+                            <input type="email" class="form-control" placeholder="alpha@gmail.com" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Đơn vị công tác / Trường học</label>
+                            <input type="text" class="form-control" placeholder="Đại học Công Nghệ..." required>
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-lg w-100 fw-bold">XÁC NHẬN ĐĂNG KÝ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <p class="mb-0" style="font-size: 0.9rem;">&copy; 2026 TechEvent. Toàn bộ bản quyền được bảo lưu.</p>
+            <small class="text-muted">FIT4015 - Tài liệu phân phối thực hành giảng viên</small>
+        </div>
+    </footer>
+
+</body>
+</html>

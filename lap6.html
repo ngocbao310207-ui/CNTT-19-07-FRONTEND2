@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 06: Quy trình tính đơn hàng bằng Callback</title>
+    <style>
+        body { font-family: monospace; background-color: #2c3e50; color: #2ecc71; padding: 20px; display: flex; justify-content: center; }
+        .console-box { background: #1a252f; border: 2px solid #2ecc71; box-shadow: 0 4px 20px rgba(0,0,0,0.5); padding: 25px; width: 100%; max-width: 550px; border-radius: 6px; }
+        h3 { text-align: center; color: #fff; margin-top: 0; text-transform: uppercase; border-bottom: 2px solid #2ecc71; padding-bottom: 10px;}
+        .log-line { margin: 10px 0; font-size: 14px; line-height: 1.5; }
+        .text-white { color: #ffffff; }
+        .text-yellow { color: #f1c40f; }
+        .btn-test { background: #2ecc71; color: #1a252f; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; border-radius: 4px; font-family: monospace; margin: 5px;}
+        .btn-test:hover { background: #27ae60; }
+    </style>
+</head>
+<body>
+
+<div class="console-box">
+    <h3>Hệ Thống Xử Lý Đơn Hàng (Callback) ⚙️</h3>
+    <div style="text-align: center; margin-bottom: 15px;">
+        <button class="btn-test" onclick="runScenario(1)">Chạy tình huống 1</button>
+        <button class="btn-test" onclick="runScenario(2)">Chạy tình huống 2 (VIP)</button>
+    </div>
+    <div id="consoleLog">
+        </div>
+</div>
+
+<script>
+const consoleLog = document.getElementById('consoleLog');
+
+// Hàm bổ trợ in tiến trình ra màn hình console giả lập
+function logProgress(message, isHeader = false) {
+    const div = document.createElement('div');
+    div.className = 'log-line' + (isHeader ? ' text-white' : '');
+    div.innerHTML = message;
+    consoleLog.appendChild(div);
+}
+
+// --- 2. XÂY DỰNG CÁC HÀM XỬ LÝ ĐỘC LẬP TRONG CHUỖI ---
+
+// Bước 1: Tính tổng tiền hàng gốc từ danh sách sản phẩm
+function stepCalculateRawTotal(cartItems, callback) {
+    let rawTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    logProgress(`[Khởi tạo] Tổng tiền hàng gốc: <span class="text-white">${rawTotal.toLocaleString()} đ</span>`);
+    
+    // Gọi callback chuyển tiếp kết quả sang bước kế tiếp
+    callback(rawTotal);
+}
+
+// Bước 2: Áp dụng giảm giá dựa trên hạng khách hàng
+function stepApplyDiscount(rawTotal, memberType, callback) {
+    let discountPercent = 0;
+    if (memberType === 'VIP') discountPercent = 10; // Giảm 10%
+    else if (memberType === 'MEMBER') discountPercent = 5;  // Giảm 5%
+
+    let discountAmount = rawTotal * (discountPercent / 100);
+    let afterDiscount = rawTotal - discountAmount;
+    
+    logProgress(`[Khấu trừ] Hạng: <span class="text-yellow">${memberType}</span> (-${discountPercent}%), Giảm: -${discountAmount.toLocaleString()} đ`);
+    
+    callback(afterDiscount);
+}
+
+// Bước 3 (Yêu cầu mở rộng): Áp dụng mã coupon cố định nếu có
+function stepApplyCoupon(amount, couponCode, callback) {
+    let couponValue = 0;
+    if (couponCode === "SALE50K") {
+        couponValue = 50000;
+    }
+    let afterCoupon = amount - couponValue;
+    if(afterCoupon < 0) afterCoupon = 0;
+    
+    logProgress(`[Voucher] Áp dụng mã <span class="text-yellow">${couponCode || 'KHÔNG'}</span>: -${couponValue.toLocaleString()} đ`);
+    
+    callback(afterCoupon);
+}
+
+// Bước 4: Cộng phí vận chuyển
+function stepAddShipping(amount, callback) {
+    // Nếu đơn hàng từ 500k trở lên thì miễn phí vận chuyển, ngược lại phí 30k
+    let shippingFee = amount >= 500000 ? 0 : 30000;
+    let afterShipping = amount + shippingFee;
+    
+    logProgress(`[Vận chuyển] Phí giao hàng: ${shippingFee === 0 ? '<span class="text-white">Miễn phí (0đ)</span>' : shippingFee.toLocaleString() + ' đ'}`);
+    
+    callback(afterShipping);
+}
+
+// Bước 5 (Yêu cầu mở rộng): Tính thuế VAT 8%
+function stepCalculateTax(amount, callback) {
+    let tax = amount * 0.08;
+    let finalTotal = amount + tax;
+    
+    logProgress(`[Thuế suất] Thuế VAT (8%): +${tax.toLocaleString()} đ`);
+    
+    callback(finalTotal);
+}
+
+// --- 3. ĐIỀU PHỐI QUY TRÌNH BẰNG CHUỖI CALLBACK LỒNG NHAU ---
+function processOrderPipeline(orderObject) {
+    consoleLog.innerHTML = ""; // Reset màn hình log
+    logProgress(`⚡ Bắt đầu xử lý đơn hàng cho khách: <b>${orderObject.customer}</b>`, true);
+
+    // Bắt đầu chuỗi Callback lồng nhau (Callback Hell minh họa quy trình tuyến tính)
+    stepCalculateRawTotal(orderObject.items, function(rawTotal) {
+        
+        stepApplyDiscount(rawTotal, orderObject.memberType, function(afterDiscount) {
+            
+            stepApplyCoupon(afterDiscount, orderObject.coupon, function(afterCoupon) {
+                
+                stepAddShipping(afterCoupon, function(afterShipping) {
+                    
+                    stepCalculateTax(afterShipping, function(finalTotal) {
+                        
+                        // Kết quả cuối cùng sau chuỗi xử lý liên tiếp
+                        logProgress(`-----------------------------------------`);
+                        logProgress(`🛒 <b class="text-white">TỔNG THANH TOÁN CUỐI CÙNG:</b> <span style="font-size:18px; color:#fff;">${finalTotal.toLocaleString()} đ</span>`, true);
+                    });
+                });
+            });
+        });
+    });
+}
+
+// 4. Kiểm thử ứng dụng với 2 bộ dữ liệu tình huống (Scenario) khác nhau
+function runScenario(type) {
+    if (type === 1) {
+        const order1 = {
+            customer: "Nguyễn Văn A",
+            memberType: "NORMAL",
+            coupon: "NONE",
+            items: [
+                { name: "Áo sơ mi", price: 150000, quantity: 2 },
+                { name: "Quần Tây", price: 250000, quantity: 1 }
+            ] // Tổng hàng gốc: 550.000đ -> được freeship
+        };
+        processOrderPipeline(order1);
+    } else {
+        const order2 = {
+            customer: "Trần Thị B (VIP)",
+            memberType: "VIP",
+            coupon: "SALE50K",
+            items: [
+                { name: "Sách chuyên ngành", price: 80000, quantity: 3 }
+            ] // Tổng hàng gốc: 240.000đ -> mất phí ship
+        };
+        processOrderPipeline(order2);
+    }
+}
+</script>
+
+</body>
+</html>

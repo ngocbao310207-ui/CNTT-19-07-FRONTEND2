@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 13 - Ẩn Hiện với jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        #content-box { width: 300px; height: 15px; padding: 30px; margin: 20px auto; background-color: #3498db; color: white; border-radius: 8px; line-height: 15px;}
+        button { padding: 10px 15px; font-size: 1rem; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Điều Khiển Trạng Thái Hiển Thị</h2>
+    
+    <div id="content-box">
+        Hộp nội dung tương tác của Bài Lab 13!
+    </div>
+
+    <div>
+        <button id="btn-hide">Ẩn</button>
+        <button id="btn-show">Hiện</button>
+        <button id="btn-toggle">Chuyển đổi (Toggle)</button>
+        <button id="btn-status" style="background:#e67e22; color:white;">Kiểm tra trạng thái</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            // Hàm đồng bộ và thay đổi nhãn nút tự động theo trạng thái thực tế
+            function updateToggleLabel() {
+                setTimeout(() => {
+                    if ($('#content-box').is(':visible')) {
+                        $('#btn-toggle').text('Chuyển đổi (Đang HIỆN)');
+                    } else {
+                        $('#btn-toggle').text('Chuyển đổi (Đang ẨN)');
+                    }
+                }, 400); // Đợi hiệu ứng hoàn thành
+            }
+
+            $('#btn-hide').click(function() {
+                $('#content-box').hide(300, updateToggleLabel);
+            });
+
+            $('#btn-show').click(function() {
+                $('#content-box').show(300, updateToggleLabel);
+            });
+
+            $('#btn-toggle').click(function() {
+                $('#content-box').toggle(300, updateToggleLabel);
+            });
+
+            // Yêu cầu mở rộng: Kiểm tra trạng thái đang ẩn hay hiện
+            $('#btn-status').click(function() {
+                if ($('#content-box').is(':visible')) {
+                    alert('Trạng thái hiện tại: Khối nội dung đang HIỆN.');
+                } else {
+                    alert('Trạng thái hiện tại: Khối nội dung đang ẨN.');
+                }
+            });
+
+            // Chạy kiểm tra nhãn ban đầu
+            updateToggleLabel();
+        });
+    </script>
+</body>
+</html>

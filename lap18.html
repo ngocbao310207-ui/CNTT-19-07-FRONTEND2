@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 18 - Quản lý thành viên</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 30px auto; padding: 20px; }
+        .input-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 8px; }
+        button { padding: 8px 12px; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #ddd; }
+        .member-name { flex-grow: 1; margin-left: 10px; }
+        .index-label { font-weight: bold; color: #7f8c8d; min-width: 25px; }
+        .action-btns { display: flex; gap: 5px; }
+        .btn-edit { background: #f39c12; color: white; border: none; }
+        .btn-del { background: #e74c3c; color: white; border: none; }
+    </style>
+</head>
+<body>
+
+    <h2>Danh Sách Thành Viên Nhóm</h2>
+    
+    <div class="input-box">
+        <input type="text" id="member-input" placeholder="Nhập tên thành viên...">
+        <button id="btn-add" style="background:#2ecc71; color:white; border:none;">Thêm mới</button>
+    </div>
+
+    <ul id="member-list">
+        <li>
+            <span class="index-label"></span>
+            <span class="member-name">Nguyễn Văn A</span>
+            <div class="action-btns">
+                <button class="btn-edit">Sửa</button>
+                <button class="btn-del">Xóa</button>
+            </div>
+        </li>
+    </ul>
+
+    <script>
+        $(document).ready(function() {
+
+            // Yêu cầu mở rộng: Hàm đánh số thứ tự (STT) tự động cập nhật
+            function reIndex() {
+                $('#member-list li').each(function(index) {
+                    $(this).find('.index-label').text(`${index + 1}.`);
+                });
+            }
+
+            // Chức năng thêm mới phần tử
+            $('#btn-add').click(function() {
+                const name = $('#member-input').val().trim();
+                if (name === '') return;
+
+                const newLi = `
+                    <li>
+                        <span class="index-label"></span>
+                        <span class="member-name">${name}</span>
+                        <div class="action-btns">
+                            <button class="btn-edit">Sửa</button>
+                            <button class="btn-del">Xóa</button>
+                        </div>
+                    </li>`;
+                
+                $('#member-list').append(newLi);
+                $('#member-input').val('');
+                reIndex();
+            });
+
+            // Sử dụng Event Delegation áp dụng cho nút Xóa phần tử động
+            $('#member-list').on('click', '.btn-del', function() {
+                $(this).closest('li').remove();
+                reIndex();
+            });
+
+            // Sử dụng Event Delegation áp dụng cho nút Sửa (Cập nhật trực tiếp tại chỗ bằng prompt)
+            $('#member-list').on('click', '.btn-edit', function() {
+                const nameSpan = $(this).closest('li').find('.member-name');
+                const currentName = nameSpan.text();
+                const newName = prompt("Nhập lại tên thành viên mới:", currentName);
+                
+                if (newName && newName.trim() !== '') {
+                    nameSpan.text(newName.trim());
+                }
+            });
+
+            // Chạy đánh số thứ tự lần đầu cho các thẻ HTML tĩnh ban đầu
+            reIndex();
+        });
+    </script>
+</body>
+</html>

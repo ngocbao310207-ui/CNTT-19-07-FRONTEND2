@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 16 - Bộ đếm jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        #counter-value { font-size: 4rem; font-weight: bold; margin: 20px; }
+        .positive { color: #2ecc71; }
+        .negative { color: #e74c3c; }
+        .zero { color: #34495e; }
+        button { font-size: 1rem; padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Bộ Đếm Tương Tác (jQuery)</h2>
+    <div id="counter-value" class="zero">0</div>
+
+    <div>
+        <button id="btn-dec">-1</button>
+        <button id="btn-reset">Đặt lại</button>
+        <button id="btn-inc">+1</button>
+        <button id="btn-inc10" style="background:#3498db; color:white; border:none; border-radius:3px;">+10</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let count = 0;
+
+            // Hàm xử lý logic giao diện tập trung
+            function updateUI() {
+                $('#counter-value').text(count);
+                
+                // Yêu cầu mở rộng: Đổi màu theo trạng thái âm/dương
+                $('#counter-value').removeClass('positive negative zero');
+                if (count > 0) {
+                    $('#counter-value').addClass('positive');
+                } else if (count < 0) {
+                    $('#counter-value').addClass('negative');
+                } else {
+                    $('#counter-value').addClass('zero');
+                }
+            }
+
+            $('#btn-inc').click(function() { count += 1; updateUI(); });
+            $('#btn-dec').click(function() { count -= 1; updateUI(); });
+            $('#btn-reset').click(function() { count = 0; updateUI(); });
+            
+            // Yêu cầu mở rộng
+            $('#btn-inc10').click(function() { count += 10; updateUI(); });
+        });
+    </script>
+</body>
+</html>
