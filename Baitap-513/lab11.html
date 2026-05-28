@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tra cứu thông tin</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container{
+            width: 500px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .search-box{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input{
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button{
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+
+        .search-btn{
+            background-color: #007bff;
+        }
+
+        .clear-btn{
+            background-color: #ff9800;
+        }
+
+        .result{
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.8;
+        }
+
+        .error{
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .success{
+            color: green;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🔍 Tra Cứu Người Dùng</h1>
+
+        <div class="search-box">
+
+            <input
+                type="number"
+                id="userId"
+                placeholder="Nhập mã ID..."
+            >
+
+            <button class="search-btn" onclick="searchUser()">
+                Tra cứu
+            </button>
+
+            <button class="clear-btn" onclick="clearResult()">
+                Xóa
+            </button>
+
+        </div>
+
+        <div class="result" id="result">
+
+            Nhập ID để tra cứu thông tin.
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // API mẫu
+        const baseURL =
+            "https://jsonplaceholder.typicode.com/users/";
+
+        // Hàm tra cứu
+        async function searchUser(){
+
+            let id =
+                document.getElementById("userId").value;
+
+            let result =
+                document.getElementById("result");
+
+            // Kiểm tra dữ liệu
+            if(id === ""){
+
+                result.innerHTML =
+                    "<p class='error'>Vui lòng nhập ID!</p>";
+
+                return;
+            }
+
+            try{
+
+                // Tạo URL động
+                let response =
+                    await fetch(baseURL + id);
+
+                let user = await response.json();
+
+                // Kiểm tra dữ liệu tồn tại
+                if(user && user.id){
+
+                    result.innerHTML = `
+                        <h3 class="success">
+                            Thông tin người dùng
+                        </h3>
+
+                        <p>
+                            👤 Họ tên:
+                            ${user.name}
+                        </p>
+
+                        <p>
+                            📧 Email:
+                            ${user.email}
+                        </p>
+
+                        <p>
+                            📱 Số điện thoại:
+                            ${user.phone}
+                        </p>
+
+                        <p>
+                            🌐 Website:
+                            ${user.website}
+                        </p>
+
+                        <p>
+                            🏢 Công ty:
+                            ${user.company.name}
+                        </p>
+                    `;
+                }
+                else{
+
+                    result.innerHTML =
+                        "<p class='error'>❌ Không tìm thấy dữ liệu!</p>";
+                }
+
+            }
+            catch(error){
+
+                result.innerHTML =
+                    "<p class='error'>⚠ Có lỗi xảy ra!</p>";
+
+                console.log(error);
+            }
+        }
+
+        // Hàm xóa dữ liệu
+        function clearResult(){
+
+            document.getElementById("userId").value = "";
+
+            document.getElementById("result").innerHTML =
+                "Nhập ID để tra cứu thông tin.";
+        }
+
+    </script>
+
+</body>
+</html>

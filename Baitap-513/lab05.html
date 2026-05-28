@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý sản phẩm</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            padding: 30px;
+        }
+
+        .container{
+            width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+        }
+
+        .controls{
+            margin-bottom: 20px;
+        }
+
+        input, select{
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button{
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            opacity: 0.9;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td{
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        table th{
+            background-color: #007bff;
+            color: white;
+        }
+
+        .total{
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🛒 Quản Lý Danh Sách Sản Phẩm</h1>
+
+        <div class="controls">
+
+            <input type="text" id="searchName"
+                   placeholder="Nhập tên sản phẩm">
+
+            <button onclick="searchProduct()">
+                Tìm kiếm
+            </button>
+
+            <br><br>
+
+            <input type="number" id="maxPrice"
+                   placeholder="Lọc giá nhỏ hơn">
+
+            <button onclick="filterProduct()">
+                Lọc giá
+            </button>
+
+            <button onclick="sortPrice()">
+                Sắp xếp giá tăng dần
+            </button>
+
+            <button onclick="showAll()">
+                Hiển thị tất cả
+            </button>
+
+        </div>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                </tr>
+            </thead>
+
+            <tbody id="productList">
+
+            </tbody>
+
+        </table>
+
+        <div class="total" id="totalValue"></div>
+
+    </div>
+
+    <script>
+
+        // Danh sách sản phẩm
+        let products = [
+            {
+                name: "Laptop",
+                price: 15000000,
+                quantity: 5
+            },
+            {
+                name: "Điện thoại",
+                price: 8000000,
+                quantity: 10
+            },
+            {
+                name: "Tai nghe",
+                price: 1200000,
+                quantity: 15
+            },
+            {
+                name: "Chuột máy tính",
+                price: 500000,
+                quantity: 20
+            },
+            {
+                name: "Bàn phím",
+                price: 900000,
+                quantity: 12
+            }
+        ];
+
+        // Hàm hiển thị danh sách
+        function renderProducts(data){
+
+            let html = "";
+
+            data.map(function(item){
+
+                html += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.price.toLocaleString()} VNĐ</td>
+                        <td>${item.quantity}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("productList").innerHTML = html;
+
+            // Tính tổng giá trị tồn kho
+            let total = 0;
+
+            data.forEach(function(item){
+                total += item.price * item.quantity;
+            });
+
+            document.getElementById("totalValue").innerHTML =
+                "Tổng giá trị tồn kho: "
+                + total.toLocaleString() + " VNĐ";
+        }
+
+        // Tìm kiếm sản phẩm
+        function searchProduct(){
+
+            let keyword =
+                document.getElementById("searchName")
+                .value.toLowerCase();
+
+            let result = products.find(function(item){
+
+                return item.name.toLowerCase() == keyword;
+            });
+
+            if(result){
+                renderProducts([result]);
+            }
+            else{
+                alert("Không tìm thấy sản phẩm!");
+            }
+        }
+
+        // Lọc theo giá
+        function filterProduct(){
+
+            let maxPrice =
+                Number(document.getElementById("maxPrice").value);
+
+            let result = products.filter(function(item){
+
+                return item.price <= maxPrice;
+            });
+
+            renderProducts(result);
+        }
+
+        // Sắp xếp giá tăng dần
+        function sortPrice(){
+
+            let sortedProducts = [...products];
+
+            sortedProducts.sort(function(a, b){
+
+                return a.price - b.price;
+            });
+
+            renderProducts(sortedProducts);
+        }
+
+        // Hiển thị tất cả
+        function showAll(){
+
+            renderProducts(products);
+        }
+
+        // Hiển thị mặc định
+        renderProducts(products);
+
+    </script>
+
+</body>
+</html>

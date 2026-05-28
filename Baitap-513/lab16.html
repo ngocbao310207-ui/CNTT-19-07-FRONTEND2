@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bộ Đếm jQuery</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+        }
+
+        .container{
+            width: 420px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #counter{
+            font-size: 70px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: 0.3s;
+        }
+
+        .positive{
+            color: green;
+        }
+
+        .negative{
+            color: red;
+        }
+
+        .zero{
+            color: #333;
+        }
+
+        button{
+            padding: 12px 18px;
+            margin: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover{
+            transform: scale(1.05);
+        }
+
+        .increase{
+            background-color: #28a745;
+        }
+
+        .decrease{
+            background-color: #dc3545;
+        }
+
+        .reset{
+            background-color: #ff9800;
+        }
+
+        .increase10{
+            background-color: #007bff;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🔢 Bộ Đếm Tương Tác</h1>
+
+        <div id="counter" class="zero">
+            0
+        </div>
+
+        <button class="increase">
+            +1
+        </button>
+
+        <button class="decrease">
+            -1
+        </button>
+
+        <button class="reset">
+            Reset
+        </button>
+
+        <br>
+
+        <button class="increase10">
+            +10
+        </button>
+
+    </div>
+
+    <script>
+
+        // Biến trạng thái
+        let count = 0;
+
+        // Hàm cập nhật giao diện
+        function render(){
+
+            $("#counter").text(count);
+
+            // Đổi màu theo giá trị
+            if(count > 0){
+
+                $("#counter")
+                    .removeClass()
+                    .addClass("positive");
+            }
+            else if(count < 0){
+
+                $("#counter")
+                    .removeClass()
+                    .addClass("negative");
+            }
+            else{
+
+                $("#counter")
+                    .removeClass()
+                    .addClass("zero");
+            }
+        }
+
+        // Nút tăng
+        $(".increase").click(function(){
+
+            count++;
+
+            render();
+        });
+
+        // Nút giảm
+        $(".decrease").click(function(){
+
+            count--;
+
+            render();
+        });
+
+        // Nút reset
+        $(".reset").click(function(){
+
+            count = 0;
+
+            render();
+        });
+
+        // Nút tăng nhanh +10
+        $(".increase10").click(function(){
+
+            count += 10;
+
+            render();
+        });
+
+    </script>
+
+</body>
+</html>

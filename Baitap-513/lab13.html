@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Ẩn Hiện Nội Dung bằng jQuery</title>
+
+    <!-- Nhúng thư viện jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container{
+            width: 500px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            color: #333;
+        }
+
+        .content{
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .content img{
+            width: 220px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        button{
+            padding: 10px 18px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover{
+            transform: scale(1.05);
+        }
+
+        .hide-btn{
+            background-color: #dc3545;
+        }
+
+        .show-btn{
+            background-color: #28a745;
+        }
+
+        .toggle-btn{
+            background-color: #007bff;
+        }
+
+        .status{
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📚 jQuery Hide / Show</h1>
+
+        <button class="hide-btn">
+            Ẩn nội dung
+        </button>
+
+        <button class="show-btn">
+            Hiện nội dung
+        </button>
+
+        <button class="toggle-btn">
+            Toggle
+        </button>
+
+        <div class="content">
+
+            <h3>Thực hành jQuery cơ bản</h3>
+
+            <p>
+                Đây là ví dụ sử dụng hide(), show()
+                và toggle() trong jQuery.
+            </p>
+
+            <img
+                src="https://picsum.photos/300"
+                alt="Ảnh minh họa"
+            >
+
+        </div>
+
+        <div class="status">
+            Trạng thái: Đang hiển thị
+        </div>
+
+    </div>
+
+    <script>
+
+        // Nút ẩn
+        $(".hide-btn").click(function(){
+
+            $(".content").hide();
+
+            $(".status").text(
+                "Trạng thái: Đã ẩn nội dung"
+            );
+        });
+
+        // Nút hiện
+        $(".show-btn").click(function(){
+
+            $(".content").show();
+
+            $(".status").text(
+                "Trạng thái: Đang hiển thị"
+            );
+        });
+
+        // Nút toggle
+        $(".toggle-btn").click(function(){
+
+            $(".content").toggle();
+
+            // Kiểm tra trạng thái
+            if($(".content").is(":visible")){
+
+                $(".status").text(
+                    "Trạng thái: Đang hiển thị"
+                );
+            }
+            else{
+
+                $(".status").text(
+                    "Trạng thái: Đã ẩn nội dung"
+                );
+            }
+        });
+
+    </script>
+
+</body>
+</html>

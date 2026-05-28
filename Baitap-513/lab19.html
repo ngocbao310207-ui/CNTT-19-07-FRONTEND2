@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Danh sách thành viên</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f1f5f9;
+            padding: 40px;
+        }
+
+        .container{
+            width: 850px;
+            margin: auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .status{
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td{
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        table th{
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even){
+            background-color: #f8f9fa;
+        }
+
+        .reload-btn{
+            margin-bottom: 20px;
+            padding: 10px 18px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .reload-btn:hover{
+            opacity: 0.9;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📋 Danh Sách Thành Viên</h1>
+
+        <button class="reload-btn">
+            Tải lại dữ liệu
+        </button>
+
+        <div class="status" id="status">
+            Đang tải dữ liệu...
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Thành phố</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="memberList">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <script>
+
+        // API mẫu
+        const API_URL =
+            "https://jsonplaceholder.typicode.com/users";
+
+        // Hàm lấy dữ liệu bằng Ajax
+        function loadData(){
+
+            // Hiện trạng thái loading
+            $("#status").text("Đang tải dữ liệu...");
+
+            $.get(API_URL, function(data){
+
+                let html = "";
+
+                // Duyệt dữ liệu
+                data.forEach(function(user){
+
+                    html += `
+                        <tr>
+
+                            <td>${user.id}</td>
+
+                            <td>${user.name}</td>
+
+                            <td>${user.email}</td>
+
+                            <td>${user.address.city}</td>
+
+                        </tr>
+                    `;
+                });
+
+                // Hiển thị dữ liệu
+                $("#memberList").html(html);
+
+                // Thông báo thành công
+                $("#status").text(
+                    "✅ Tải dữ liệu thành công!"
+                );
+
+            })
+
+            // Xử lý lỗi
+            .fail(function(){
+
+                $("#status")
+                    .css("color", "red")
+                    .text("❌ Không thể tải dữ liệu!");
+
+            });
+
+        }
+
+        // Tải dữ liệu khi mở trang
+        loadData();
+
+        // Nút tải lại dữ liệu
+        $(".reload-btn").click(function(){
+
+            loadData();
+
+        });
+
+    </script>
+
+</body>
+</html>

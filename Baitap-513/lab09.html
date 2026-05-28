@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>To-do List</title>
+
+    <style>
+
+        body{
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .todo-container{
+            width: 500px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+        }
+
+        .input-box{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input{
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button{
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+
+        .add-btn{
+            background-color: #28a745;
+        }
+
+        .done-btn{
+            background-color: #007bff;
+            margin-right: 5px;
+        }
+
+        .delete-btn{
+            background-color: #dc3545;
+        }
+
+        ul{
+            list-style: none;
+            padding: 0;
+        }
+
+        li{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .completed{
+            text-decoration: line-through;
+            color: gray;
+            opacity: 0.7;
+        }
+
+        .filter-box{
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .filter-box button{
+            background-color: #6c757d;
+            margin: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="todo-container">
+
+        <h1>📝 Quản Lý Công Việc</h1>
+
+        <div class="input-box">
+
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Nhập công việc..."
+            >
+
+            <button class="add-btn" id="addBtn">
+                Thêm
+            </button>
+
+        </div>
+
+        <div class="filter-box">
+
+            <button onclick="filterTasks('all')">
+                Tất cả
+            </button>
+
+            <button onclick="filterTasks('completed')">
+                Hoàn thành
+            </button>
+
+            <button onclick="filterTasks('pending')">
+                Chưa hoàn thành
+            </button>
+
+        </div>
+
+        <ul id="taskList"></ul>
+
+    </div>
+
+    <script>
+
+        // Lấy dữ liệu từ localStorage
+        let tasks =
+            JSON.parse(localStorage.getItem("tasks")) || [];
+
+        // Hàm lưu localStorage
+        function saveTasks(){
+
+            localStorage.setItem(
+                "tasks",
+                JSON.stringify(tasks)
+            );
+        }
+
+        // Hàm hiển thị danh sách
+        function renderTasks(data){
+
+            let taskList =
+                document.getElementById("taskList");
+
+            taskList.innerHTML = "";
+
+            data.forEach(function(task, index){
+
+                let li = document.createElement("li");
+
+                // Nếu hoàn thành thì thêm class
+                if(task.completed){
+
+                    li.classList.add("completed");
+                }
+
+                li.innerHTML = `
+                    <span>${task.name}</span>
+
+                    <div>
+
+                        <button
+                            class="done-btn"
+                            onclick="toggleTask(${index})"
+                        >
+                            ✔
+                        </button>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteTask(${index})"
+                        >
+                            ✖
+                        </button>
+
+                    </div>
+                `;
+
+                taskList.appendChild(li);
+            });
+        }
+
+        // Thêm công việc
+        document
+            .getElementById("addBtn")
+            .addEventListener("click", function(){
+
+                let input =
+                    document.getElementById("taskInput");
+
+                let taskName = input.value.trim();
+
+                if(taskName === ""){
+
+                    alert("Vui lòng nhập công việc!");
+                    return;
+                }
+
+                tasks.push({
+                    name: taskName,
+                    completed: false
+                });
+
+                saveTasks();
+
+                renderTasks(tasks);
+
+                input.value = "";
+            });
+
+        // Đánh dấu hoàn thành
+        function toggleTask(index){
+
+            tasks[index].completed =
+                !tasks[index].completed;
+
+            saveTasks();
+
+            renderTasks(tasks);
+        }
+
+        // Xóa công việc
+        function deleteTask(index){
+
+            tasks.splice(index, 1);
+
+            saveTasks();
+
+            renderTasks(tasks);
+        }
+
+        // Bộ lọc công việc
+        function filterTasks(type){
+
+            if(type === "completed"){
+
+                let completedTasks =
+                    tasks.filter(function(task){
+
+                        return task.completed;
+                    });
+
+                renderTasks(completedTasks);
+            }
+            else if(type === "pending"){
+
+                let pendingTasks =
+                    tasks.filter(function(task){
+
+                        return !task.completed;
+                    });
+
+                renderTasks(pendingTasks);
+            }
+            else{
+
+                renderTasks(tasks);
+            }
+        }
+
+        // Hiển thị lần đầu
+        renderTasks(tasks);
+
+    </script>
+
+</body>
+</html>

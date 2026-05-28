@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thao tác DOM cơ bản</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card{
+            width: 420px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            color: #333;
+        }
+
+        p{
+            color: #666;
+            line-height: 1.6;
+        }
+
+        img{
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        button{
+            padding: 10px 18px;
+            margin-top: 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            color: white;
+        }
+
+        .change-btn{
+            background-color: #007bff;
+        }
+
+        .reset-btn{
+            background-color: #ff9800;
+        }
+
+        .dark-mode{
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-mode p{
+            color: #ddd;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="card" id="card">
+
+        <h1 id="title">
+            Chào mừng bạn 👋
+        </h1>
+
+        <p id="description">
+            Đây là bài thực hành thao tác DOM bằng JavaScript.
+        </p>
+
+        <img
+            id="image"
+            src="https://picsum.photos/300"
+            alt="Hình ảnh"
+        >
+
+        <br>
+
+        <button class="change-btn" onclick="changeContent()">
+            Thay đổi nội dung
+        </button>
+
+        <button class="reset-btn" onclick="resetContent()">
+            Khôi phục
+        </button>
+
+    </div>
+
+    <script>
+
+        // Hàm thay đổi nội dung
+        function changeContent(){
+
+            // Lấy phần tử bằng id
+            let title = document.getElementById("title");
+
+            // Lấy phần tử bằng querySelector
+            let description = document.querySelector("#description");
+
+            let image = document.getElementById("image");
+
+            let card = document.getElementById("card");
+
+            // Thay đổi nội dung
+            title.innerText = "DOM đã được thay đổi 🎉";
+
+            description.textContent =
+                "Bạn vừa sử dụng JavaScript để thay đổi nội dung giao diện.";
+
+            // Đổi ảnh
+            image.src = "https://picsum.photos/301";
+
+            // Thêm class mới
+            card.classList.add("dark-mode");
+        }
+
+        // Hàm khôi phục ban đầu
+        function resetContent(){
+
+            document.getElementById("title").innerText =
+                "Chào mừng bạn 👋";
+
+            document.getElementById("description").textContent =
+                "Đây là bài thực hành thao tác DOM bằng JavaScript.";
+
+            document.getElementById("image").src =
+                "https://picsum.photos/300";
+
+            document.getElementById("card")
+                .classList.remove("dark-mode");
+        }
+
+    </script>
+
+</body>
+</html>

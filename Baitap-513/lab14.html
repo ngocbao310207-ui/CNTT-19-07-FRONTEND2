@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hiệu ứng jQuery</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container{
+            width: 550px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .buttons{
+            margin-bottom: 20px;
+        }
+
+        button{
+            padding: 10px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        button:hover{
+            transform: scale(1.05);
+        }
+
+        .fadeIn-btn{
+            background-color: #28a745;
+        }
+
+        .fadeOut-btn{
+            background-color: #dc3545;
+        }
+
+        .slide-btn{
+            background-color: #007bff;
+        }
+
+        .effect-btn{
+            background-color: #ff9800;
+        }
+
+        .box{
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+        }
+
+        .box img{
+            width: 220px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .highlight{
+            background-color: #ffe082;
+            border-color: orange;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>✨ Hiệu Ứng Giao Diện jQuery</h1>
+
+        <div class="buttons">
+
+            <button class="fadeIn-btn">
+                Fade In
+            </button>
+
+            <button class="fadeOut-btn">
+                Fade Out
+            </button>
+
+            <button class="slide-btn">
+                Slide Toggle
+            </button>
+
+            <button class="effect-btn">
+                Hiệu ứng kết hợp
+            </button>
+
+        </div>
+
+        <div class="box">
+
+            <h3>Thông báo hệ thống</h3>
+
+            <p>
+                Đây là ví dụ thực hành các hiệu ứng cơ bản
+                của jQuery như fade, slide và chaining.
+            </p>
+
+            <img
+                src="https://picsum.photos/300"
+                alt="Ảnh minh họa"
+            >
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // Fade In
+        $(".fadeIn-btn").click(function(){
+
+            $(".box").fadeIn(1000);
+        });
+
+        // Fade Out
+        $(".fadeOut-btn").click(function(){
+
+            $(".box").fadeOut(1000);
+        });
+
+        // Slide Toggle
+        $(".slide-btn").click(function(){
+
+            $(".box").slideToggle(800);
+        });
+
+        // Hiệu ứng kết hợp
+        $(".effect-btn").click(function(){
+
+            $(".box")
+                .slideUp(500)
+                .slideDown(500)
+                .fadeOut(500)
+                .fadeIn(500);
+
+            // Thêm highlight
+            $(".box").toggleClass("highlight");
+        });
+
+    </script>
+
+</body>
+</html>

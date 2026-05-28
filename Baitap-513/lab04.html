@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Xử lý điểm sinh viên</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 30px;
+        }
+
+        .container{
+            width: 500px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+        }
+
+        input{
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        button{
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover{
+            opacity: 0.9;
+        }
+
+        .result{
+            margin-top: 20px;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        .good{
+            color: green;
+            font-weight: bold;
+        }
+
+        .average{
+            color: orange;
+            font-weight: bold;
+        }
+
+        .weak{
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📚 Xử Lý Điểm Sinh Viên</h1>
+
+        <input type="number" id="newScore" placeholder="Nhập điểm mới">
+
+        <button onclick="addScore()">Thêm điểm</button>
+
+        <button onclick="calculate()">Tính kết quả</button>
+
+        <div class="result" id="result"></div>
+
+    </div>
+
+    <script>
+
+        // Mảng điểm ban đầu
+        let scores = [7, 8.5, 6, 9, 7.5];
+
+        // Hàm thêm điểm
+        function addScore(){
+
+            let score = Number(document.getElementById("newScore").value);
+
+            if(score < 0 || score > 10){
+                alert("Vui lòng nhập điểm từ 0 đến 10");
+                return;
+            }
+
+            scores.push(score);
+
+            document.getElementById("newScore").value = "";
+
+            alert("Đã thêm điểm thành công!");
+        }
+
+        // Hàm tính kết quả
+        function calculate(){
+
+            let result = document.getElementById("result");
+
+            // Tính tổng
+            let total = 0;
+
+            scores.forEach(function(item){
+                total += item;
+            });
+
+            // Loại bỏ điểm thấp nhất
+            let minScore = Math.min(...scores);
+
+            let newTotal = total - minScore;
+
+            let average = newTotal / (scores.length - 1);
+
+            average = average.toFixed(2);
+
+            // Xếp loại
+            let rank = "";
+            let className = "";
+
+            if(average >= 8){
+                rank = "Giỏi";
+                className = "good";
+            }
+            else if(average >= 6.5){
+                rank = "Khá";
+                className = "average";
+            }
+            else if(average >= 5){
+                rank = "Trung bình";
+                className = "average";
+            }
+            else{
+                rank = "Yếu";
+                className = "weak";
+            }
+
+            // Hiển thị kết quả
+            result.innerHTML = `
+                <p><b>Danh sách điểm:</b> ${scores.join(", ")}</p>
+
+                <p><b>Điểm thấp nhất đã loại:</b> ${minScore}</p>
+
+                <p><b>Tổng điểm:</b> ${newTotal}</p>
+
+                <p><b>Điểm trung bình:</b> ${average}</p>
+
+                <p class="${className}">
+                    <b>Xếp loại:</b> ${rank}
+                </p>
+            `;
+        }
+
+    </script>
+
+</body>
+</html>

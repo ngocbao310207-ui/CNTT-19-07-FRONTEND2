@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ Hàng Đơn Giản</title>
+
+    <!-- Nhúng jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container{
+            width: 700px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .product{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .product-info{
+            width: 40%;
+        }
+
+        .product-info h3{
+            margin: 0;
+            color: #333;
+        }
+
+        .product-info p{
+            margin-top: 8px;
+            color: #666;
+        }
+
+        .quantity-box{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button{
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .minus{
+            background-color: #dc3545;
+        }
+
+        .plus{
+            background-color: #28a745;
+        }
+
+        .quantity{
+            font-size: 18px;
+            font-weight: bold;
+            width: 30px;
+            text-align: center;
+        }
+
+        .total{
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            width: 150px;
+            text-align: right;
+        }
+
+        .bill{
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+            text-align: right;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e91e63;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🛒 Giỏ Hàng Đơn Giản</h1>
+
+        <!-- Sản phẩm 1 -->
+        <div class="product" data-price="120">
+
+            <div class="product-info">
+
+                <h3>Chuột Gaming</h3>
+
+                <p>Giá: 120$</p>
+
+            </div>
+
+            <div class="quantity-box">
+
+                <button class="minus">
+                    -
+                </button>
+
+                <div class="quantity">
+                    1
+                </div>
+
+                <button class="plus">
+                    +
+                </button>
+
+            </div>
+
+            <div class="total">
+                120$
+            </div>
+
+        </div>
+
+        <!-- Sản phẩm 2 -->
+        <div class="product" data-price="250">
+
+            <div class="product-info">
+
+                <h3>Bàn Phím Cơ</h3>
+
+                <p>Giá: 250$</p>
+
+            </div>
+
+            <div class="quantity-box">
+
+                <button class="minus">
+                    -
+                </button>
+
+                <div class="quantity">
+                    1
+                </div>
+
+                <button class="plus">
+                    +
+                </button>
+
+            </div>
+
+            <div class="total">
+                250$
+            </div>
+
+        </div>
+
+        <!-- Tổng hóa đơn -->
+        <div class="bill">
+
+            Tổng hóa đơn: <span id="billTotal">370$</span>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // Hàm cập nhật tổng tiền
+        function updateBill(){
+
+            let billTotal = 0;
+
+            $(".product").each(function(){
+
+                let price =
+                    Number($(this).attr("data-price"));
+
+                let quantity =
+                    Number($(this)
+                    .find(".quantity")
+                    .text());
+
+                let total = price * quantity;
+
+                // Cập nhật thành tiền
+                $(this)
+                    .find(".total")
+                    .text(total + "$");
+
+                // Cộng tổng hóa đơn
+                billTotal += total;
+            });
+
+            $("#billTotal").text(billTotal + "$");
+        }
+
+        // Nút tăng
+        $(".plus").click(function(){
+
+            let quantityElement =
+                $(this).siblings(".quantity");
+
+            let quantity =
+                Number(quantityElement.text());
+
+            quantity++;
+
+            quantityElement.text(quantity);
+
+            updateBill();
+        });
+
+        // Nút giảm
+        $(".minus").click(function(){
+
+            let quantityElement =
+                $(this).siblings(".quantity");
+
+            let quantity =
+                Number(quantityElement.text());
+
+            // Không cho nhỏ hơn 1
+            if(quantity > 1){
+
+                quantity--;
+
+                quantityElement.text(quantity);
+
+                updateBill();
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>

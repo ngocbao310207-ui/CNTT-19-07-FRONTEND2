@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bộ Đếm Tương Tác</title>
+
+    <style>
+
+        body{
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            font-family: Arial, sans-serif;
+        }
+
+        .counter-box{
+            background-color: white;
+            padding: 30px;
+            width: 400px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h1{
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #count{
+            font-size: 70px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: 0.3s;
+        }
+
+        .positive{
+            color: green;
+        }
+
+        .negative{
+            color: red;
+        }
+
+        .zero{
+            color: #333;
+        }
+
+        button{
+            padding: 12px 18px;
+            margin: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover{
+            transform: scale(1.05);
+        }
+
+        .increase{
+            background-color: #28a745;
+        }
+
+        .decrease{
+            background-color: #dc3545;
+        }
+
+        .reset{
+            background-color: #ff9800;
+        }
+
+        .increase5{
+            background-color: #007bff;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="counter-box">
+
+        <h1>🔢 Bộ Đếm Tương Tác</h1>
+
+        <div id="count" class="zero">0</div>
+
+        <button class="increase">
+            Tăng +1
+        </button>
+
+        <button class="decrease">
+            Giảm -1
+        </button>
+
+        <button class="reset">
+            Reset
+        </button>
+
+        <br>
+
+        <button class="increase5">
+            Tăng +5
+        </button>
+
+    </div>
+
+    <script>
+
+        // Biến trạng thái
+        let count = 0;
+
+        // Lấy phần tử hiển thị
+        let countElement = document.getElementById("count");
+
+        // Lấy các nút
+        let increaseBtn = document.querySelector(".increase");
+
+        let decreaseBtn = document.querySelector(".decrease");
+
+        let resetBtn = document.querySelector(".reset");
+
+        let increase5Btn = document.querySelector(".increase5");
+
+        // Hàm cập nhật giao diện
+        function render(){
+
+            countElement.innerText = count;
+
+            // Đổi màu theo giá trị
+            if(count > 0){
+
+                countElement.className = "positive";
+            }
+            else if(count < 0){
+
+                countElement.className = "negative";
+            }
+            else{
+
+                countElement.className = "zero";
+            }
+        }
+
+        // Sự kiện tăng
+        increaseBtn.addEventListener("click", function(){
+
+            count++;
+
+            render();
+        });
+
+        // Sự kiện giảm
+        decreaseBtn.addEventListener("click", function(){
+
+            count--;
+
+            render();
+        });
+
+        // Sự kiện reset
+        resetBtn.addEventListener("click", function(){
+
+            count = 0;
+
+            render();
+        });
+
+        // Tăng nhanh +5
+        increase5Btn.addEventListener("click", function(){
+
+            count += 5;
+
+            render();
+        });
+
+    </script>
+
+</body>
+</html>

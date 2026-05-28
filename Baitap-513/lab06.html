@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tính toán đơn hàng bằng Callback</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        .container{
+            width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+        }
+
+        button{
+            padding: 10px 18px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover{
+            opacity: 0.9;
+        }
+
+        .result{
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        .title{
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🛒 Tính Toán Đơn Hàng Bằng Callback</h1>
+
+        <button onclick="runOrder1()">
+            Đơn hàng 1
+        </button>
+
+        <button onclick="runOrder2()">
+            Đơn hàng 2
+        </button>
+
+        <div class="result" id="result"></div>
+
+    </div>
+
+    <script>
+
+        // Hàm tính tiền hàng
+        function calculateSubtotal(order, callback){
+
+            let subtotal = 0;
+
+            order.products.forEach(function(item){
+
+                subtotal += item.price * item.quantity;
+            });
+
+            callback(subtotal);
+        }
+
+        // Hàm giảm giá
+        function applyDiscount(subtotal, callback){
+
+            let discount = 0;
+
+            if(subtotal >= 3000000){
+                discount = subtotal * 0.1;
+            }
+            else if(subtotal >= 1000000){
+                discount = subtotal * 0.05;
+            }
+
+            let totalAfterDiscount = subtotal - discount;
+
+            callback(totalAfterDiscount, discount);
+        }
+
+        // Hàm tính phí vận chuyển
+        function addShipping(total, callback){
+
+            let shipping = 30000;
+
+            if(total >= 2000000){
+                shipping = 0;
+            }
+
+            let finalTotal = total + shipping;
+
+            callback(finalTotal, shipping);
+        }
+
+        // Hàm tính thuế
+        function applyTax(total, callback){
+
+            let tax = total * 0.08;
+
+            let finalPayment = total + tax;
+
+            callback(finalPayment, tax);
+        }
+
+        // Quy trình xử lý đơn hàng
+        function processOrder(order){
+
+            calculateSubtotal(order, function(subtotal){
+
+                applyDiscount(subtotal, function(afterDiscount, discount){
+
+                    addShipping(afterDiscount, function(afterShipping, shipping){
+
+                        applyTax(afterShipping, function(finalPayment, tax){
+
+                            document.getElementById("result").innerHTML = `
+                                <p class="title">
+                                    Kết quả xử lý đơn hàng
+                                </p>
+
+                                <p>
+                                    Tiền hàng:
+                                    ${subtotal.toLocaleString()} VNĐ
+                                </p>
+
+                                <p>
+                                    Giảm giá:
+                                    ${discount.toLocaleString()} VNĐ
+                                </p>
+
+                                <p>
+                                    Phí vận chuyển:
+                                    ${shipping.toLocaleString()} VNĐ
+                                </p>
+
+                                <p>
+                                    Thuế VAT (8%):
+                                    ${tax.toLocaleString()} VNĐ
+                                </p>
+
+                                <p class="title">
+                                    Tổng thanh toán:
+                                    ${finalPayment.toLocaleString()} VNĐ
+                                </p>
+                            `;
+                        });
+
+                    });
+
+                });
+
+            });
+
+        }
+
+        // Dữ liệu đơn hàng 1
+        function runOrder1(){
+
+            let order1 = {
+
+                products: [
+                    {
+                        name: "Laptop",
+                        price: 15000000,
+                        quantity: 1
+                    },
+                    {
+                        name: "Chuột",
+                        price: 500000,
+                        quantity: 2
+                    }
+                ]
+            };
+
+            processOrder(order1);
+        }
+
+        // Dữ liệu đơn hàng 2
+        function runOrder2(){
+
+            let order2 = {
+
+                products: [
+                    {
+                        name: "Tai nghe",
+                        price: 1200000,
+                        quantity: 1
+                    },
+                    {
+                        name: "Bàn phím",
+                        price: 900000,
+                        quantity: 1
+                    }
+                ]
+            };
+
+            processOrder(order2);
+        }
+
+    </script>
+
+</body>
+</html>

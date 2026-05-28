@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trò Chơi Dự Đoán Số</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-box{
+            width: 400px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1{
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p{
+            color: #555;
+        }
+
+        input{
+            width: 80%;
+            padding: 10px;
+            margin-top: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button{
+            padding: 10px 20px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .check-btn{
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .reset-btn{
+            background-color: #ff9800;
+            color: white;
+            margin-left: 10px;
+        }
+
+        button:hover{
+            opacity: 0.9;
+        }
+
+        #message{
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #history{
+            margin-top: 15px;
+            color: #444;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-box">
+
+        <h1>🎯 Dự Đoán Số</h1>
+
+        <p>Hãy đoán số từ 1 đến 100</p>
+
+        <input type="number" id="guess" placeholder="Nhập số bạn đoán">
+
+        <br>
+
+        <button class="check-btn" onclick="checkNumber()">
+            Kiểm tra
+        </button>
+
+        <button class="reset-btn" onclick="newGame()">
+            Chơi lại
+        </button>
+
+        <div id="message"></div>
+
+        <div id="history"></div>
+
+    </div>
+
+    <script>
+
+        // Sinh số bí mật
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+
+        // Đếm số lần đoán
+        let count = 0;
+
+        // Lưu lịch sử đoán
+        let historyList = [];
+
+        function checkNumber(){
+
+            let guess = Number(document.getElementById("guess").value);
+
+            let message = document.getElementById("message");
+
+            // Kiểm tra dữ liệu
+            if(guess < 1 || guess > 100){
+                message.innerHTML = "⚠ Vui lòng nhập số từ 1 đến 100";
+                message.style.color = "red";
+                return;
+            }
+
+            count++;
+
+            historyList.push(guess);
+
+            // So sánh kết quả
+            if(guess > secretNumber){
+                message.innerHTML = "📉 Số bạn đoán lớn hơn!";
+                message.style.color = "orange";
+            }
+            else if(guess < secretNumber){
+                message.innerHTML = "📈 Số bạn đoán nhỏ hơn!";
+                message.style.color = "blue";
+            }
+            else{
+                message.innerHTML =
+                    "🎉 Chính xác! Bạn đã đoán đúng sau "
+                    + count + " lần thử.";
+
+                message.style.color = "green";
+            }
+
+            // Hiển thị lịch sử
+            document.getElementById("history").innerHTML =
+                "Lịch sử đoán: " + historyList.join(", ");
+
+            // Xóa ô input
+            document.getElementById("guess").value = "";
+        }
+
+        // Hàm chơi lại
+        function newGame(){
+
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+
+            count = 0;
+
+            historyList = [];
+
+            document.getElementById("message").innerHTML = "";
+
+            document.getElementById("history").innerHTML = "";
+
+            document.getElementById("guess").value = "";
+        }
+
+    </script>
+
+</body>
+</html>

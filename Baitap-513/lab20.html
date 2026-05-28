@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Thêm dữ liệu bằng Ajax</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #eef2f7;
+            padding: 40px;
+        }
+
+        .container{
+            width: 850px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        form{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) auto;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        input{
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button{
+            padding: 12px 18px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            opacity: 0.9;
+        }
+
+        .message{
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .success{
+            color: green;
+        }
+
+        .error{
+            color: red;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td{
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        table th{
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even){
+            background-color: #f8f9fa;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>➕ Thêm Sinh Viên Bằng Ajax</h1>
+
+        <!-- Form nhập -->
+        <form id="studentForm">
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Nhập họ tên"
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Nhập email"
+            >
+
+            <input
+                type="text"
+                id="className"
+                placeholder="Nhập lớp"
+            >
+
+            <button type="submit">
+                Thêm
+            </button>
+
+        </form>
+
+        <!-- Thông báo -->
+        <div class="message" id="message"></div>
+
+        <!-- Bảng dữ liệu -->
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Lớp</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="studentList">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <script>
+
+        // API mockapi
+        // Thay bằng API của bạn
+        const API_URL =
+            "https://6659d7f5003609eda45e.mockapi.io/students";
+
+        // Hàm tải danh sách
+        function loadStudents(){
+
+            $.get(API_URL, function(data){
+
+                let html = "";
+
+                data.forEach(function(student){
+
+                    html += `
+                        <tr>
+
+                            <td>${student.id}</td>
+
+                            <td>${student.name}</td>
+
+                            <td>${student.email}</td>
+
+                            <td>${student.className}</td>
+
+                        </tr>
+                    `;
+                });
+
+                $("#studentList").html(html);
+
+            });
+
+        }
+
+        // Load dữ liệu lần đầu
+        loadStudents();
+
+        // Submit form
+        $("#studentForm").submit(function(event){
+
+            // Chặn load trang
+            event.preventDefault();
+
+            // Lấy dữ liệu
+            let name =
+                $("#name").val().trim();
+
+            let email =
+                $("#email").val().trim();
+
+            let className =
+                $("#className").val().trim();
+
+            // Kiểm tra rỗng
+            if(name === "" ||
+               email === "" ||
+               className === ""){
+
+                $("#message")
+                    .removeClass()
+                    .addClass("message error")
+                    .text("❌ Vui lòng nhập đầy đủ thông tin!");
+
+                return;
+            }
+
+            // Object dữ liệu
+            let newStudent = {
+
+                name: name,
+                email: email,
+                className: className
+            };
+
+            // Ajax POST
+            $.ajax({
+
+                url: API_URL,
+
+                method: "POST",
+
+                data: newStudent,
+
+                success: function(){
+
+                    $("#message")
+                        .removeClass()
+                        .addClass("message success")
+                        .text("✅ Thêm sinh viên thành công!");
+
+                    // Xóa dữ liệu form
+                    $("#studentForm")[0].reset();
+
+                    // Load lại danh sách
+                    loadStudents();
+                },
+
+                error: function(){
+
+                    $("#message")
+                        .removeClass()
+                        .addClass("message error")
+                        .text("❌ Có lỗi xảy ra!");
+                }
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>
