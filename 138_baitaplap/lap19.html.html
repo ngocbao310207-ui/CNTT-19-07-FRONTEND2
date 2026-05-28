@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 19 - Ajax GET</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    padding: 30px;
+}
+
+.user{
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Danh Sách User</h1>
+
+<button id="load">Load Data</button>
+
+<div id="ketQua"></div>
+
+<script>
+
+$("#load").click(function(){
+
+    $.ajax({
+
+        url:"https://jsonplaceholder.typicode.com/users",
+
+        method:"GET",
+
+        success:function(data){
+
+            let html = "";
+
+            data.forEach(user => {
+
+                html += `
+                
+                <div class="user">
+                
+                    <h3>${user.name}</h3>
+                
+                    <p>${user.email}</p>
+                
+                    <p>${user.phone}</p>
+                
+                </div>
+                
+                `;
+            });
+
+            $("#ketQua").html(html);
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

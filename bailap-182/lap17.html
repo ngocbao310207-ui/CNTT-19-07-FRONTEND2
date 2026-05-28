@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 17: Giỏ Hàng Đơn Giản</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .cart-item { border: 1px solid #ddd; padding: 15px; width: 400px; border-radius: 6px; }
+        .qty-input { width: 40px; text-align: center; font-weight: bold; }
+        .price, .total-line { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Giỏ Hàng Mua Sắm Trực Tuyến</h2>
+    <div class="cart-item">
+        <h4>Sản phẩm: Giày Thể Thao Sneaker</h4>
+        <p>Đơn giá: <span class="price" id="unitPrice" data-price="750000">750,000</span> đ</p>
+        <p>
+            Số lượng: 
+            <button id="minusQty">-</button>
+            <input type="text" class="qty-input" id="itemQty" value="1" readonly>
+            <button id="plusQty">+</button>
+        </p>
+        <hr>
+        <p>Thành tiền: <span class="total-line" id="subTotal">750,000</span> VNĐ</p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const pricePerUnit = $("#unitPrice").data("price");
+
+            function reCalcTotal() {
+                let currentQty = parseInt($("#itemQty").val());
+                let totalCost = currentQty * pricePerUnit;
+                $("#subTotal").text(totalCost.toLocaleString('vi-VN'));
+            }
+
+            $("#plusQty").click(function() {
+                let qty = parseInt($("#itemQty").val());
+                $("#itemQty").val(qty + 1);
+                reCalcTotal();
+            });
+
+            $("#minusQty").click(function() {
+                let qty = parseInt($("#itemQty").val());
+                // Quy ước không cho phép số lượng nhỏ hơn 1 trong giỏ hàng mua sắm
+                if(qty > 1) {
+                    $("#itemQty").val(qty - 1);
+                    reCalcTotal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

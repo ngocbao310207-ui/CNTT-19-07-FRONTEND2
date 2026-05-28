@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 7: Thay đổi nội dung DOM</title>
+    <style>
+        .dark-mode { background-color: #333; color: white; }
+        .box { padding: 15px; border: 1px solid #999; width: 300px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div id="contentBox" class="box">
+        <h2 id="mainTitle">Tiêu đề ban đầu</h2>
+        <p id="description">Đây là mô tả ngắn gọn nội dung cốt lõi của giao diện lúc chưa bấm nút.</p>
+        <img id="avatar" src="https://picsum.photos/id/1/200/100" alt="Hinh anh mau" style="border-radius: 5px;">
+    </div>
+
+    <button id="btnChange">Thay đổi giao diện</button>
+    <button id="btnReset">Khôi phục trạng thái</button>
+
+    <script>
+        const btnChange = document.getElementById('btnChange');
+        const btnReset = document.getElementById('btnReset');
+
+        btnChange.addEventListener('click', function() {
+            document.getElementById('mainTitle').innerText = "Chào mừng bạn đã đến!";
+            document.getElementById('description').innerText = "Văn bản đã được thay đổi động thành công nhờ vào JavaScript DOM thuần.";
+            document.getElementById('avatar').src = "https://picsum.photos/id/10/200/100";
+            document.getElementById('contentBox').classList.add('dark-mode');
+        });
+
+        // Mở rộng phục hồi trạng thái cũ
+        btnReset.addEventListener('click', function() {
+            document.getElementById('mainTitle').innerText = "Tiêu đề ban đầu";
+            document.getElementById('description').innerText = "Đây là mô tả ngắn gọn nội dung cốt lõi của giao diện lúc chưa bấm nút.";
+            document.getElementById('avatar').src = "https://picsum.photos/id/1/200/100";
+            document.getElementById('contentBox').classList.remove('dark-mode');
+        });
+    </script>
+</body>
+</html>

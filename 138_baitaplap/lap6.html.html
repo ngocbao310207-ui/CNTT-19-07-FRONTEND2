@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Callback</title>
+</head>
+<body>
+
+<h1>Callback Đơn Hàng</h1>
+
+<div id="ketQua"></div>
+
+<script>
+function tinhTienHang(tien, callback){
+
+    let html = `Tiền hàng: ${tien}<br>`;
+
+    callback(tien, html);
+}
+
+function giamGia(tien, html, callback){
+
+    let giam = tien * 0.1;
+
+    let sauGiam = tien - giam;
+
+    html += `Giảm giá: ${giam}<br>`;
+
+    callback(sauGiam, html);
+}
+
+function phiShip(tien, html){
+
+    let ship = 50;
+
+    let tong = tien + ship;
+
+    html += `Phí ship: ${ship}<br>`;
+
+    html += `Tổng tiền: ${tong}`;
+
+    document.getElementById("ketQua").innerHTML = html;
+}
+
+tinhTienHang(1000,function(tien, html){
+
+    giamGia(tien, html, function(ketQua, htmlMoi){
+
+        phiShip(ketQua, htmlMoi);
+
+    });
+
+});
+</script>
+
+</body>
+</html>

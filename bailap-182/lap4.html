@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 4: Điểm Sinh Viên</title>
+</head>
+<body>
+    <h2>Quản Lý Điểm Sinh Viên</h2>
+    <p>Danh sách điểm hiện tại: <span id="scoreList"></span></p>
+    
+    <div>
+        <input type="number" id="newScore" step="0.1" placeholder="Nhập điểm mới (0-10)">
+        <button onclick="addScore()">Thêm điểm</button>
+        <button onclick="removeLowestAndCalculate()" style="background-color: bisque;">Xóa điểm thấp nhất & Tính ĐTB</button>
+    </div>
+
+    <h3 id="avgResult"></h3>
+    <h3 id="rankResult"></h3>
+
+    <script>
+        let scores = [8.5, 7.2, 4.5, 9.0, 6.8];
+
+        function displayScores() {
+            document.getElementById('scoreList').innerText = scores.join(', ');
+        }
+
+        function addScore() {
+            const scoreInput = document.getElementById('newScore');
+            const val = Number(scoreInput.value);
+            if (scoreInput.value === '' || val < 0 || val > 10) {
+                alert("Điểm nhập phải nằm trong khoảng từ 0 đến 10!");
+                return;
+            }
+            scores.push(val);
+            displayScores();
+            scoreInput.value = '';
+            calculateResult();
+        }
+
+        function removeLowestAndCalculate() {
+            if(scores.length <= 1) {
+                alert("Mảng điểm quá ngắn để xóa!");
+                return;
+            }
+            const minScore = Math.min(...scores);
+            const index = scores.indexOf(minScore);
+            scores.splice(index, 1); // Loại bỏ phần tử thấp nhất đầu tiên tìm thấy
+            alert(`Đã loại bỏ điểm thấp nhất là: ${minScore}`);
+            displayScores();
+            calculateResult();
+        }
+
+        function calculateResult() {
+            if (scores.length === 0) return;
+            
+            // Dùng reduce tính tổng điểm
+            const total = scores.reduce((sum, score) => sum + score, 0);
+            const avg = total / scores.length;
+            
+            let rank = "";
+            if (avg >= 8.5) rank = "Giỏi";
+            else if (avg >= 7.0) rank = "Khá";
+            else if (avg >= 5.0) rank = "Trung bình";
+            else rank = "Yếu";
+
+            document.getElementById('avgResult').innerText = "Điểm trung bình học phần: " + avg.toFixed(2);
+            document.getElementById('rankResult').innerText = "Phân loại học lực: " + rank;
+        }
+
+        // Chạy lần đầu để hiển thị dữ liệu mẫu
+        displayScores();
+        calculateResult();
+    </script>
+</body>
+</html>

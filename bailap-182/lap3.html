@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 3: Trò chơi đoán số</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .game-box { max-width: 400px; margin: 0 auto; padding: 20px; border: 2px solid #333; border-radius: 10px; box-shadow: 2px 2px 10px #aaa; }
+        input { padding: 8px; width: 60px; text-align: center; font-size: 16px; }
+        button { padding: 8px 15px; font-size: 14px; cursor: pointer; margin: 5px; }
+        .message { margin: 15px 0; font-weight: bold; font-size: 18px; color: blue; }
+        .history { text-align: left; background: #eee; padding: 10px; margin-top: 15px; border-radius: 5px; max-height: 100px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="game-box">
+        <h2>Trò Chơi Đoán Số (1 - 100)</h2>
+        <p>Máy đã chọn ngẫu nhiên một số. Hãy đoán thử xem!</p>
+        <input type="number" id="userGuess" min="1" max="100">
+        <button onclick="checkGuess()">Đoán</button>
+        <button onclick="resetGame()" style="background: #dc3545; color: white;">Chơi Lại</button>
+        
+        <div class="message" id="msg"></div>
+        <p>Số lần thử: <span id="attempts">0</span>/10 (Giới hạn 10 lần)</p>
+        
+        <div class="history">
+            <strong>Lịch sử đoán:</strong>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        let secretWord;
+        let count = 0;
+        const maxAttempts = 10;
+
+        function resetGame() {
+            secretWord = Math.floor(Math.random() * 100) + 1;
+            count = 0;
+            document.getElementById('attempts').innerText = count;
+            document.getElementById('msg').innerText = "Ván mới bắt đầu! Hãy nhập số.";
+            document.getElementById('msg').style.color = "blue";
+            document.getElementById('log').innerText = "";
+            document.getElementById('userGuess').value = "";
+            document.getElementById('userGuess').disabled = false;
+        }
+
+        function checkGuess() {
+            const guessInput = document.getElementById('userGuess');
+            const userNum = Number(guessInput.value);
+            const msg = document.getElementById('msg');
+            const log = document.getElementById('log');
+
+            if (!userNum || userNum < 1 || userNum > 100) {
+                alert("Vui lòng nhập số từ 1 đến 100!");
+                return;
+            }
+
+            count++;
+            document.getElementById('attempts').innerText = count;
+
+            if (userNum === secretWord) {
+                msg.innerText = `Chính xác! Bạn đã đoán đúng số ${secretWord} sau ${count} lần thử.`;
+                msg.style.color = "green";
+                guessInput.disabled = true;
+            } else if (userNum > secretWord) {
+                msg.innerText = "Lớn quá! Hãy thử số nhỏ hơn.";
+                msg.style.color = "orange";
+                log.innerHTML += `Lần ${count}: Đoán ${userNum} (Quá lớn)<br>`;
+            } else {
+                msg.innerText = "Nhỏ quá! Hãy thử số lớn hơn.";
+                msg.style.color = "orange";
+                log.innerHTML += `Lần ${count}: Đoán ${userNum} (Quá nhỏ)<br>`;
+            }
+
+            if (count >= maxAttempts && userNum !== secretWord) {
+                msg.innerText = `Thua cuộc! Bạn đã dùng hết ${maxAttempts} lượt. Số bí mật là: ${secretWord}`;
+                msg.style.color = "red";
+                guessInput.disabled = true;
+            }
+            guessInput.value = "";
+        }
+
+        // Khởi động trò chơi lần đầu
+        resetGame();
+    </script>
+</body>
+</html>

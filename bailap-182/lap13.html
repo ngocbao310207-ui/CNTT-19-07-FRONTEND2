@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 13: Ẩn Hiện Bằng jQuery</title>
+    <!-- Nhúng CDN thư viện jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .info-block { padding: 20px; background-color: lightblue; border: 1px solid blue; width: 300px; margin-top: 10px;}
+    </style>
+</head>
+<body>
+    <h2>Thao Tác Ẩn Hiện Khối Nội Dung</h2>
+    <button id="btnHide">Ẩn Nội Dung</button>
+    <button id="btnShow">Hiện Nội Dung</button>
+    <button id="btnToggle">Chuyển Đổi (Toggle)</button>
+
+    <div class="info-block" id="targetContent">
+        Đây là văn bản thông báo quan trọng sẽ bị ẩn hiện tương tác dựa vào mã lệnh jQuery.
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#btnHide").click(function() {
+                $("#targetContent").hide();
+            });
+
+            $("#btnShow").click(function() {
+                $("#targetContent").show();
+            });
+
+            $("#btnToggle").click(function() {
+                $("#targetContent").toggle();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 6: Quy trình Đơn hàng Callback</title>
+</head>
+<body>
+    <h2>Tính Toán Hóa Đơn Quy Trình Callback</h2>
+    <div id="outputLog"></div>
+
+    <script>
+        // Dữ liệu đơn hàng đầu vào
+        const cart = {
+            id: "#DH1002",
+            itemsTotal: 1500000 // Tiền gốc hàng hóa
+        };
+
+        // Bước 1: Tính tiền gốc hàng hóa
+        function stepCalculateRaw(order, callback) {
+            let log = `<b>Bước 1:</b> Tiếp nhận đơn hàng. Tiền hàng gốc: ${order.itemsTotal.toLocaleString()} đ<br>`;
+            callback(order.itemsTotal, log);
+        }
+
+        // Bước 2: Áp dụng mã giảm giá 10%
+        function stepApplyDiscount(rawAmount, log, callback) {
+            const discount = rawAmount * 0.10;
+            const afterDiscount = rawAmount - discount;
+            log += `<b>Bước 2:</b> Áp mã giảm giá (10%). Giảm: -${discount.toLocaleString()} đ. Còn: ${afterDiscount.toLocaleString()} đ<br>`;
+            callback(afterDiscount, log);
+        }
+
+        // Bước 3: Cộng phí vận chuyển ngoại thành
+        function stepAddShipping(currentAmount, log, callback) {
+            const shipFee = 35000; // phí cố định 35k
+            const afterShip = currentAmount + shipFee;
+            log += `<b>Bước 3:</b> Cộng phí giao hàng toàn quốc: +${shipFee.toLocaleString()} đ<br>`;
+            callback(afterShip, log);
+        }
+
+        // Yêu cầu mở rộng: Bước 4 Tính thuế VAT (10%)
+        function stepAddTax(currentAmount, log, callback) {
+            const tax = currentAmount * 0.10;
+            const finalTotal = currentAmount + tax;
+            log += `<b>Bước 4 (Mở rộng):</b> Tính thuế VAT (10%): +${tax.toLocaleString()} đ<br>`;
+            log += `<hr><h3>Tổng số tiền khách phải thanh toán: ${finalTotal.toLocaleString()} VNĐ</h3>`;
+            callback(log);
+        }
+
+        // Kích hoạt thực thi chuỗi lồng nhau thông qua cơ chế callback liên tiếp
+        stepCalculateRaw(cart, function(rawAmount, log1) {
+            stepApplyDiscount(rawAmount, log1, function(afterDiscount, log2) {
+                stepAddShipping(afterDiscount, log2, function(afterShip, log3) {
+                    stepAddTax(afterShip, log3, function(finalResultHTML) {
+                        document.getElementById('outputLog').innerHTML = finalResultHTML;
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

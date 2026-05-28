@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sản Phẩm</title>
+</head>
+<body>
+
+<h1>Danh Sách Sản Phẩm</h1>
+
+<div id="ketQua"></div>
+
+<script>
+let sanPham = [
+    {ten:"Laptop", gia:15000},
+    {ten:"Chuột", gia:500},
+    {ten:"Bàn phím", gia:1200},
+    {ten:"Tai nghe", gia:800},
+    {ten:"Màn hình", gia:4000}
+];
+
+let html = "";
+
+sanPham.forEach(sp => {
+    html += `
+    <p>
+    ${sp.ten} - ${sp.gia}
+    </p>
+    `;
+});
+
+let loc = sanPham.filter(sp => sp.gia > 1000);
+
+html += "<h3>Sản phẩm giá > 1000</h3>";
+
+loc.forEach(sp => {
+    html += `<p>${sp.ten}</p>`;
+});
+
+document.getElementById("ketQua").innerHTML = html;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Đoán Số</title>
+
+<style>
+    body{
+        font-family:Arial;
+        background:linear-gradient(135deg,#667eea,#764ba2);
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+
+    .game{
+        background:white;
+        padding:30px;
+        border-radius:15px;
+        width:350px;
+        text-align:center;
+        box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    input{
+        width:90%;
+        padding:10px;
+        margin-top:15px;
+        border-radius:8px;
+        border:1px solid #ccc;
+    }
+
+    button{
+        padding:10px 20px;
+        margin-top:15px;
+        border:none;
+        border-radius:8px;
+        background:#007bff;
+        color:white;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    button:hover{
+        background:#0056b3;
+    }
+
+    #thongBao{
+        margin-top:20px;
+        font-size:18px;
+        font-weight:bold;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <h2>🎯 Trò Chơi Đoán Số</h2>
+
+    <p>Đoán số từ 1 đến 100</p>
+
+    <input type="number" id="duDoan" placeholder="Nhập số của bạn">
+
+    <button onclick="kiemTra()">Đoán</button>
+
+    <button onclick="choiLai()">Chơi Lại</button>
+
+    <div id="thongBao"></div>
+
+</div>
+
+<script>
+
+let soBiMat = Math.floor(Math.random() * 100) + 1;
+
+let soLanDoan = 0;
+
+function kiemTra(){
+
+    let duDoan = Number(document.getElementById("duDoan").value);
+
+    soLanDoan++;
+
+    let thongBao = document.getElementById("thongBao");
+
+    if(duDoan < soBiMat){
+        thongBao.innerHTML = "📉 Số bạn đoán nhỏ hơn!";
+    }
+    else if(duDoan > soBiMat){
+        thongBao.innerHTML = "📈 Số bạn đoán lớn hơn!";
+    }
+    else{
+        thongBao.innerHTML =
+        `🎉 Chính xác!<br>
+        Bạn đã đoán đúng sau ${soLanDoan} lần.`;
+    }
+}
+
+function choiLai(){
+
+    soBiMat = Math.floor(Math.random() * 100) + 1;
+
+    soLanDoan = 0;
+
+    document.getElementById("duDoan").value = "";
+
+    document.getElementById("thongBao").innerHTML = "Game mới bắt đầu!";
+}
+
+</script>
+
+</body>
+</html>

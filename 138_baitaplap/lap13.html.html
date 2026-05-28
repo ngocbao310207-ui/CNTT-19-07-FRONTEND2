@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 13</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+#box{
+    width:300px;
+    padding:20px;
+    background:orange;
+    margin-bottom:20px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="box">
+    Nội dung demo jQuery
+</div>
+
+<button id="an">Ẩn</button>
+<button id="hien">Hiện</button>
+<button id="toggle">Toggle</button>
+
+<script>
+
+$("#an").click(function(){
+    $("#box").hide();
+});
+
+$("#hien").click(function(){
+    $("#box").show();
+});
+
+$("#toggle").click(function(){
+    $("#box").toggle();
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 10: Tải Danh Sách API</title>
+    <style>
+        .user-card { border: 1px solid #bbb; padding: 10px; margin: 5px 0; background: #fafafa; border-radius: 4px; max-width: 400px;}
+    </style>
+</head>
+<body>
+    <h2>Danh Sách Người Dùng (Fetch API)</h2>
+    <div id="loading" style="display: none; color: blue;">Đang tải danh sách dữ liệu từ máy chủ, vui lòng đợi...</div>
+    <div id="userContainer"></div>
+
+    <script>
+        const apiURL = "https://65bb980db51f9b589e8848cb.mockapi.io/users"; // Endpoint mẫu MockAPI công khai
+
+        async function fetchUsers() {
+            const loader = document.getElementById('loading');
+            const container = document.getElementById('userContainer');
+            loader.style.display = "block";
+            container.innerHTML = "";
+
+            try {
+                const response = await fetch(apiURL);
+                if (!response.ok) throw new Error("Kết nối máy chủ thất bại.");
+                
+                const data = await response.json();
+                loader.style.display = "none";
+                
+                // Duyệt hiển thị ít nhất 3 trường thông tin: ID, Name, Email
+                data.forEach(user => {
+                    container.innerHTML += `<div class="user-card">
+                        <strong>ID:</strong> ${user.id} - <strong>Tên:</strong> ${user.name}<br>
+                        <span><strong>Email:</strong> ${user.email}</span>
+                    </div>`;
+                });
+            } catch (error) {
+                loader.style.display = "none";
+                container.innerHTML = `<p style="color:red;">Lỗi mở rộng: ${error.message}</p>`;
+            }
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>

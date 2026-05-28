@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 2: Tính Toán Khuyến Mãi</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 450px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 15px; background: #28a745; color: white; border: none; cursor: pointer; width: 100%; }
+        .invoice { margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hóa Đơn Thanh Toán</h2>
+        <div class="form-group">
+            <label>Tổng giá trị đơn hàng (VNĐ):</label>
+            <input type="number" id="orderValue" placeholder="Nhập số tiền">
+        </div>
+        <div class="form-group">
+            <label>Hạng thành viên:</label>
+            <select id="memberRank">
+                <option value="khach_hang">Khách hàng phổ thông</option>
+                <option value="bac">Thành viên Bạc (Silver)</option>
+                <option value="vang">Thành viên Vàng (Gold)</option>
+            </select>
+        </div>
+        <button onclick="processInvoice()">Tính toán đơn hàng</button>
+
+        <div class="invoice" id="invoiceDetails" style="display:none;">
+            <div class="row"><span>Tiền gốc:</span><span id="lblOriginal">0</span></div>
+            <div class="row"><span>Tỷ lệ giảm:</span><span id="lblRate">0%</span></div>
+            <div class="row"><span>Số tiền giảm:</span><span id="lblDiscount">0</span></div>
+            <div class="row"><strong>Tổng thanh toán:</strong><strong id="lblTotal" style="color:red;">0</strong></div>
+        </div>
+    </div>
+
+    <script>
+        function processInvoice() {
+            const originalValue = Number(document.getElementById('orderValue').value);
+            const rank = document.getElementById('memberRank').value;
+
+            if (originalValue <= 0) {
+                alert("Vui lòng nhập giá trị đơn hàng lớn hơn 0!");
+                return;
+            }
+
+            let discountRate = 0;
+
+            // Áp dụng khuyến mãi theo khoảng tiền & hạng thành viên
+            if (originalValue >= 1000000) {
+                discountRate = rank === 'vang' ? 0.20 : (rank === 'bac' ? 0.15 : 0.10);
+            } else if (originalValue >= 500000) {
+                discountRate = rank === 'vang' ? 0.15 : (rank === 'bac' ? 0.10 : 0.05);
+            } else if (originalValue >= 200000) {
+                discountRate = rank === 'vang' ? 0.10 : (rank === 'bac' ? 0.05 : 0.02);
+            }
+
+            // Tính toán số tiền
+            const discountAmount = originalValue * discountRate;
+            let finalTotal = originalValue - discountAmount;
+
+            // Yêu cầu mở rộng: Miễn phí vận chuyển (Trừ tiếp 30k) nếu đơn hàng trên 2 triệu
+            if (originalValue >= 2000000) {
+                alert("Đơn hàng trên 2,000,000đ! Bạn được miễn phí vận chuyển (giảm thêm 30,000đ)");
+                finalTotal = Math.max(0, finalTotal - 30000);
+            }
+
+            // Hiển thị và format số tiền dạng VND
+            document.getElementById('lblOriginal').innerText = originalValue.toLocaleString('vi-VN') + " đ";
+            document.getElementById('lblRate').innerText = (discountRate * 100) + "%";
+            document.getElementById('lblDiscount').innerText = discountAmount.toLocaleString('vi-VN') + " đ";
+            document.getElementById('lblTotal').innerText = finalTotal.toLocaleString('vi-VN') + " đ";
+            document.getElementById('invoiceDetails').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

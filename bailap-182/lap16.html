@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 16: Bộ Đếm Tương Tác jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .num-view { font-size: 36px; font-weight: bold; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Bộ Đếm Tương Tác Sử Dụng jQuery</h2>
+    <div class="num-view" id="numView">0</div>
+    
+    <button id="btnMinus">Giảm nhẹ</button>
+    <button id="btnClr">Đặt lại</button>
+    <button id="btnPlus">Tăng nhẹ</button>
+
+    <script>
+        $(document).ready(function() {
+            let currentNum = 0;
+
+            function updateUI() {
+                $("#numView").text(currentNum);
+                // Đổi màu sắc sinh động theo trạng thái âm hay dương
+                if(currentNum > 0) $("#numView").css("color", "blue");
+                else if(currentNum < 0) $("#numView").css("color", "red");
+                else $("#numView").css("color", "black");
+            }
+
+            $("#btnPlus").click(function() { currentNum++; updateUI(); });
+            $("#btnMinus").click(function() { currentNum--; updateUI(); });
+            $("#btnClr").click(function() { currentNum = 0; updateUI(); });
+        });
+    </script>
+</body>
+</html>

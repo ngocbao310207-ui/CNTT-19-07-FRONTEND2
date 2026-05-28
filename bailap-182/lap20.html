@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 20: Ajax POST Form</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .form-box { border: 1px solid #444; padding: 15px; width: 320px; background-color: #fafafa;}
+        .form-group { margin-bottom: 10px; }
+        input { width: 95%; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Thêm Bản Ghi Mới Qua Phương Thức Ajax POST</h2>
+    
+    <div class="form-box">
+        <form id="ajaxAddForm">
+            <div class="form-group">
+                <label>Họ và Tên:</label>
+                <input type="text" id="inputName" required>
+            </div>
+            <div class="form-group">
+                <label>Email liên hệ:</label>
+                <input type="email" id="inputEmail" required>
+            </div>
+            <button type="submit">Gửi Dữ Liệu Đi (POST)</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const endPointUrl = "https://65bb980db51f9b589e8848cb.mockapi.io/users";
+
+            $("#ajaxAddForm").submit(function(e) {
+                e.preventDefault();
+
+                // Lấy dữ liệu từ các trường thông tin trong ô nhập liệu
+                const dataPayload = {
+                    name: $("#inputName").val(),
+                    email: $("#inputEmail").val()
+                };
+
+                $.ajax({
+                    url: endPointUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(dataPayload),
+                    success: function(result) {
+                        alert(`Thành công! Đã thêm phần tử mới với ID: ${result.id}`);
+                        // Clear sạch form sau khi thêm thành công tốt đẹp
+                        $("#inputName").val("");
+                        $("#inputEmail").val("");
+                    },
+                    error: function() {
+                        alert("Xảy ra lỗi trong tiến trình truyền gửi dữ liệu POST.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

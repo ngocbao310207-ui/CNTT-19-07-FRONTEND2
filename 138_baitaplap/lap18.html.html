@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý thành viên</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            margin: 50px;
+        }
+
+        input{
+            padding: 10px;
+            width: 250px;
+        }
+
+        button{
+            padding: 10px 15px;
+            margin: 5px;
+        }
+
+        li{
+            margin: 10px 0;
+            font-size: 20px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <h1>QUẢN LÝ THÀNH VIÊN</h1>
+
+    <input type="text" id="name" placeholder="Nhập tên thành viên">
+
+    <button id="add">Thêm</button>
+
+    <ul id="memberList"></ul>
+
+    <script>
+
+        $("#add").click(function(){
+
+            let name = $("#name").val();
+
+            if(name == ""){
+                alert("Vui lòng nhập tên");
+                return;
+            }
+
+            let item = `
+                <li>
+                    <span class="memberName">${name}</span>
+
+                    <button class="edit">Sửa</button>
+
+                    <button class="delete">Xóa</button>
+                </li>
+            `;
+
+            $("#memberList").append(item);
+
+            $("#name").val("");
+        });
+
+        $(document).on("click",".delete",function(){
+
+            $(this).closest("li").remove();
+        });
+
+        $(document).on("click",".edit",function(){
+
+            let oldName = $(this).siblings(".memberName").text();
+
+            let newName = prompt("Nhập tên mới", oldName);
+
+            if(newName != null && newName != ""){
+
+                $(this).siblings(".memberName").text(newName);
+            }
+        });
+
+    </script>
+
+</body>
+</html>

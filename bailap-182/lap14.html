@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 14: Hiệu Ứng jQuery Động</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .effect-box { width: 320px; padding: 25px; background: coral; color: white; border-radius: 8px; margin-top: 15px;}
+    </style>
+</head>
+<body>
+    <h2>Hiệu Ứng Mờ Dần Và Trượt Với jQuery</h2>
+    <button id="btnFadeOut">Fade Out (Mờ đi)</button>
+    <button id="btnFadeIn">Fade In (Rõ lên)</button>
+    <button id="btnSlideToggle">Slide Toggle (Trượt lên/xuống)</button>
+
+    <div class="effect-box" id="myBox">
+        <h3>Hộp Hiệu Ứng Giao Diện</h3>
+        <p>Bấm các nút phía trên để trải nghiệm hiệu ứng mượt mà của jQuery Animation.</p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Thiết lập tốc độ hiệu ứng ở mức vừa phải (400ms)
+            $("#btnFadeOut").click(function() {
+                $("#myBox").fadeOut(400);
+            });
+            $("#btnFadeIn").click(function() {
+                $("#myBox").fadeIn(400);
+            });
+            $("#btnSlideToggle").click(function() {
+                $("#myBox").slideToggle(400);
+            });
+        });
+    </script>
+</body>
+</html>

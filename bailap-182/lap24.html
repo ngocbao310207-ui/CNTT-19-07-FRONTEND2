@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 24: Landing Page Giới Thiệu Sự Kiện Hoàn Chỉnh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- 1. Thanh điều hướng Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-warning" href="#">TECH-FEST 2026</a>
+            <button class="navbar-toggler" type="text/button" data-bs-toggle="collapse" data-bs-target="#myNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="myNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="#hero">Trang Chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#highlights">Điểm Nổi Bật</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Lịch Trình</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#register">Đăng Ký Tham Gia</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. Khối Hero Section giới thiệu bao quát -->
+    <header id="hero" class="bg-primary text-white text-center py-5" style="background: linear-gradient(rgba(0,123,255,0.85), rgba(0,40,150,0.9)), url('https://picsum.photos/id/180/1200/500') center/cover no-repeat;">
+        <div class="container my-5 py-3">
+            <h1 class="display-4 fw-bold text-uppercase">Hội Nghị Khởi Nghiệp Công Nghệ Toàn Cầu</h1>
+            <p class="lead my-4">Nơi hội tụ giao lưu của hàng ngàn chuyên gia lập trình hàng đầu quốc tế.</p>
+            <a href="#register" class="btn btn-warning btn-lg fw-bold px-4 text-dark shadow">Đăng Ký Đặt Chỗ Ngay</a>
+        </div>
+    </header>
+
+    <!-- 3. Section Điểm nổi bật (Highlights) -->
+    <section id="highlights" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4">ĐIỂM NỔI BẬT CỦA SỰ KIỆN</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-4">
+                    <div class="card p-3 border-0 text-center h-100 shadow-sm">
+                        <div class="fs-1 text-primary mb-2">🚀</div>
+                        <h5 class="fw-bold">Cập Nhật Công Nghệ AI</h5>
+                        <p class="text-muted small mb-0">Lắng nghe bài chia sẻ chuyên sâu về các mô hình mạng nơ-ron thông minh đột phá mới.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card p-3 border-0 text-center h-100 shadow-sm">
+                        <div class="fs-1 text-success mb-2">🤝</div>
+                        <h5 class="fw-bold">Gặp Gỡ Đối Tác Đầu Tư</h5>
+                        <p class="text-muted small mb-0">Cơ hội tiếp cận hơn 50 quỹ đầu tư mạo hiểm quy mô lớn trong khu vực châu Á.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card p-3 border-0 text-center h-100 shadow-sm">
+                        <div class="fs-1 text-danger mb-2">🏆</div>
+                        <h5 class="fw-bold">Đấu Trường Hackathon</h5>
+                        <p class="text-muted small mb-0">Theo dõi trực tiếp vòng chung kết giải đấu lập trình với cơ cấu giải thưởng cực khủng.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Section Lịch trình diễn ra (Schedule) -->
+    <section id="schedule" class="py-5">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4">LỊCH TRÌNH SỰ KIỆN CHI TIẾT</h2>
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="list-group shadow-sm">
+                        <div class="list-group-item list-group-item-action p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">08:00 AM - 09:00 AM</h5>
+                                <span class="badge bg-secondary rounded-pill">Hội trường A</span>
+                            </div>
+                            <p class="mb-1">Đón tiếp khách mời đại biểu, check-in quét mã QR code nhận tài liệu hướng dẫn.</p>
+                        </div>
+                        <div class="list-group-item list-group-item-action p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">09:15 AM - 11:30 AM</h5>
+                                <span class="badge bg-success rounded-pill">Sân khấu chính</span>
+                            </div>
+                            <p class="mb-1">Khai mạc ngày hội hội nghị TechFest và nghe bài phát biểu chuyên đề AI thế hệ mới.</p>
+                        </div>
+                        <div class="list-group-item list-group-item-action p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 fw-bold text-primary">02:00 PM - 05:00 PM</h5>
+                                <span class="badge bg-secondary rounded-pill">Phòng Teabreak</span>
+                            </div>
+                            <p class="mb-1">Tổ chức hoạt động kết nối giao thương Networking, trao đổi thông tin trực tiếp.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Section Form Đăng ký nhận vé tham gia -->
+    <section id="register" class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 col-lg-6">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-warning">ĐĂNG KÝ VÉ THAM GIA MIỄN PHÍ</h2>
+                        <p class="text-muted small">Điền mẫu thông tin liên hệ chính xác để hệ thống gửi vé QR qua Email của bạn</p>
+                    </div>
+                    <form class="bg-secondary p-4 rounded-3 shadow">
+                        <div class="mb-3">
+                            <label class="form-label">Họ và tên của bạn</label>
+                            <input type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email chính chủ nhận vé</label>
+                            <input type="email" class="form-control" placeholder="vana@gmail.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Vị trí công tác tại đơn vị</label>
+                            <select class="form-select">
+                                <option>Sinh viên ngành CNTT</option>
+                                <option>Kỹ sư lập trình viên phần mềm</option>
+                                <option>Quản lý / Nhà sáng lập doanh nghiệp</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 text-dark fw-bold py-2">Xác nhận Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Chân trang Footer -->
+    <footer class="bg-black text-center text-muted py-3">
+        <p class="small mb-0">© 2026 Bản quyền sự kiện thuộc về Ban tổ chức TechFest Toàn Cầu.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

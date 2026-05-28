@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 8: Bộ đếm tương tác</title>
+    <style>
+        .counter-display { font-size: 48px; font-weight: bold; margin: 20px; }
+        button { font-size: 18px; padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Bộ Đếm Trạng Thái Thao Tác</h2>
+    <div class="counter-display" id="counter">0</div>
+    
+    <button id="btnDecrease">Giảm (-1)</button>
+    <button id="btnReset">Đặt lại (0)</button>
+    <button id="btnIncrease">Tăng (+1)</button>
+    <button id="btnQuickAdd" style="background-color: yellow;">Tăng nhanh (+5)</button>
+
+    <script>
+        let countValue = 0;
+        const counterEl = document.getElementById('counter');
+
+        function renderDOM() {
+            counterEl.innerText = countValue;
+            // Thay đổi màu sắc chữ hiển thị tùy giá trị âm hay dương (Yêu cầu mở rộng)
+            if (countValue > 0) {
+                counterEl.style.color = "green";
+            } else if (countValue < 0) {
+                counterEl.style.color = "red";
+            } else {
+                counterEl.style.color = "black";
+            }
+        }
+
+        document.getElementById('btnIncrease').addEventListener('click', () => { countValue++; renderDOM(); });
+        document.getElementById('btnDecrease').addEventListener('click', () => { countValue--; renderDOM(); });
+        document.getElementById('btnReset').addEventListener('click', () => { countValue = 0; renderDOM(); });
+        document.getElementById('btnQuickAdd').addEventListener('click', () => { countValue += 5; renderDOM(); });
+    </script>
+</body>
+</html>

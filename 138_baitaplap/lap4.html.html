@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Điểm Sinh Viên</title>
+</head>
+<body>
+
+<h1>Xử Lý Điểm</h1>
+
+<div id="ketQua"></div>
+
+<script>
+let diem = [8,7,9,6,10];
+
+let tong = 0;
+
+for(let i=0;i<diem.length;i++){
+    tong += diem[i];
+}
+
+let tb = tong / diem.length;
+
+let hocLuc = "";
+
+if(tb < 5){
+    hocLuc = "Yếu";
+}
+else if(tb < 7){
+    hocLuc = "Trung bình";
+}
+else if(tb < 8.5){
+    hocLuc = "Khá";
+}
+else{
+    hocLuc = "Giỏi";
+}
+
+document.getElementById("ketQua").innerHTML = `
+Danh sách điểm: ${diem}<br>
+Tổng: ${tong}<br>
+Trung bình: ${tb.toFixed(2)}<br>
+Học lực: ${hocLuc}
+`;
+</script>
+
+</body>
+</html>

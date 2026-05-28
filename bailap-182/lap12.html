@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 12: Quản lý sinh viên CRUD Fetch</title>
+    <style>
+        table { border-collapse: collapse; width: 600px; margin-top: 15px; }
+        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+        th { background: #f1f5f9; }
+        .form-section { border: 1px solid #ccc; padding: 15px; width: 300px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Hệ Thống Quản Lý Sinh Viên (Fetch CRUD)</h2>
+
+    <div class="form-section">
+        <h3>Thêm Sinh Viên Mới</h3>
+        <input type="text" id="addName" placeholder="Tên sinh viên" style="width:90%; margin-bottom:5px;"><br>
+        <input type="email" id="addEmail" placeholder="Email liên lạc" style="width:90%; margin-bottom:10px;"><br>
+        <button onclick="createNewStudent()">Gửi dữ liệu (POST)</button>
+    </div>
+
+    <h3>Danh Sách Sinh Viên Thực Thời</h3>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Họ Tên</th><th>Email</th><th>Hành Động</th></tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+    </table>
+
+    <script>
+        const apiMockUrl = "https://65bb980db51f9b589e8848cb.mockapi.io/users";
+
+        async function loadAllStudents() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = "<tr><td colspan='4'>Đang nạp danh sách...</td></tr>";
+            try {
+                const response = await fetch(apiMockUrl);
+                const list = await response.json();
+                tbody.innerHTML = "";
+                list.forEach(std => {
+                    tbody.innerHTML += `<tr>
+                        <td>${std.id}</td>
+                        <td>${std.name}</td>
+                        <td>${std.email}</td>
+                        <td><button onclick="deleteStudent('${std.id}')" style="color:red;">Xóa</button></td>
+                    </tr>`;
+                });
+            } catch (err) {
+                tbody.innerHTML = "<tr><td colspan='4' style='color:red;'>Không thể nạp dữ liệu.</td></tr>";
+            }
+        }
+
+        async function createNewStudent() {
+            const name = document.getElementById('addName').value.trim();
+            const email = document.getElementById('addEmail').value.trim();
+            if(!name || !email) { return alert("Hãy điền đầy đủ thông tin!"); }
+
+            try {
+                await fetch(apiMockUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                document.getElementById('addName').value = "";
+                document.getElementById('addEmail').value = "";
+                loadAllStudents(); // Tải lại danh sách sau khi thêm mới
+            } catch (e) { alert("Lỗi khi thêm!"); }
+        }
+
+        async function deleteStudent(id) {
+            if(!confirm("Bạn có chắc chắn muốn xóa sinh viên mang ID này không?")) return;
+            try {
+                await fetch(`${apiMockUrl}/${id}`, { method: 'DELETE' });
+                loadAllStudents(); // Tải lại danh sách sau khi xóa
+            } catch (e) { alert("Lỗi khi xóa!"); }
+        }
+
+        // Gọi tải dữ liệu khi mở trang lên
+        loadAllStudents();
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 21: Hệ Thống CRUD Ajax Trọn Gói</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        table { border-collapse: collapse; width: 650px; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f5; }
+        .editor-section { background-color: #fef08a; padding: 10px; margin-bottom: 15px; width: 400px; border: 1px dashed orange; display: none; }
+        .add-section { background-color: #bbf7d0; padding: 10px; margin-bottom: 15px; width: 400px; border: 1px solid green; }
+    </style>
+</head>
+<body>
+    <h2>Hệ Thống CRUD Quản Lý Toàn Diện Bằng jQuery Ajax</h2>
+
+    <!-- Khối form Thêm mới -->
+    <div class="add-section">
+        <h3>Thêm Thành Viên</h3>
+        Tên: <input type="text" id="addNameField">
+        Email: <input type="email" id="addEmailField">
+        <button id="btnCreate">Lưu mới (POST)</button>
+    </div>
+
+    <!-- Khối form Sửa / Cập nhật ẩn hiện linh hoạt -->
+    <div class="editor-section" id="editArea">
+        <h3>Cập Nhật Dữ Liệu Thành Viên (ID: <span id="targetIdLbl"></span>)</h3>
+        Tên mới: <input type="text" id="editNameField"><br><br>
+        Email mới: <input type="email" id="editEmailField"><br><br>
+        <button id="btnUpdate">Cập nhật thay đổi (PUT)</button>
+        <button id="btnCancelEdit">Hủy</button>
+    </div>
+
+    <h3>Bảng Dữ Liệu Máy Chủ</h3>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Họ Tên</th><th>Email</th><th>Hành Động Chức Năng</th></tr>
+        </thead>
+        <tbody id="mainCrudTbody"></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            const mainUrl = "https://65bb980db51f9b589e8848cb.mockapi.io/users";
+
+            // Hàm READ: Nạp danh sách tổng quan ban đầu
+            function fetchAllData() {
+                $("#mainCrudTbody").html("<tr><td colspan='4'>Đang kết nối và đồng bộ...</td></tr>");
+                $.get(mainUrl, function(data) {
+                    $("#mainCrudTbody").empty();
+                    data.forEach(item => {
+                        $("#mainCrudTbody").append(`<tr>
+                            <td>${item.id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.email}</td>
+                            <td>
+                                <button class="btn-trigger-edit" data-id="${item.id}" data-name="${item.name}" data-email="${item.email}">Sửa</button>
+                                <button class="btn-trigger-del" data-id="${item.id}" style="color:red;">Xóa</button>
+                            </td>
+                        </tr>`);
+                    });
+                });
+            }
+
+            // Xử lý hành động bấm nút CREATE
+            $("#btnCreate").click(function() {
+                const name = $("#addNameField").val();
+                const email = $("#addEmailField").val();
+                if(!name || !email) return alert("Vui lòng điền đủ thông tin!");
+
+                $.post(mainUrl, { name, email }, function() {
+                    $("#addNameField").val("");
+                    $("#addEmailField").val("");
+                    fetchAllData(); // Nạp lại bảng dữ liệu
+                });
+            });
+
+            // Kích hoạt giao diện sửa dữ liệu
+            $(document).on("click", ".btn-trigger-edit", function() {
+                const id = $(this).data("id");
+                const name = $(this).data("name");
+                const email = $(this).data("email");
+
+                $("#targetIdLbl").text(id);
+                $("#editNameField").val(name);
+                $("#editEmailField").val(email);
+                $("#editArea").slideDown(); // Hiện khu vực sửa
+            });
+
+            // Xử lý hành động bấm nút UPDATE (PUT)
+            $("#btnUpdate").click(function() {
+                const id = $("#targetIdLbl").text();
+                const name = $("#editNameField").val();
+                const email = $("#editEmailField").val();
+
+                $.ajax({
+                    url: `${mainUrl}/${id}`,
+                    type: "PUT",
+                    data: { name, email },
+                    success: function() {
+                        $("#editArea").slideUp();
+                        fetchAllData();
+                    }
+                });
+            });
+
+            // Xử lý hành động xóa dữ liệu (DELETE)
+            $(document).on("click", ".btn-trigger-del", function() {
+                const id = $(this).data("id");
+                if(!confirm("Bạn có chắc chắn mún xóa dòng dữ liệu mang mã số " + id + "?")) return;
+
+                $.ajax({
+                    url: `${mainUrl}/${id}`,
+                    type: "DELETE",
+                    success: function() {
+                        fetchAllData();
+                    }
+                });
+            });
+
+            $("#btnCancelEdit").click(function() { $("#editArea").slideUp(); });
+
+            // Tải dữ liệu ban đầu
+            fetchAllData();
+        });
+    </script>
+</body>
+</html>

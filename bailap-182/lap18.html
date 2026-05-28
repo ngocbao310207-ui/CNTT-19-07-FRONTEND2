@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 18: Quản Lý Thành Viên jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .member-list-box { width: 450px; margin-top: 15px; }
+        .member-row { display: flex; justify-content: space-between; background: #f9f9f9; padding: 6px; border-bottom: 1px solid #eee; margin-bottom: 4px;}
+        button { margin-left: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Hệ Thống Thêm Sửa Xóa Thành Viên Giao Diện</h2>
+    <div>
+        <input type="text" id="memberNameInput" placeholder="Nhập tên thành viên mới..." style="padding:6px; width:220px;">
+        <button id="btnAddMember" style="padding:6px;">Thêm Thành Viên</button>
+    </div>
+
+    <div class="member-list-box" id="memberContainer">
+        <!-- Các dòng thành viên thêm mới sẽ được chèn động tự động vào đây bằng mã lệnh append -->
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Sự kiện Thêm mới dòng dữ liệu
+            $("#btnAddMember").click(function() {
+                const name = $.trim($("#memberNameInput").val());
+                if(name === "") return alert("Vui lòng không để trống tên thành viên!");
+
+                const rowHTML = `<div class="member-row">
+                    <span class="name-text">${name}</span>
+                    <div>
+                        <button class="edit-btn">Sửa</button>
+                        <button class="del-btn" style="color:red;">Xóa</button>
+                    </div>
+                </div>`;
+
+                $("#memberContainer").append(rowHTML);
+                $("#memberNameInput").val(""); // clear form nhập liệu
+            });
+
+            // Sử dụng Event Delegation cơ bản để lắng nghe sự kiện từ các thẻ được sinh ra động
+            // 1. Thao tác Xóa dòng bằng closest()
+            $(document).on("click", ".del-btn", function() {
+                if(confirm("Xác nhận xóa thành viên này?")) {
+                    $(this).closest(".member-row").remove();
+                }
+            });
+
+            // 2. Thao tác Sửa dữ liệu trực tiếp tại chỗ bằng câu lệnh prompt của trình duyệt
+            $(document).on("click", ".edit-btn", function() {
+                const nameSpan = $(this).closest(".member-row").find(".name-text");
+                const oldName = nameSpan.text();
+                const newName = prompt("Nhập tên mới cập nhật cho thành viên:", oldName);
+                if(newName && $.trim(newName) !== "") {
+                    nameSpan.text($.trim(newName));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

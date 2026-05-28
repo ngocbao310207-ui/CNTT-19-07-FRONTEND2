@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 9: To-do List Ứng Dụng Công Việc</title>
+    <style>
+        .completed { text-decoration: line-through; color: gray; }
+        ul { list-style-type: none; padding: 0; width: 350px; }
+        li { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #ddd; align-items: center; }
+        .del-btn { color: red; cursor: pointer; border: none; background: none; }
+    </style>
+</head>
+<body>
+    <h2>Danh Sách Công Việc Cá Nhân</h2>
+    <div>
+        <input type="text" id="taskInput" placeholder="Nhập tên việc cần làm..." style="padding:6px; width:220px;">
+        <button id="btnAddTask" style="padding:6px;">Thêm việc</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <script>
+        // Mảng đối tượng lưu dữ liệu công việc cấu trúc
+        let todos = JSON.parse(localStorage.getItem('my_todos')) || [
+            { id: 1, text: "Học cú pháp căn bản DOM", status: false },
+            { id: 2, text: "Làm sạch bàn học tập buổi tối", status: true }
+        ];
+
+        function renderTodos() {
+            const ul = document.getElementById('taskList');
+            ul.innerHTML = "";
+            
+            todos.forEach(item => {
+                const li = document.createElement('li');
+                
+                const span = document.createElement('span');
+                span.innerText = item.text;
+                if(item.status) span.classList.add('completed');
+                
+                // Click vào chữ để đổi trạng thái hoàn thành hay chưa
+                span.addEventListener('click', () => toggleStatus(item.id));
+
+                const delBtn = document.createElement('button');
+                delBtn.innerText = "Xóa";
+                delBtn.classList.add('del-btn');
+                delBtn.addEventListener('click', () => deleteTask(item.id));
+
+                li.appendChild(span);
+                li.appendChild(delBtn);
+                ul.appendChild(li);
+            });
+            // Mở rộng: Đồng bộ hóa dữ liệu vào localStorage lưu trữ cục bộ
+            localStorage.setItem('my_todos', JSON.stringify(todos));
+        }
+
+        function toggleStatus(id) {
+            todos = todos.map(t => t.id === id ? { ...t, status: !t.status } : t);
+            renderTodos();
+        }
+
+        function deleteTask(id) {
+            todos = todos.filter(t => t.id !== id);
+            renderTodos();
+        }
+
+        document.getElementById('btnAddTask').addEventListener('click', () => {
+            const input = document.getElementById('taskInput');
+            if(input.value.trim() === "") {
+                alert("Vui lòng ghi nội dung công việc!");
+                return;
+            }
+            const newTodo = {
+                id: Date.now(),
+                text: input.value.trim(),
+                status: false
+            };
+            todos.push(newTodo);
+            input.value = "";
+            renderTodos();
+        });
+
+        // Chạy kết xuất giao diện lần đầu
+        renderTodos();
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bài 7: Thao tác DOM giao diện</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #fdfdfd;
+        padding: 40px;
+      }
+      .card {
+        max-width: 350px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 15px 0;
+        max-height: 200px;
+        object-fit: cover;
+      }
+      .dark-mode {
+        background-color: #343a40 !important;
+        color: #fff !important;
+        border-color: #454d55;
+      }
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 15px;
+      }
+      button {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        border: 1px solid #007bff;
+        background: #fff;
+        color: #007bff;
+      }
+      button.active {
+        background: #007bff;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card" id="myCard">
+      <h3 id="cardTitle">Giao diện mặc định</h3>
+      <p id="cardDesc">
+        Đây là nội dung văn bản gốc chưa qua chỉnh sửa bằng mã JavaScript.
+      </p>
+      <img
+        id="cardImg"
+        src="https://picsum.photos/id/1/300/200"
+        alt="Hình ảnh mẫu"
+      />
+
+      <div class="btn-group">
+        <button class="active" onclick="changeContent()">Đổi Trạng Thái</button>
+        <button
+          onclick="resetContent()"
+          style="border-color: #dc3545; color: #dc3545"
+        >
+          Khôi Phục
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const originalTitle = "Giao diện mặc định";
+      const originalDesc =
+        "Đây là nội dung văn bản gốc chưa qua chỉnh sửa bằng mã JavaScript.";
+      const originalSrc = "https://picsum.photos/id/1/300/200";
+
+      let isChanged = false;
+
+      function changeContent() {
+        const card = document.getElementById("myCard");
+        const title = document.getElementById("cardTitle");
+        const desc = document.getElementById("cardDesc");
+        const img = document.getElementById("cardImg");
+
+        if (!isChanged) {
+          // Chuyển sang trạng thái mới dữ liệu động
+          title.innerText = "Chào mừng bạn đến với kỷ nguyên AI!";
+          desc.innerText =
+            "Giao diện đã chuyển sang chế độ Dark Mode độc đáo huyền bí.";
+          img.src = "https://picsum.photos/id/10/300/200";
+          card.classList.add("dark-mode");
+          isChanged = true;
+        } else {
+          // Nhấp tiếp tục để chuyển sang trạng thái biến đổi khác
+          title.innerText = "Trạng thái đặc biệt";
+          desc.innerText = "Nội dung biến chuyển linh hoạt liên tục qua lại.";
+          img.src = "https://picsum.photos/id/20/300/200";
+          card.classList.remove("dark-mode");
+          isChanged = false;
+        }
+      }
+
+      function resetContent() {
+        // Khôi phục đồng loạt giá trị ban đầu (Yêu cầu mở rộng)
+        document.getElementById("cardTitle").innerText = originalTitle;
+        document.getElementById("cardDesc").innerText = originalDesc;
+        document.getElementById("cardImg").src = originalSrc;
+        document.getElementById("myCard").classList.remove("dark-mode");
+        isChanged = false;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 19: Tải Dữ Liệu jQuery Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        table { border-collapse: collapse; width: 500px; margin-top: 10px;}
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left;}
+        th { background: #e2e8f0; }
+    </style>
+</head>
+<body>
+    <h2>Danh Sách Lớp Học Bằng $.ajax GET</h2>
+    <button id="btnLoadAjax">Tải danh sách dữ liệu</button>
+    <div id="statusMsg" style="color: blue; margin-top:5px;"></div>
+
+    <table>
+        <thead>
+            <tr><th>Mã ID</th><th>Họ và Tên</th><th>Địa Chỉ Email</th></tr>
+        </thead>
+        <tbody id="ajaxTableBody"></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            const apiTarget = "https://65bb980db51f9b589e8848cb.mockapi.io/users";
+
+            $("#btnLoadAjax").click(function() {
+                $("#statusMsg").text("Đang kết nối API và đồng bộ danh sách...");
+                $("#ajaxTableBody").empty();
+
+                $.ajax({
+                    url: apiTarget,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(responseList) {
+                        $("#statusMsg").text("Nạp dữ liệu thành công hoàn tất!");
+                        responseList.forEach(item => {
+                            let tr = `<tr>
+                                <td>${item.id}</td>
+                                <td>${item.name}</td>
+                                <td>${item.email}</td>
+                            </tr>`;
+                            $("#ajaxTableBody").append(tr);
+                        });
+                    },
+                    error: function() {
+                        $("#statusMsg").text("Lỗi hệ thống: Không thể kết nối hoặc tải dữ liệu!");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

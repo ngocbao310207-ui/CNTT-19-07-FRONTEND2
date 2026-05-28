@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khuyến Mãi Đơn Hàng</title>
+
+<style>
+    body{
+        font-family:Arial;
+        background:#f4f4f4;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+
+    .box{
+        width:400px;
+        background:white;
+        padding:25px;
+        border-radius:15px;
+        box-shadow:0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    h2{
+        text-align:center;
+    }
+
+    input, select{
+        width:100%;
+        padding:10px;
+        margin-top:10px;
+        border-radius:8px;
+        border:1px solid #ccc;
+    }
+
+    button{
+        width:100%;
+        padding:12px;
+        margin-top:15px;
+        border:none;
+        background:#28a745;
+        color:white;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+    }
+
+    button:hover{
+        background:#1e7e34;
+    }
+
+    #ketQua{
+        margin-top:20px;
+        line-height:1.8;
+        font-weight:bold;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>Tính Khuyến Mãi</h2>
+
+    <input type="number" id="donHang" placeholder="Nhập giá trị đơn hàng">
+
+    <select id="thanhVien">
+        <option value="thuong">Thành viên thường</option>
+        <option value="bac">Thành viên bạc</option>
+        <option value="vang">Thành viên vàng</option>
+    </select>
+
+    <button onclick="tinhTien()">Tính Tiền</button>
+
+    <div id="ketQua"></div>
+
+</div>
+
+<script>
+
+function tinhTien(){
+
+    let donHang = Number(document.getElementById("donHang").value);
+    let thanhVien = document.getElementById("thanhVien").value;
+
+    let giam = 0;
+
+    // Khuyến mãi theo đơn hàng
+    if(donHang >= 5000000){
+        giam = 20;
+    }
+    else if(donHang >= 2000000){
+        giam = 10;
+    }
+    else if(donHang >= 1000000){
+        giam = 5;
+    }
+
+    // Thêm ưu đãi theo thành viên
+    if(thanhVien == "bac"){
+        giam += 3;
+    }
+    else if(thanhVien == "vang"){
+        giam += 5;
+    }
+
+    let tienGiam = donHang * giam / 100;
+    let thanhToan = donHang - tienGiam;
+
+    document.getElementById("ketQua").innerHTML = `
+        Tiền gốc: ${donHang.toLocaleString()} VNĐ <br>
+        Tỷ lệ giảm: ${giam}% <br>
+        Tiền giảm: ${tienGiam.toLocaleString()} VNĐ <br>
+        Tổng thanh toán: ${thanhToan.toLocaleString()} VNĐ
+    `;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 15: Kiểm Tra Lỗi Form Đăng Ký</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .form-group { margin-bottom: 12px; width: 350px; }
+        label { display: block; font-weight: bold; }
+        input { width: 100%; padding: 6px; box-sizing: border-box; }
+        .error-msg { color: red; font-size: 13px; margin-top: 3px; display: none; }
+        .success-box { padding: 10px; background: lightgreen; color: green; display: none; width: 340px; margin-bottom: 10px;}
+        .invalid-border { border: 1px solid red; }
+        .valid-border { border: 1px solid green; }
+    </style>
+</head>
+<body>
+    <h2>Form Đăng Ký Tài Khoản Thành Viên</h2>
+    <div class="success-box" id="msgSuccess">Chúc mừng! Bạn đã điền form hoàn toàn hợp lệ.</div>
+
+    <form id="regForm">
+        <div class="form-group">
+            <label>Họ và Tên:</label>
+            <input type="text" id="fullname">
+            <div class="error-msg" id="errName">Họ tên không được để trống!</div>
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="text" id="email">
+            <div class="error-msg" id="errEmail">Định dạng email sai quy định!</div>
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu:</label>
+            <input type="password" id="password">
+            <div class="error-msg" id="errPass">Mật khẩu phải dài tối thiểu 6 ký tự!</div>
+        </div>
+        <div class="form-group">
+            <label>Xác nhận mật khẩu:</label>
+            <input type="password" id="confirmPass">
+            <div class="error-msg" id="errConfirm">Mật khẩu xác nhận nhập lại không trùng khớp!</div>
+        </div>
+        <button type="submit" style="padding: 8px 20px; font-size:16px;">Đăng ký ngay</button>
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            $("#regForm").submit(function(event) {
+                event.preventDefault(); // Chặn hành vi tải lại trang mặc định của Form submit
+                
+                let isValid = true;
+                $(".error-msg").hide();
+                $("input").removeClass("invalid-border valid-border");
+
+                // 1. Kiểm tra họ tên rỗng
+                const name = $.trim($("#fullname").val());
+                if(name === "") {
+                    $("#errName").show();
+                    $("#fullname").addClass("invalid-border");
+                    isValid = false;
+                } else { $("#fullname").addClass("valid-border"); }
+
+                // 2. Kiểm tra Regex định dạng Email
+                const email = $.trim($("#email").val());
+                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+                if(!emailRegex.test(email)) {
+                    $("#errEmail").show();
+                    $("#email").addClass("invalid-border");
+                    isValid = false;
+                } else { $("#email").addClass("valid-border"); }
+
+                // 3. Kiểm tra độ dài mật khẩu
+                const pass = $("#password").val();
+                if(pass.length < 6) {
+                    $("#errPass").show();
+                    $("#password").addClass("invalid-border");
+                    isValid = false;
+                } else { $("#password").addClass("valid-border"); }
+
+                // 4. Kiểm tra trùng khớp mật khẩu
+                const confirm = $("#confirmPass").val();
+                if(confirm !== pass || confirm === "") {
+                    $("#errConfirm").show();
+                    $("#confirmPass").addClass("invalid-border");
+                    isValid = false;
+                } else { $("#confirmPass").addClass("valid-border"); }
+
+                // Hiển thị kết luận cuối cùng
+                if(isValid) {
+                    $("#msgSuccess").fadeIn();
+                } else {
+                    $("#msgSuccess").hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

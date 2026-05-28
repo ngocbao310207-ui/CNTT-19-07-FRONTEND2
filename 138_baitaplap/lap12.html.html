@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 12 - CRUD Sinh Viên</title>
+
+<style>
+body{
+    font-family: Arial;
+    padding: 30px;
+}
+
+input{
+    padding: 10px;
+    width: 250px;
+}
+
+button{
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+li{
+    margin: 10px 0;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Quản Lý Sinh Viên</h1>
+
+<input type="text" id="ten" placeholder="Nhập tên sinh viên">
+<button onclick="themSinhVien()">Thêm</button>
+
+<ul id="danhSach"></ul>
+
+<script>
+
+let sinhVien = ["An", "Bình", "Cường"];
+
+function hienThi(){
+
+    let html = "";
+
+    sinhVien.forEach((sv,index)=>{
+
+        html += `
+        <li>
+            ${sv}
+            <button onclick="xoa(${index})">Xóa</button>
+        </li>
+        `;
+    });
+
+    document.getElementById("danhSach").innerHTML = html;
+}
+
+function themSinhVien(){
+
+    let ten = document.getElementById("ten").value;
+
+    if(ten == ""){
+        alert("Vui lòng nhập tên");
+        return;
+    }
+
+    sinhVien.push(ten);
+
+    document.getElementById("ten").value = "";
+
+    hienThi();
+}
+
+function xoa(index){
+
+    sinhVien.splice(index,1);
+
+    hienThi();
+}
+
+hienThi();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 11: Tra Cứu ID Chi Tiết</title>
+    <style>
+        .details-box { border: 2px solid green; padding: 15px; margin-top: 15px; background-color: #f0fff0; width: 350px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Tra Cứu Thông Tin Sinh Viên Theo ID</h2>
+    <div>
+        <input type="number" id="studentId" placeholder="Nhập ID (Ví dụ: 1, 2, 3...)">
+        <button onclick="searchStudent()">Tìm Kiếm</button>
+    </div>
+
+    <div id="searchResult"></div>
+
+    <script>
+        const baseEndpoint = "https://65bb980db51f9b589e8848cb.mockapi.io/users";
+
+        function searchStudent() {
+            const idVal = document.getElementById('studentId').value.trim();
+            const resultBox = document.getElementById('searchResult');
+
+            if(!idVal) {
+                alert("Vui lòng nhập ID định danh!");
+                return;
+            }
+
+            resultBox.innerHTML = "Đang tra cứu dữ liệu...";
+
+            // Truyền tham số ID động vào URL của chuỗi string template
+            fetch(`${baseEndpoint}/${idVal}`)
+            .then(res => {
+                if(!res.ok) {
+                    throw new Error("Không tìm thấy dữ liệu ứng với ID này hoặc API bị lỗi!");
+                }
+                return res.json();
+            })
+            .then(student => {
+                resultBox.innerHTML = `<div class="details-box">
+                    <h3>Thông tin chi tiết</h3>
+                    <p><strong>ID hệ thống:</strong> ${student.id}</p>
+                    <p><strong>Họ & Tên:</strong> ${student.name}</p>
+                    <p><strong>Địa chỉ Email:</strong> ${student.email}</p>
+                </div>`;
+            })
+            .catch(err => {
+                resultBox.innerHTML = `<p style="color:red;">Thông báo: ${err.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>

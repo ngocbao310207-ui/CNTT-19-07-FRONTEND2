@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lab 14</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+
+#box{
+    width:200px;
+    height:200px;
+    background:red;
+}
+
+button{
+    margin-top:20px;
+    padding:10px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div id="box"></div>
+
+<br>
+
+<button id="fadeIn">Fade In</button>
+<button id="fadeOut">Fade Out</button>
+<button id="slide">Slide Toggle</button>
+
+<script>
+
+$("#fadeIn").click(function(){
+    $("#box").fadeIn();
+});
+
+$("#fadeOut").click(function(){
+    $("#box").fadeOut();
+});
+
+$("#slide").click(function(){
+    $("#box").slideToggle();
+});
+
+</script>
+
+</body>
+</html>

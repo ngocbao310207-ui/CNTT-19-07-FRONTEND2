@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng đơn giản</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            margin: 50px;
+        }
+
+        .product{
+            width: 400px;
+            border: 1px solid rgb(255, 255, 255);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        button{
+            padding: 5px 15px;
+            font-size: 18px;
+            margin: 5px;
+        }
+
+        .total{
+            margin-top: 20px;
+            font-size: 24px;
+            color: rgb(9, 255, 0);
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="product">
+
+        <h2>IPhone 17</h2>
+
+        <p>Đơn giá: <span id="price">30000000</span> VNĐ</p>
+
+        <button id="minus">-</button>
+
+        <span id="quantity">1</span>
+
+        <button id="plus">+</button>
+
+        <div class="total">
+            Thành tiền: <span id="money"></span> VNĐ
+        </div>
+
+    </div>
+
+    <script>
+
+        let quantity = 1;
+        let price = 30000000;
+
+        function updateTotal(){
+
+            $("#quantity").text(quantity);
+
+            let total = quantity * price;
+
+            $("#money").text(total.toLocaleString());
+        }
+
+        updateTotal();
+
+        $("#plus").click(function(){
+
+            quantity++;
+
+            updateTotal();
+        });
+
+        $("#minus").click(function(){
+
+            if(quantity > 1){
+                quantity--;
+            }
+
+            updateTotal();
+        });
+
+    </script>
+
+</body>
+</html>
