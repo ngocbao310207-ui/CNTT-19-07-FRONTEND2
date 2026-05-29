@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 11 - Tra cứu ID</title>
+</head>
+<body>
+    <h2>Tra cứu thông tin theo Mã ID</h2>
+    <input type="number" id="userIdInput" placeholder="Nhập ID (Ví dụ: 1, 2...)"> <button onclick="searchUserById()">Tra cứu</button> <div id="userDetail" style="margin-top:20px; padding:10px; background:#f4f4f4; width:350px;"></div>
+
+<script>
+const BASE_URL = "https://6655f44e3c1d3b60293a647d.mockapi.io/users"; //
+
+function searchUserById() {
+    const id = document.getElementById("userIdInput").value;
+    const detailDiv = document.getElementById("userDetail");
+    if(!id) return alert("Vui lòng nhập ID!");
+
+    // 1. Tạo URL động dựa vào tham số đầu vào
+    const targetUrl = `${BASE_URL}/${id}`; //
+    detailDiv.innerHTML = "Đang tra cứu...";
+
+    // 2. Thực hiện gọi API fetch
+    fetch(targetUrl)
+        .then(res => {
+            if(!res.ok) return null; // Trả về null nếu mã trạng thái lỗi (404 không tìm thấy)
+            return res.json();
+        })
+        .then(user => {
+            // 3. Xử lý logic hiển thị hoặc báo lỗi cụ thể
+            if (user === null) {
+                detailDiv.innerHTML = "<span style='color:red;'>⚠️ Không tồn tại đối tượng có mã định danh này!</span>"; //
+            } else {
+                detailDiv.innerHTML = `
+                    <h3>Thông tin chi tiết</h3>
+                    <p><b>Mã số:</b> ${user.id}</p>
+                    <p><b>Họ và tên:</b> ${user.name}</p>
+                    <p><b>Email liên hệ:</b> ${user.email}</p>
+                `; //
+            }
+        });
+}
+</script>
+</body>
+</html>

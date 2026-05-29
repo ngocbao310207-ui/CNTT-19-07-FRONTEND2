@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 08 - Bộ đếm tương tác</title>
+    <style>
+        #counter { font-size: 48px; margin: 20px; font-weight: bold; }
+        button { padding: 10px 20px; font-size: 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Bộ đếm tương tác</h2>
+    <div id="counter">0</div> <button id="btnDecrease">Giảm (-1)</button> <button id="btnReset">Đặt lại (0)</button> <button id="btnIncrease">Tăng (+1)</button> <button id="btnFastIncrease" style="background:#007bff; color:white;">Tăng nhanh (+5)</button> <script>
+let count = 0; // Biến trạng thái
+
+const counterDisplay = document.getElementById("counter");
+
+// Hàm render tách biệt logic cập nhật giao diện
+function render() {
+    counterDisplay.innerText = count; //
+    
+    // Yêu cầu mở rộng: Đổi màu theo giá trị âm dương
+    if (count > 0) counterDisplay.style.color = "green"; //
+    else if (count < 0) counterDisplay.style.color = "red"; //
+    else counterDisplay.style.color = "black";
+}
+
+// Bắt sự kiện addEventListener
+document.getElementById("btnIncrease").addEventListener("click", () => { count++; render(); }); //
+document.getElementById("btnDecrease").addEventListener("click", () => { count--; render(); }); //
+document.getElementById("btnReset").addEventListener("click", () => { count = 0; render(); }); //
+document.getElementById("btnFastIncrease").addEventListener("click", () => { count += 5; render(); }); //
+
+render(); // Gọi ban đầu
+</script>
+</body>
+</html>

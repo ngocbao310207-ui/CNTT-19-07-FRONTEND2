@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 05 - Quản lý sản phẩm</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Quản lý danh sách sản phẩm</h2>
+    <div>
+        <input type="text" id="searchName" placeholder="Tìm theo tên sản phẩm...">
+        <button onclick="searchProduct()">Tìm bằng 'find'</button>
+        
+        <input type="number" id="maxPrice" placeholder="Mức giá tối đa...">
+        <button onclick="filterProduct()">Lọc bằng 'filter'</button>
+
+        <button onclick="sortProducts('asc')">Giá tăng dần</button>
+        <button onclick="sortProducts('desc')">Giá giảm dần</button>
+        <button onclick="renderTable(products)">Hiển thị tất cả</button>
+    </div>
+
+    <table id="productTable">
+        <thead>
+            <tr><th>Tên</th><th>Giá (VNĐ)</th><th>Số lượng</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <h3 id="totalInventory"></h3>
+
+<script>
+// 1. Khai báo dữ liệu mẫu
+let products = [
+    { name: "Điện thoại iPhone 15", price: 22000000, quantity: 10 },
+    { name: "Laptop ASUS Rog", price: 35000000, quantity: 5 },
+    { name: "Chuột không dây Logitech", price: 500000, quantity: 30 },
+    { name: "Bàn phím cơ AKKO", price: 1500000, quantity: 15 },
+    { name: "Tai nghe Sony WH", price: 4500000, quantity: 8 }
+];
+
+// 2. Hàm render tái sử dụng
+function renderTable(data) {
+    const tbody = document.querySelector("#productTable tbody");
+    tbody.innerHTML = "";
+    data.forEach(p => {
+        tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.price.toLocaleString()}</td><td>${p.quantity}</td></tr>`; //
+    });
+    calcInventory();
+}
+
+// Yêu cầu mở rộng: Tính tổng giá trị tồn kho
+function calcInventory() {
+    const total = products.reduce((sum, p) => sum + (p.price * p.quantity), 0); //
+    document.getElementById("totalInventory").innerText = `Tổng giá trị tồn kho: ${total.toLocaleString()} VNĐ`; //
+}
+
+// 3. Tìm kiếm bằng find
+function searchProduct() {
+    const keyword = document.getElementById("searchName").value.toLowerCase().trim();
+    const result = products.find(p => p.name.toLowerCase().includes(keyword)); //
+    if (result) {
+        renderTable([result]);
+    } else {
+        document.querySelector("#productTable tbody").innerHTML = "<tr><td colspan='3'>Không tìm thấy sản phẩm!</td></tr>";
+    }
+}
+
+// 4. Lọc bằng filter
+function filterProduct() {
+    const maxPrice = parseFloat(document.getElementById("maxPrice").value);
+    if (isNaN(maxPrice)) return alert("Vui lòng nhập giá trị lọc!");
+    const filtered = products.filter(p => p.price <= maxPrice); //
+    renderTable(filtered);
+}
+
+// Yêu cầu mở rộng: Sắp xếp sản phẩm
+function sortProducts(order) {
+    let sorted = [...products];
+    if (order === 'asc') sorted.sort((a, b) => a.price - b.price); //
+    else sorted.sort((a, b) => b.price - a.price); //
+    renderTable(sorted);
+}
+
+renderTable(products); // Tải trang ban đầu
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 06 - Quy trình Callback</title>
+</head>
+<body>
+    <h2>Mô phỏng chuỗi xử lý đơn hàng (Mở Console để xem chi tiết log)</h2>
+    <div id="output" style="font-family: monospace; white-space: pre-line; background: #f0f0f0; padding:15px;"></div>
+
+<script>
+// Dữ liệu đơn hàng mẫu
+const order = {
+    id: "DH1002",
+    rawAmount: 1200000, // 1 triệu 200 nghìn
+    memberType: "VIP"
+};
+
+// Bước 1: Tính tiền gốc và áp giảm giá
+function applyDiscount(ord, callback) {
+    let discount = 0;
+    if (ord.rawAmount >= 1000000) discount = ord.rawAmount * 0.1; // Giảm 10%
+    const amountAfterDiscount = ord.rawAmount - discount;
+    console.log(`[Bước 1] Tiền gốc: ${ord.rawAmount}, Giảm giá: ${discount} -> Còn: ${amountAfterDiscount}`);
+    
+    callback(amountAfterDiscount, ord, calcShipping); // Gọi tiếp bước sau
+}
+
+// Bước 2: Cộng phí vận chuyển
+function calcShipping(currentAmount, ord, callback) {
+    let shippingFee = 30000;
+    if (currentAmount >= 1000000) shippingFee = 0; // Miễn phí vận chuyển đơn lớn
+    const amountAfterShipping = currentAmount + shippingFee;
+    console.log(`[Bước 2] Phí vận chuyển: ${shippingFee} -> Tổng cộng: ${amountAfterShipping}`);
+    
+    callback(amountAfterShipping, applyTax); // Gọi tiếp bước mở rộng
+}
+
+// Bước 3 (Yêu cầu mở rộng): Tính thuế VAT 10%
+function applyTax(currentAmount, callback) {
+    const tax = currentAmount * 0.1; // Thuế
+    const finalTotal = currentAmount + tax;
+    console.log(`[Bước 3 - Mở rộng] Thuế VAT (10%): ${tax} -> Sau cùng: ${finalTotal}`);
+    
+    callback(finalTotal); // Kết thúc chuỗi, xuất ra màn hình
+}
+
+// Hàm hiển thị kết quả cuối cùng lên giao diện
+function displayFinalResult(finalAmount) {
+    document.getElementById("output").innerText = 
+        `Mã Đơn Hàng: ${order.id}\n` +
+        `-----------------------------\n` +
+        `Tổng giá trị thanh toán cuối cùng: ${finalAmount.toLocaleString()} VNĐ`; //
+}
+
+// Kích hoạt chuỗi callback liên tiếp
+applyDiscount(order, function(amountAfterDisc, ord, nextStep) {
+    nextStep(amountAfterDisc, ord, function(amountAfterShip, nextStep2) {
+        nextStep2(amountAfterShip, displayFinalResult);
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 09 - To-Do List</title>
+    <style>
+        .completed { text-decoration: line-through; color: gray; }
+        li { margin: 8px 0; font-size: 18px; }
+        .btn-del { margin-left: 15px; color: red; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Ứng dụng quản lý công việc</h2>
+    <input type="text" id="taskInput" placeholder="Nhập công việc cần làm..."> <button onclick="addTask()">Thêm</button> <ul id="taskList"></ul>
+
+<script>
+// Khởi tạo dữ liệu từ localStorage nếu có
+let todos = JSON.parse(localStorage.getItem("todos")) || []; //
+
+function saveAndRender() {
+    localStorage.setItem("todos", JSON.stringify(todos)); // Lưu trữ
+    const list = document.getElementById("taskList");
+    list.innerHTML = ""; //
+    
+    todos.forEach((todo, index) => { //
+        list.innerHTML += `
+            <li>
+                <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTask(${index})">
+                <span class="${todo.done ? 'completed' : ''}">${todo.text}</span>
+                <span class="btn-del" onclick="deleteTask(${index})">[Xóa]</span>
+            </li>
+        `; //
+    });
+}
+
+function addTask() {
+    const input = document.getElementById("taskInput");
+    if (input.value.trim() === "") return alert("Hãy nhập nội dung!");
+    
+    todos.push({ text: input.value.trim(), done: false }); //
+    input.value = "";
+    saveAndRender(); //
+}
+
+function toggleTask(index) {
+    todos[index].done = !todos[index].done; //
+    saveAndRender(); //
+}
+
+function deleteTask(index) {
+    todos.splice(index, 1); // Xóa khỏi mảng
+    saveAndRender(); //
+}
+
+saveAndRender(); // Tải dữ liệu ban đầu
+</script>
+</body>
+</html>

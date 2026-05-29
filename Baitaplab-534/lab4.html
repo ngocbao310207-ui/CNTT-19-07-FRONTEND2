@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 04 - Quản lý điểm</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        .box { max-width: 500px; padding: 20px; border: 1px solid #aaa; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Xử lý điểm sinh viên</h2>
+    <p>Danh sách điểm hiện tại: <span id="gradeList"></span></p>
+    
+    <input type="number" id="newGrade" min="0" max="10" placeholder="Nhập điểm mới (0-10)">
+    <button onclick="addGrade()">Thêm điểm</button>
+    <button onclick="processGrades()">Tính & Phân loại</button>
+    <button onclick="removeLowestAndCalc()" style="background:#dc3545; color:white;">Bỏ điểm thấp nhất & Tính</button>
+
+    <div id="gradeResult" style="margin-top:20px; font-weight:bold;"></div>
+</div>
+
+<script>
+let grades = [8.5, 6.5, 9.0, 4.0, 7.5]; //
+
+function displayGrades() {
+    document.getElementById('gradeList').innerText = grades.join(', '); //
+}
+
+function addGrade() {
+    const val = parseFloat(document.getElementById('newGrade').value);
+    if (!isNaN(val) && val >= 0 && val <= 10) {
+        grades.push(val); //
+        displayGrades();
+        document.getElementById('newGrade').value = '';
+    } else {
+        alert("Điểm nhập vào không hợp lệ!");
+    }
+}
+
+function calcAndRender(arr) {
+    if (arr.length === 0) return "Mảng rỗng";
+    // Dùng reduce tính tổng
+    const total = arr.reduce((sum, g) => sum + g, 0); //
+    const avg = (total / arr.length).toFixed(2); //
+    
+    let rank = "";
+    if (avg >= 8.0) rank = "Giỏi"; //
+    else if (avg >= 6.5) rank = "Khá"; //
+    else if (avg >= 5.0) rank = "Trung bình"; //
+    else rank = "Yếu"; //
+
+    return `Số lượng cột điểm: ${arr.length} <br> Điểm trung bình: ${avg} <br> Học lực: ${rank}`; //
+}
+
+function processGrades() {
+    document.getElementById('gradeResult').innerHTML = calcAndRender(grades); //
+}
+
+function removeLowestAndCalc() {
+    if (grades.length <= 1) {
+        alert("Cần tối thiểu 2 đầu điểm để thực hiện chức năng này!");
+        return;
+    }
+    // Sao chép mảng và loại bỏ phần tử nhỏ nhất
+    let filteredGrades = [...grades];
+    const min = Math.min(...filteredGrades);
+    const index = filteredGrades.indexOf(min);
+    filteredGrades.splice(index, 1); //
+
+    document.getElementById('gradeResult').innerHTML = 
+        `<i>(Đã tạm bỏ điểm thấp nhất là ${min})</i><br>` + calcAndRender(filteredGrades);
+}
+
+displayGrades(); // Khởi tạo ban đầu
+</script>
+</body>
+</html>

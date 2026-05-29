@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 02 - Tính Khuyến Mãi Đơn Hàng</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .container { max-width: 450px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+        .result-box { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-left: 5px solid #28a745; display: none; }
+        .result-line { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tính Toán Hóa Đơn Khuyến Mãi</h2>
+    <div class="form-group">
+        <label for="orderValue">Giá trị đơn hàng (VNĐ):</label>
+        <input type="number" id="orderValue" placeholder="Nhập số tiền gốc">
+    </div>
+    <div class="form-group">
+        <label for="memberRank">Hạng thành viên:</label>
+        <select id="memberRank">
+            <option value="Bronze">Đồng (Bronze)</option>
+            <option value="Silver">Bạc (Silver)</option>
+            <option value="Gold">Vàng (Gold)</option>
+        </select>
+    </div>
+    <button onclick="xuLyThanhToan()">Tính Tổng Tiền</button>
+
+    <div class="result-box" id="resultBox">
+        <div class="result-line"><span>Tiền gốc:</span> <strong id="lblOriginal">0đ</strong></div>
+        <div class="result-line"><span>Tỷ lệ giảm:</span> <strong id="lblRate">0%</strong></div>
+        <div class="result-line"><span>Số tiền giảm:</span> <strong id="lblDiscount">0đ</strong></div>
+        <div class="result-line"><span>Phí vận chuyển:</span> <strong id="lblShipping">0đ</strong></div>
+        <hr>
+        <div class="result-line"><span>Tổng thanh toán:</span> <strong id="lblTotal" style="color: red; font-size: 1.2em;">0đ</strong></div>
+    </div>
+</div>
+
+<script>
+// Hàm định dạng tiền tệ VNĐ tiện dụng
+function formatCurrency(num) {
+    return num.toLocaleString('vi-VN') + ' VNĐ';
+}
+
+function tinhKhuyenMai(amount, rank) {
+    let rate = 0;
+
+    // Áp dụng tối thiểu 3 mức khuyến mãi kết hợp số tiền và hạng thành viên
+    if (amount >= 500000 && amount < 1000000) {
+        rate = rank === 'Gold' ? 0.10 : (rank === 'Silver' ? 0.07 : 0.05);
+    } else if (amount >= 1000000 && amount < 2000000) {
+        rate = rank === 'Gold' ? 0.15 : (rank === 'Silver' ? 0.12 : 0.08);
+    } else if (amount >= 2000000) {
+        rate = rank === 'Gold' ? 0.20 : (rank === 'Silver' ? 0.15 : 0.10);
+    } else {
+        rate = rank === 'Gold' ? 0.05 : 0; // Đơn hàng nhỏ dưới 500k chỉ ưu tiên VIP Gold
+    }
+    return rate;
+}
+
+function xuLyThanhToan() {
+    const originalValue = Number(document.getElementById('orderValue').value);
+    const rank = document.getElementById('memberRank').value;
+
+    if (originalValue <= 0 || isNaN(originalValue)) {
+        alert("Vui lòng nhập giá trị đơn hàng hợp lệ!");
+        return;
+    }
+
+    // Tính toán qua hàm nghiệp vụ riêng biệt
+    const discountRate = tinhKhuyenMai(originalValue, rank);
+    const discountAmount = originalValue * discountRate;
+    
+    // Yêu cầu mở rộng: Tính phí vận chuyển (Mặc định 30k, miễn phí nếu đơn hàng > 1 triệu)
+    let shippingFee = 30000;
+    if (originalValue >= 1000000) {
+        shippingFee = 0;
+    }
+
+    const totalPayment = originalValue - discountAmount + shippingFee;
+
+    // Hiển thị kết quả định dạng rõ ràng
+    document.getElementById('lblOriginal').innerText = formatCurrency(originalValue);
+    document.getElementById('lblRate').innerText = (discountRate * 100) + '%';
+    document.getElementById('lblDiscount').innerText = formatCurrency(discountAmount);
+    document.getElementById('lblShipping').innerText = shippingFee === 0 ? "Miễn phí" : formatCurrency(shippingFee);
+    document.getElementById('lblTotal').innerText = formatCurrency(totalPayment);
+
+    document.getElementById('resultBox').style.display = 'block';
+}
+</script>
+</body>
+</html>

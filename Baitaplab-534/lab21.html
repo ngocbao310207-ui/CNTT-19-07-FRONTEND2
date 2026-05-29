@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 21 - Full CRUD Ajax</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; }
+        .form-area { padding:15px; background:#f9f9f9; border:1px solid #ddd; margin-bottom:15px; }
+    </style>
+</head>
+<body>
+    <h2>Hệ thống quản lý dữ liệu toàn diện (CRUD Ajax)</h2>
+
+    <div class="form-area">
+        <h3 id="formTitle">Tạo bản ghi mới</h3>
+        <input type="hidden" id="editId"> Họ tên: <input type="text" id="targetName"> 
+        Lớp: <input type="text" id="targetClass">
+        <button id="btnSave" onclick="saveData()">Lưu (POST/PUT)</button>
+        <button id="btnCancel" onclick="resetForm()" style="display:none;">Hủy sửa</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>Mã ID</th><th>Họ tên</th><th>Lớp</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="mainDataBody"></tbody>
+    </table>
+
+<script>
+const CRUD_API = "https://6655f44e3c1d3b60293a647d.mockapi.io/students"; // [cite: 316, 317]
+
+// 1. READ: Lấy danh sách (GET) [cite: 315, 319, 324]
+function loadList() {
+    $.ajax({
+        url: CRUD_API,
+        type: "GET", // [cite: 315]
+        success: function(data) {
+            const tbody = $("#mainDataBody");
+            tbody.empty();
+            data.forEach(item => {
+                tbody.append(`
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.class}</td>
+                        <td>
+                            <button onclick="editMode(${item.id}, '${item.name}', '${item.class}')">Sửa</button> <button onclick="deleteItem(${item.id})" style="color:red;">Xóa</button> </td>
+                    </tr>
+                `); // [cite: 319]
+            });
+        }
+    });
+}
+
+// 2. CREATE hoặc UPDATE phụ thuộc vào trạng thái Form [cite: 320, 321, 325]
+function saveData() {
+    const id = $("#editId").val();
+    const name = $("#targetName").val();
+    const cls = $("#targetClass").val();
+
+    if(!name || !cls) return alert("Vui lòng nhập đủ thông tin!");
+
+    const payload = { name: name, class: cls };
+    
+    if(id === "") {
+        // Trạng thái CREATE mới (POST) [cite: 315, 320, 325]
+        $.ajax({
+            url: CRUD_API,
+            type: "POST", // [cite: 315]
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function() { loadList(); resetForm(); } // [cite: 326]
+        });
+    } else {
+        // Trạng thái UPDATE cũ (PUT) [cite: 315, 321, 325]
+        $.ajax({
+            url: `${CRUD_API}/${id}`,
+            type: "PUT", // [cite: 315]
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function() { loadList(); resetForm(); } // [cite: 326]
+        });
+    }
+}
+
+// Chuyển form sang trạng thái Sửa bản ghi [cite: 321, 323]
+function editMode(id, name, cls) {
+    $("#formTitle").text("Cập nhật thông tin bản ghi ID: " + id);
+    $("#editId").val(id);
+    $("#targetName").val(name);
+    $("#targetClass").val(cls);
+    $("#btnCancel").show();
+}
+
+function resetForm() {
+    $("#formTitle").text("Tạo bản ghi mới");
+    $("#editId").val("");
+    $("#targetName").val("");
+    $("#targetClass").val("");
+    $("#btnCancel").hide();
+}
+
+// 3. DELETE: Xóa dữ liệu (DELETE) [cite: 315, 322, 325]
+function deleteItem(id) {
+    if(!confirm("Xác nhận xóa bản ghi này?")) return;
+    $.ajax({
+        url: `${CRUD_API}/${id}`,
+        type: "DELETE", // [cite: 315]
+        success: function() { loadList(); } // [cite: 326]
+    });
+}
+
+$(document).ready(function(){ loadList(); }); // Tải danh sách lúc bắt đầu [cite: 324]
+</script>
+</body>
+</html>

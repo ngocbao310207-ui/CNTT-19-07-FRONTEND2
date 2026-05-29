@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 14 - Hiệu ứng jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <style>
+        #alertPanel { background: #fff3cd; color: #856404; padding: 20px; border: 1px solid #ffeeba; display: none; margin-top:15px; }
+    </style>
+</head>
+<body>
+    <h2>Hiệu ứng giao diện động</h2>
+    <button id="btnFadeIn">Mờ dần vào (FadeIn)</button> 
+    <button id="btnFadeOut">Mờ dần đi (FadeOut)</button> 
+    <button id="btnSlideToggle">Trượt đóng/mở (SlideToggle)</button> 
+
+    <div id="alertPanel">
+        <h4>📢 THÔNG BÁO HỆ THỐNG</h4>
+        <p>Hộp thoại này xuất hiện mượt mà bằng các hàm hiệu ứng tích hợp sẵn trong thư viện jQuery.</p>
+    </div>
+
+<script>
+$(document).ready(function(){
+    // Gắn sự kiện và tùy chỉnh tốc độ mili-giây
+    $("#btnFadeIn").click(function(){
+        $("#alertPanel").fadeIn(600); // Xuất hiện mờ dần trong 600ms
+    });
+
+    $("#btnFadeOut").click(function(){
+        $("#alertPanel").fadeOut(400); // Mất đi trong 400ms
+    });
+
+    $("#btnSlideToggle").click(function(){
+        $("#alertPanel").slideToggle("slow"); // Trượt lên xuống tốc độ chậm
+    });
+});
+</script>
+</body>
+</html>

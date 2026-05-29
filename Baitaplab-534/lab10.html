@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 10 - Fetch API List</title>
+</head>
+<body>
+    <h2>Danh sách người dùng từ API</h2>
+    <div id="loading" style="display:none; color: blue;">Đang tải dữ liệu, vui lòng đợi...</div> <ul id="userList"></ul>
+
+<script>
+// Thay đổi URL endpoint mockapi của bạn tại đây
+const API_URL = "https://6655f44e3c1d3b60293a647d.mockapi.io/users"; 
+
+async function loadUsers() {
+    const loader = document.getElementById("loading");
+    const list = document.getElementById("userList");
+    loader.style.display = "block"; //
+    
+    try {
+        const response = await fetch(API_URL); //
+        if (!response.ok) throw new Error("Lỗi kết nối API");
+        
+        const users = await response.json(); // Chuyển đổi JSON
+        list.innerHTML = ""; //
+        
+        users.forEach(user => { //
+            // Hiển thị tối thiểu 3 trường thông tin (ID, Tên, Email)
+            list.innerHTML += `<li><strong>ID:</strong> ${user.id} - <strong>Tên:</strong> ${user.name} - <strong>Email:</strong> ${user.email}</li>`;
+        });
+    } catch (error) {
+        // Yêu cầu mở rộng: Xử lý lỗi
+        list.innerHTML = `<li style="color:red;">Không thể lấy dữ liệu: ${error.message}</li>`; //
+    } finally {
+        loader.style.display = "none";
+    }
+}
+
+loadUsers(); // Gọi khi tải trang
+</script>
+</body>
+</html>

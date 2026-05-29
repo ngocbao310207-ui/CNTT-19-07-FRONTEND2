@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 19 - jQuery Ajax GET</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h2>Danh sách thành viên lớp học (Ajax GET)</h2>
+    <table id="memberTable">
+        <thead>
+            <tr><th>Mã hệ thống</th><th>Họ tên</th><th>Nhóm học tập</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+<script>
+const MEMBER_API = "https://6655f44e3c1d3b60293a647d.mockapi.io/students"; //
+
+function loadDataWithAjax() {
+    // Gọi lệnh bất đồng bộ Ajax GET lấy thông tin
+    $.ajax({
+        url: MEMBER_API,
+        type: "GET", //
+        dataType: "json",
+        success: function(response) { // Hàm Callback khi nhận thành công
+            const tbody = $("#memberTable tbody");
+            tbody.empty(); //
+            
+            // Duyệt dữ liệu render ra bảng
+            response.forEach(item => {
+                tbody.append(`
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.class}</td>
+                    </tr>
+                `); //
+            });
+        },
+        error: function() {
+            alert("Đã xảy ra lỗi nghiêm trọng khi nạp dữ liệu từ MockAPI!");
+        }
+    });
+}
+
+$(document).ready(function(){
+    loadDataWithAjax(); // Kích hoạt ngay khi mở trang
+});
+</script>
+</body>
+</html>

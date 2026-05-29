@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Lab 03 - Trò Chơi Đoán Số</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .game-box { max-width: 400px; margin: 0 auto; padding: 20px; border: 2px solid #333; border-radius: 10px; background: #fdfdfd; }
+        input { padding: 8px; width: 60px; text-align: center; font-size: 16px; }
+        button { padding: 8px 15px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #message { margin-top: 15px; font-weight: bold; font-size: 16px; color: blue; }
+        #history { margin-top: 15px; font-size: 12px; color: #666; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="game-box">
+    <h2>Trò Chơi Đoán Số (1 - 100)</h2>
+    <p>Tôi đã chọn một số bí mật. Hãy thử tài đoán xem nó là số nào!</p>
+    
+    <input type="number" id="guessInput" min="1" max="100" placeholder="Số?">
+    <button onclick="checkGuess()">Đoán</button>
+    <button onclick="resetGame()" style="background-color: #ffc107;">Chơi lại</button>
+
+    <div id="message"></div>
+    <div id="history"></div>
+</div>
+
+<script>
+// 1. Khai báo biến lưu số bí mật và lượt đoán toàn cục
+let secretNumber;
+let attempts = 0;
+let guessHistory = [];
+
+function resetGame() {
+    // Sinh số ngẫu nhiên từ 1 đến 100
+    secretNumber = Math.floor(Math.random() * 100) + 1;
+    attempts = 0;
+    guessHistory = [];
+    document.getElementById('message').innerText = "Trò chơi mới bắt đầu! Mời bạn nhập số.";
+    document.getElementById('message').style.color = "blue";
+    document.getElementById('history').innerHTML = "";
+    document.getElementById('guessInput').value = "";
+    document.getElementById('guessInput').disabled = false;
+}
+
+function checkGuess() {
+    const guessInput = document.getElementById('guessInput');
+    const userGuess = Number(guessInput.value);
+    const messageDiv = document.getElementById('message');
+
+    // Kiểm tra tính hợp lệ của đầu vào
+    if (!userGuess || userGuess < 1 || userGuess > 100) {
+        messageDiv.innerText = "Vui lòng nhập một số hợp lệ từ 1 đến 100!";
+        messageDiv.style.color = "red";
+        return;
+    }
+
+    attempts++;
+    guessHistory.push(userGuess);
+
+    // 2. So sánh và đưa ra phản hồi
+    if (userGuess === secretNumber) {
+        messageDiv.innerText = `Chính xác! 🎉 Bạn đã đoán đúng số ${secretNumber} sau ${attempts} lần thử.`;
+        messageDiv.style.color = "green";
+        guessInput.disabled = true; // Khóa input khi thắng cuộc
+    } else if (userGuess < secretNumber) {
+        messageDiv.innerText = "Số bạn đoán quá NHỎ rồi! Thử số lớn hơn.";
+        messageDiv.style.color = "orange";
+    } else {
+        messageDiv.innerText = "Số bạn đoán quá LỚN rồi! Thử số nhỏ hơn.";
+        messageDiv.style.color = "orange";
+    }
+
+    // Yêu cầu mở rộng: Hiển thị lịch sử các lần đoán
+    document.getElementById('history').innerHTML = `<strong>Lịch sử đoán:</strong> ${guessHistory.join(', ')} (Đã đoán ${attempts} lần)`;
+}
+
+// Khởi chạy game ngay khi tải trang lần đầu
+resetGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 12 - Quản lý Sinh Viên CRUD</title>
+    <style>
+        table { width: 500px; border-collapse: collapse; margin-top:15px;}
+        th, td { border: 1px solid #aaa; padding: 6px; text-align: left;}
+        .form-box { background: #e9ecef; padding: 15px; width: 470px; margin-bottom:15px; }
+    </style>
+</head>
+<body>
+    <h2>Quản lý sinh viên (MockAPI)</h2>
+
+    <div class="form-box">
+        <h3>Thêm sinh viên mới</h3>
+        Tên: <input type="text" id="stuName"><br><br>
+        Lớp: <input type="text" id="stuClass"><br><br>
+        <button onclick="createStudent()">Lưu dữ liệu (POST)</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Họ Tên</th><th>Lớp</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+    </table>
+
+<script>
+const STU_API = "https://6655f44e3c1d3b60293a647d.mockapi.io/students"; //
+
+// 1. READ: Lấy và render danh sách sinh viên (GET)
+async function fetchStudents() {
+    try {
+        const res = await fetch(STU_API);
+        const data = await res.json();
+        const tbody = document.getElementById("studentTableBody");
+        tbody.innerHTML = "";
+        
+        data.forEach(stu => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${stu.id}</td>
+                    <td>${stu.name}</td>
+                    <td>${stu.class}</td>
+                    <td><button onclick="deleteStudent(${stu.id})" style="color:red;">Xóa</button></td>
+                </tr>
+            `; //
+        });
+    } catch (err) { alert("Lỗi nạp danh sách!"); }
+}
+
+// 2. CREATE: Thêm sinh viên mới (POST)
+async function createStudent() {
+    const name = document.getElementById("stuName").value;
+    const cls = document.getElementById("stuClass").value;
+    if(!name || !cls) return alert("Vui lòng điền đủ thông tin!");
+
+    const newStudent = { name: name, class: cls };
+
+    try {
+        await fetch(STU_API, {
+            method: "POST", //
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newStudent)
+        });
+        document.getElementById("stuName").value = "";
+        document.getElementById("stuClass").value = "";
+        fetchStudents(); // Cập nhật lại danh sách sau khi thêm
+    } catch (err) { alert("Lỗi khi thêm!"); }
+}
+
+// 3. DELETE: Xóa sinh viên khỏi hệ thống (DELETE)
+async function deleteStudent(id) {
+    if(!confirm("Bạn chắc chắn muốn xóa sinh viên ID này không?")) return;
+    try {
+        await fetch(`${STU_API}/${id}`, { method: "DELETE" }); //
+        fetchStudents(); // Đọc lại danh sách
+    } catch (err) { alert("Xóa không thành công!"); }
+}
+
+fetchStudents(); // Khởi tạo khi vào trang
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Lab 20 - jQuery Ajax POST</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Đăng ký thành viên mới (Ajax POST)</h2>
+    <form id="addMemberForm">
+        Họ tên: <input type="text" name="name" id="nameInput" required><br><br>
+        Lớp học: <input type="text" name="class" id="classInput" required><br><br>
+        Mã số cũ: <input type="number" name="oldId" id="oldIdInput" placeholder="Ví dụ: 2026"><br><br>
+        <button type="submit">Xác nhận gửi (POST)</button>
+    </form>
+
+<script>
+const POST_API = "https://6655f44e3c1d3b60293a647d.mockapi.io/students"; //
+
+$(document).ready(function(){
+    $("#addMemberForm").submit(function(e){
+        e.preventDefault(); // Ngăn hành vi tải lại trang
+
+        // Gom dữ liệu thành Object
+        const payload = {
+            name: $("#nameInput").val(),
+            class: $("#classInput").val()
+        };
+
+        // Gửi dữ liệu bằng phương thức Ajax POST
+        $.ajax({
+            url: POST_API,
+            type: "POST", //
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function(result) {
+                // Đưa ra thông báo thành công phản hồi từ Server giả lập
+                alert("Thêm mới thành công! Thành viên mới có ID hệ thống là: " + result.id); //
+                
+                // Yêu cầu mở rộng: Reset làm trống form sau khi hoàn thành
+                $("#nameInput").val("");
+                $("#classInput").val("");
+                $("#oldIdInput").val("");
+            },
+            error: function() {
+                alert("Thao tác POST thất bại, vui lòng kiểm tra endpoint!"); //
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>
